@@ -1,0 +1,76 @@
+{
+  "manifest_version": 3,
+  "name": "Markdown Viewer Enhanced",
+  "version": "1.0.0",
+  "description": "在浏览器中优雅地渲染 Markdown 文件，支持 Mermaid 图表、代码高亮、目录导航、多主题切换等功能",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "file:///*/*.md",
+        "file:///*/*.mdc",
+        "file:///*/*.markdown",
+        "file:///*/*.mkd",
+        "file:///*/*.mdown",
+        "file:///*/*.mdtxt",
+        "file:///*/*.mdtext",
+        "file:///*/*.txt",
+        "https://*/*.md",
+        "https://*/*.mdc",
+        "https://*/*.markdown",
+        "http://*/*.md",
+        "http://*/*.mdc",
+        "http://*/*.markdown"
+      ],
+      "js": [
+        "libs/marked.min.js",
+        "libs/marked-footnote.umd.js",
+        "libs/purify.min.js",
+        "libs/highlight.min.js",
+        "libs/mermaid.min.js",
+        "libs/katex.min.js",
+        "content/content.js"
+      ],
+      "css": [
+        "styles/github-markdown.css",
+        "styles/themes.css",
+        "styles/highlight-themes.css",
+        "styles/content.css"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "styles/*",
+        "libs/*",
+        "icons/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  }
+}

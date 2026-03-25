@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Viewer Enhanced - 设置</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 14px;
+      color: #24292f;
+      background: #f6f8fa;
+      min-height: 100vh;
+    }
+
+    /* 页面容器 */
+    .options-container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    /* 头部 */
+    .options-header {
+      display: flex;
+      align-items: center;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      margin-right: 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .header-info h1 {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .header-info p {
+      font-size: 13px;
+      opacity: 0.85;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    /* 设置卡片 */
+    .settings-card {
+      background: #ffffff;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e1e4e8;
+      font-size: 15px;
+      font-weight: 600;
+      color: #24292f;
+      gap: 8px;
+    }
+
+    .card-header .card-icon {
+      font-size: 18px;
+    }
+
+    .card-body {
+      padding: 16px 20px;
+    }
+
+    /* 设置行 */
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f2f5;
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-info {
+      flex: 1;
+      margin-right: 16px;
+    }
+
+    .setting-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #24292f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .setting-label .icon {
+      font-size: 16px;
+    }
+
+    .setting-desc {
+      font-size: 12px;
+      color: #8b949e;
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    .setting-control {
+      flex-shrink: 0;
+    }
+
+    /* 开关按钮 */
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #d0d7de;
+      border-radius: 12px;
+      transition: background 0.25s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 2px;
+      bottom: 2px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.25s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: #667eea;
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    /* 主题选择器 */
+    .theme-selector {
+      display: flex;
+      gap: 10px;
+    }
+
+    .theme-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: 2px solid #e1e4e8;
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      font-size: 13px;
+      color: #57606a;
+    }
+
+    .theme-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+      background: #f8f8ff;
+    }
+
+    .theme-btn.active {
+      border-color: #667eea;
+      background: #f0f0ff;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .theme-btn .theme-icon {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    /* 选项按钮组 */
+    .btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-option {
+      padding: 7px 16px;
+      border: 1.5px solid #d0d7de;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      color: #57606a;
+      transition: all 0.15s;
+    }
+
+    .btn-option:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .btn-option.active {
+      border-color: #667eea;
+      background: #f0f0ff;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    /* 滑块控制 */
+    .slider-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .slider-control input[type="range"] {
+      flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #e1e4e8;
+      border-radius: 3px;
+      outline: none;
+      transition: background 0.15s;
+    }
+
+    .slider-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #667eea;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(102, 126, 234, 0.4);
+      transition: transform 0.15s;
+    }
+
+    .slider-control input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .slider-label {
+      font-size: 12px;
+      color: #8b949e;
+      white-space: nowrap;
+    }
+
+    .slider-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #667eea;
+      min-width: 50px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* 下拉选择框 */
+    .select-control {
+      padding: 7px 12px;
+      border: 1.5px solid #d0d7de;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 13px;
+      color: #24292f;
+      cursor: pointer;
+      outline: none;
+      min-width: 140px;
+      transition: border-color 0.15s;
+    }
+
+    .select-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* 预览区域 */
+    .preview-section {
+      margin-top: 8px;
+      padding: 16px;
+      background: #f9fafb;
+      border: 1px solid #e1e4e8;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #24292f;
+      transition: all 0.3s;
+    }
+
+    .preview-section.preview-dark {
+      background: #1e1e2e;
+      border-color: #333;
+      color: #e0e0e0;
+    }
+
+    .preview-section h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .preview-section p {
+      margin-bottom: 6px;
+    }
+
+    .preview-section code {
+      background: rgba(102, 126, 234, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9em;
+    }
+
+    /* 底部操作栏 */
+    .actions-bar {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .action-btn {
+      padding: 10px 24px;
+      border: 1.5px solid #d0d7de;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      color: #57606a;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+
+    .action-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+      background: #f8f8ff;
+    }
+
+    .action-btn.primary {
+      background: #667eea;
+      border-color: #667eea;
+      color: #fff;
+    }
+
+    .action-btn.primary:hover {
+      background: #5a6fd6;
+      border-color: #5a6fd6;
+    }
+
+    .action-btn.danger {
+      color: #cf222e;
+      border-color: #cf222e;
+    }
+
+    .action-btn.danger:hover {
+      background: #cf222e;
+      color: #fff;
+    }
+
+    /* 保存提示 */
+    .save-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 24px;
+      background: #2da44e;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(45, 164, 78, 0.4);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 9999;
+    }
+
+    .save-toast.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* 版本信息 */
+    .version-info {
+      text-align: center;
+      padding: 16px 0 0;
+      font-size: 12px;
+      color: #8b949e;
+    }
+
+    .version-info a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .version-info a:hover {
+      text-decoration: underline;
+    }
+
+    /* 快捷键表格 */
+    .shortcuts-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .shortcuts-table td {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f2f5;
+    }
+
+    .shortcuts-table td:first-child {
+      color: #57606a;
+    }
+
+    .shortcuts-table td:last-child {
+      text-align: right;
+    }
+
+    .kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 12px;
+      color: #24292f;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    }
+
+    /* 代码主题预览 */
+    .code-theme-preview {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #d0d7de;
+      transition: all 0.3s ease;
+    }
+
+    .preview-code-block {
+      margin: 0;
+      border-radius: 0;
+      border: none;
+    }
+
+    .preview-code-header {
+      padding: 6px 12px;
+      background: #f1f3f5;
+      border-bottom: 1px solid #e1e4e8;
+      transition: all 0.3s ease;
+    }
+
+    .preview-code-lang {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #57606a;
+      letter-spacing: 0.5px;
+      transition: color 0.3s ease;
+    }
+
+    .preview-code-block code {
+      display: block;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      line-height: 1.5;
+      overflow-x: auto;
+      transition: background-color 0.3s ease;
+      white-space: pre;
+    }
+
+    /* 预览区暗色代码 header 适配 */
+    .code-theme-preview[data-code-theme="github-dark"] .preview-code-header,
+    .code-theme-preview[data-code-theme="monokai"] .preview-code-header,
+    .code-theme-preview[data-code-theme="vs2015"] .preview-code-header,
+    .code-theme-preview[data-code-theme="atom-one-dark"] .preview-code-header,
+    .code-theme-preview[data-code-theme="one-dark-pro"] .preview-code-header,
+    .code-theme-preview[data-code-theme="dracula"] .preview-code-header,
+    .code-theme-preview[data-code-theme="nord"] .preview-code-header,
+    .code-theme-preview[data-code-theme="solarized-dark"] .preview-code-header,
+    .code-theme-preview[data-code-theme="tokyo-night"] .preview-code-header,
+    .code-theme-preview[data-code-theme="default-dark-modern"] .preview-code-header {
+      background: rgba(255, 255, 255, 0.06);
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .code-theme-preview[data-code-theme="github-dark"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="monokai"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="vs2015"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="atom-one-dark"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="one-dark-pro"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="dracula"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="nord"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="solarized-dark"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="tokyo-night"] .preview-code-lang,
+    .code-theme-preview[data-code-theme="default-dark-modern"] .preview-code-lang {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* 预览区各主题背景色 */
+    .code-theme-preview[data-code-theme="github"] .preview-code-block code,
+    .code-theme-preview:not([data-code-theme]) .preview-code-block code {
+      background: #ffffff;
+    }
+    .code-theme-preview[data-code-theme="github-dark"] .preview-code-block code {
+      background: #0d1117;
+    }
+    .code-theme-preview[data-code-theme="monokai"] .preview-code-block code {
+      background: #272822;
+    }
+    .code-theme-preview[data-code-theme="vs2015"] .preview-code-block code {
+      background: #1e1e1e;
+    }
+    .code-theme-preview[data-code-theme="atom-one-dark"] .preview-code-block code {
+      background: #282c34;
+    }
+    .code-theme-preview[data-code-theme="atom-one-light"] .preview-code-block code {
+      background: #fafafa;
+    }
+    .code-theme-preview[data-code-theme="dracula"] .preview-code-block code {
+      background: #282a36;
+    }
+    .code-theme-preview[data-code-theme="nord"] .preview-code-block code {
+      background: #2e3440;
+    }
+    .code-theme-preview[data-code-theme="solarized-light"] .preview-code-block code {
+      background: #fdf6e3;
+    }
+    .code-theme-preview[data-code-theme="solarized-dark"] .preview-code-block code {
+      background: #002b36;
+    }
+    .code-theme-preview[data-code-theme="tokyo-night"] .preview-code-block code {
+      background: #1a1b26;
+    }
+    .code-theme-preview[data-code-theme="one-dark-pro"] .preview-code-block code {
+      background: #282c34;
+    }
+    .code-theme-preview[data-code-theme="default-light-modern"] .preview-code-block code {
+      background: #ffffff;
+    }
+    .code-theme-preview[data-code-theme="default-dark-modern"] .preview-code-block code {
+      background: #1f1f1f;
+    }
+    .code-theme-preview[data-code-theme="auto"] .preview-code-block code {
+      background: #ffffff;
+    }
+
+    /* 暗色主题预览边框 */
+    .code-theme-preview[data-code-theme="github-dark"],
+    .code-theme-preview[data-code-theme="monokai"],
+    .code-theme-preview[data-code-theme="vs2015"],
+    .code-theme-preview[data-code-theme="atom-one-dark"],
+    .code-theme-preview[data-code-theme="one-dark-pro"],
+    .code-theme-preview[data-code-theme="dracula"],
+    .code-theme-preview[data-code-theme="nord"],
+    .code-theme-preview[data-code-theme="solarized-dark"],
+    .code-theme-preview[data-code-theme="tokyo-night"],
+    .code-theme-preview[data-code-theme="default-dark-modern"] {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+  <link rel="stylesheet" href="../styles/highlight-themes.css">
+</head>
+<body>
+
+  <div class="options-container">
+    <!-- 头部 -->
+    <div class="options-header">
+      <div class="header-icon">M↓</div>
+      <div class="header-info">
+        <h1>Markdown Viewer Enhanced</h1>
+        <p>在浏览器中优雅地渲染 Markdown 文件，支持 Mermaid 图表、代码高亮、目录导航</p>
+      </div>
+    </div>
+
+    <!-- 主题设置 -->
+    <div class="settings-card">
+      <div class="card-header">
+        <span class="card-icon">🎨</span>
+        <span>外观主题</span>
+      </div>
+      <div class="card-body">
+        <div class="theme-selector">
+          <button class="theme-btn" data-theme="light">
+            <span class="theme-icon">☀️</span>浅色主题
+          </button>
+          <button class="theme-btn" data-theme="dark">
+            <span class="theme-icon">🌙</span>深色主题
+          </button>
+          <button class="theme-btn" data-theme="auto">
+            <span class="theme-icon">💻</span>跟随系统
+          </button>
+        </div>
+
+        <div class="setting-row" style="margin-top: 8px;">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🖌️</span>代码高亮主题</div>
+            <div class="setting-desc">选择代码块的高亮配色方案</div>
+          </div>
+          <div class="setting-control">
+            <select class="select-control" id="codeThemeSelect">
+              <optgroup label="🔆 亮色主题">
+                <option value="github">GitHub</option>
+                <option value="atom-one-light">Atom One Light</option>
+                <option value="solarized-light">Solarized Light</option>
+                <option value="default-light-modern">Default Light Modern</option>
+              </optgroup>
+              <optgroup label="🌙 暗色主题">
+                <option value="github-dark">GitHub Dark</option>
+                <option value="monokai">Monokai</option>
+                <option value="vs2015">VS 2015</option>
+                <option value="atom-one-dark">Atom One Dark</option>
+                <option value="one-dark-pro">One Dark Pro</option>
+                <option value="dracula">Dracula</option>
+                <option value="nord">Nord</option>
+                <option value="solarized-dark">Solarized Dark</option>
+                <option value="tokyo-night">Tokyo Night</option>
+                <option value="default-dark-modern">Default Dark Modern</option>
+              </optgroup>
+              <optgroup label="🔄 自动">
+                <option value="auto">跟随页面主题</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <!-- 代码主题预览 -->
+        <div class="setting-row" style="margin-top: 4px;">
+          <div id="codeThemePreview" class="code-theme-preview" data-code-theme="github">
+            <pre class="preview-code-block"><div class="preview-code-header"><span class="preview-code-lang">javascript</span></div><code class="hljs"><span class="hljs-keyword">function</span> <span class="hljs-title function_">fibonacci</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-comment">// 递归实现斐波那契数列</span>
+  <span class="hljs-keyword">if</span> (n <= <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> n;
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">1</span>) + <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">2</span>);
+}
+<span class="hljs-keyword">const</span> result = <span class="hljs-title function_">fibonacci</span>(<span class="hljs-number">10</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Result: <span class="hljs-subst">${result}</span>`</span>);</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 排版设置 -->
+    <div class="settings-card">
+      <div class="card-header">
+        <span class="card-icon">📐</span>
+        <span>排版设置</span>
+      </div>
+      <div class="card-body">
+        <!-- 字体 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🔤</span>正文字体</div>
+            <div class="setting-desc">选择 Markdown 正文的显示字体</div>
+          </div>
+          <div class="setting-control">
+            <div class="btn-group">
+              <button class="btn-option" data-font="system">系统默认</button>
+              <button class="btn-option" data-font="serif">衬线体</button>
+              <button class="btn-option" data-font="mono">等宽字体</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 字体大小 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🔠</span>字体大小</div>
+            <div class="setting-desc">调整正文字体大小（12px - 24px）</div>
+          </div>
+        </div>
+        <div class="slider-control">
+          <span class="slider-label">A</span>
+          <input type="range" id="fontSizeSlider" min="12" max="24" step="1" value="16">
+          <span class="slider-label" style="font-size:18px;">A</span>
+          <span class="slider-value" id="fontSizeValue">16px</span>
+        </div>
+
+        <!-- 行高 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">↕️</span>行高</div>
+            <div class="setting-desc">调整段落行高（1.2 - 2.0）</div>
+          </div>
+        </div>
+        <div class="slider-control">
+          <span class="slider-label">紧凑</span>
+          <input type="range" id="lineHeightSlider" min="1.2" max="2.0" step="0.1" value="1.6">
+          <span class="slider-label">宽松</span>
+          <span class="slider-value" id="lineHeightValue">1.6</span>
+        </div>
+
+        <!-- 内容宽度 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">↔️</span>内容最大宽度</div>
+            <div class="setting-desc">调整正文区域最大宽度（600px - 1400px）</div>
+          </div>
+        </div>
+        <div class="slider-control">
+          <span class="slider-label">窄</span>
+          <input type="range" id="maxWidthSlider" min="600" max="1400" step="50" value="1000">
+          <span class="slider-label">宽</span>
+          <span class="slider-value" id="maxWidthValue">1000px</span>
+        </div>
+
+        <!-- 排版预览 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">👁️</span>排版预览</div>
+          </div>
+        </div>
+        <div class="preview-section" id="typographyPreview">
+          <h3>Markdown Viewer Enhanced</h3>
+          <p>这是一段预览文本，用于展示当前排版设置的效果。The quick brown fox jumps over the lazy dog.</p>
+          <p>支持渲染 <code>Mermaid</code> 图表和代码高亮，让 Markdown 阅读体验更加出色。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 功能设置 -->
+    <div class="settings-card">
+      <div class="card-header">
+        <span class="card-icon">⚙️</span>
+        <span>功能设置</span>
+      </div>
+      <div class="card-body">
+        <!-- 目录显示 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">📑</span>显示目录导航</div>
+            <div class="setting-desc">在侧边栏显示文档目录，方便快速跳转</div>
+          </div>
+          <div class="setting-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleToc" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 目录位置 -->
+        <div class="setting-row" id="tocPositionRow">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">📌</span>目录位置</div>
+            <div class="setting-desc">选择目录侧边栏的显示位置</div>
+          </div>
+          <div class="setting-control">
+            <div class="btn-group">
+              <button class="btn-option toc-pos-btn" data-pos="left">📍 左侧</button>
+              <button class="btn-option toc-pos-btn" data-pos="right">📍 右侧</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mermaid 图表 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">📊</span>Mermaid 图表渲染</div>
+            <div class="setting-desc">启用 Mermaid 语法渲染流程图、时序图、甘特图等</div>
+          </div>
+          <div class="setting-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleMermaid" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- MathJax -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🔢</span>数学公式渲染</div>
+            <div class="setting-desc">启用 MathJax/KaTeX 渲染 LaTeX 数学公式（实验性功能）</div>
+          </div>
+          <div class="setting-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleMathJax">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 代码行号 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🔢</span>显示代码行号</div>
+            <div class="setting-desc">在代码块左侧显示行号，方便代码引用和阅读</div>
+          </div>
+          <div class="setting-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleLineNumbers">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 自动检测 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🔍</span>自动检测 Markdown</div>
+            <div class="setting-desc">自动识别 .md / .markdown 等扩展名的文件并渲染</div>
+          </div>
+          <div class="setting-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleAutoDetect" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 快捷键说明 -->
+    <div class="settings-card">
+      <div class="card-header">
+        <span class="card-icon">⌨️</span>
+        <span>快捷键</span>
+      </div>
+      <div class="card-body">
+        <table class="shortcuts-table">
+          <tr>
+            <td>切换目录侧边栏</td>
+            <td>点击工具栏 <span class="kbd">📑 目录</span> 按钮</td>
+          </tr>
+          <tr>
+            <td>切换主题</td>
+            <td>点击工具栏 <span class="kbd">🌓 主题</span> 按钮</td>
+          </tr>
+          <tr>
+            <td>查看 Markdown 源码</td>
+            <td>点击工具栏 <span class="kbd">📝 源码</span> 按钮</td>
+          </tr>
+          <tr>
+            <td>回到页面顶部</td>
+            <td>点击工具栏 <span class="kbd">⬆️ 顶部</span> 按钮</td>
+          </tr>
+          <tr>
+            <td>刷新页面</td>
+            <td>点击工具栏 <span class="kbd">🔃 刷新</span> 按钮</td>
+          </tr>
+          <tr>
+            <td>关闭图片预览</td>
+            <td><span class="kbd">Esc</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 底部操作 -->
+    <div class="actions-bar">
+      <button class="action-btn danger" id="btnReset">🔄 恢复默认设置</button>
+      <div style="flex:1;"></div>
+      <button class="action-btn primary" id="btnSave">💾 保存设置</button>
+    </div>
+
+    <!-- 版本信息 -->
+    <div class="version-info">
+      <p>Markdown Viewer Enhanced v1.0.0 · 基于 <a href="https://github.com/markedjs/marked" target="_blank">Marked.js</a> + <a href="https://github.com/mermaid-js/mermaid" target="_blank">Mermaid</a> + <a href="https://github.com/highlightjs/highlight.js" target="_blank">highlight.js</a></p>
+    </div>
+  </div>
+
+  <!-- 保存提示 -->
+  <div class="save-toast" id="saveToast">✅ 设置已保存</div>
+
+  <script src="options.js"></script>
+</body>
+</html>

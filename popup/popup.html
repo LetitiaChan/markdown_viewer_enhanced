@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Viewer Enhanced</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 13px;
+      color: #24292f;
+      background: #ffffff;
+    }
+
+    /* 头部 */
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+    }
+
+    .header-icon {
+      width: 28px;
+      height: 28px;
+      margin-right: 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .header-info h1 {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .header-info p {
+      font-size: 11px;
+      opacity: 0.85;
+      line-height: 1.3;
+    }
+
+    /* 状态栏 */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: #f6f8fa;
+      border-bottom: 1px solid #e1e4e8;
+      font-size: 12px;
+      color: #57606a;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+      background: #9ca3af;
+    }
+
+    .status-dot.active {
+      background: #2da44e;
+    }
+
+    /* 设置区域 */
+    .settings-section {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #57606a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    /* 设置项 */
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+    }
+
+    .setting-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #24292f;
+    }
+
+    .setting-label .icon {
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* 开关按钮 */
+    .toggle-switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #d0d7de;
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      bottom: 2px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: #667eea;
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(16px);
+    }
+
+    /* 主题选择 */
+    .theme-selector {
+      display: flex;
+      gap: 6px;
+    }
+
+    .theme-btn {
+      flex: 1;
+      padding: 6px 0;
+      border: 1.5px solid #d0d7de;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      color: #57606a;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .theme-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .theme-btn.active {
+      border-color: #667eea;
+      background: #f0f0ff;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .theme-btn .theme-icon {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+
+    /* 字体大小滑块 */
+    .font-size-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .font-size-control input[type="range"] {
+      flex: 1;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #d0d7de;
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .font-size-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: #667eea;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .font-size-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: #667eea;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* 目录位置选择 */
+    .toc-position-selector {
+      display: flex;
+      gap: 6px;
+    }
+
+    .toc-pos-btn {
+      flex: 1;
+      padding: 5px 0;
+      border: 1.5px solid #d0d7de;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      color: #57606a;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .toc-pos-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .toc-pos-btn.active {
+      border-color: #667eea;
+      background: #f0f0ff;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    /* 底部操作 */
+    .footer {
+      padding: 10px 16px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .footer-btn {
+      flex: 1;
+      padding: 7px 0;
+      border: 1.5px solid #d0d7de;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      color: #57606a;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .footer-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+      background: #f8f8ff;
+    }
+
+    .footer-btn.primary {
+      background: #667eea;
+      border-color: #667eea;
+      color: #fff;
+    }
+
+    .footer-btn.primary:hover {
+      background: #5a6fd6;
+    }
+
+    /* 内容最大宽度 */
+    .max-width-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .max-width-control input[type="range"] {
+      flex: 1;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #d0d7de;
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .max-width-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: #667eea;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .max-width-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: #667eea;
+      min-width: 40px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <!-- 头部 -->
+  <div class="header">
+    <div class="header-icon">M↓</div>
+    <div class="header-info">
+      <h1>Markdown Viewer Enhanced</h1>
+      <p>Markdown 阅读增强插件</p>
+    </div>
+  </div>
+
+  <!-- 状态栏 -->
+  <div class="status-bar">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">检测中...</span>
+  </div>
+
+  <!-- 主题设置 -->
+  <div class="settings-section">
+    <div class="section-title">🎨 主题</div>
+    <div class="theme-selector">
+      <button class="theme-btn" data-theme="light">
+        <span class="theme-icon">☀️</span>浅色
+      </button>
+      <button class="theme-btn" data-theme="dark">
+        <span class="theme-icon">🌙</span>深色
+      </button>
+      <button class="theme-btn" data-theme="auto">
+        <span class="theme-icon">💻</span>跟随系统
+      </button>
+    </div>
+  </div>
+
+  <!-- 排版设置 -->
+  <div class="settings-section">
+    <div class="section-title">📐 排版</div>
+
+    <div class="setting-item">
+      <span class="setting-label"><span class="icon">🔤</span>字体大小</span>
+    </div>
+    <div class="font-size-control">
+      <span style="font-size:11px;color:#9ca3af;">A</span>
+      <input type="range" id="fontSizeSlider" min="12" max="24" step="1" value="16">
+      <span style="font-size:16px;color:#9ca3af;">A</span>
+      <span class="font-size-value" id="fontSizeValue">16px</span>
+    </div>
+
+    <div class="setting-item" style="margin-top: 6px;">
+      <span class="setting-label"><span class="icon">↔️</span>内容宽度</span>
+    </div>
+    <div class="max-width-control">
+      <span style="font-size:11px;color:#9ca3af;">窄</span>
+      <input type="range" id="maxWidthSlider" min="600" max="1400" step="50" value="1000">
+      <span style="font-size:11px;color:#9ca3af;">宽</span>
+      <span class="max-width-value" id="maxWidthValue">1000px</span>
+    </div>
+  </div>
+
+  <!-- 功能开关 -->
+  <div class="settings-section">
+    <div class="section-title">⚙️ 功能</div>
+
+    <div class="setting-item">
+      <span class="setting-label"><span class="icon">📑</span>显示目录</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="toggleToc" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item" id="tocPositionRow">
+      <span class="setting-label"><span class="icon">📌</span>目录位置</span>
+      <div class="toc-position-selector">
+        <button class="toc-pos-btn" data-pos="left">左侧</button>
+        <button class="toc-pos-btn" data-pos="right">右侧</button>
+      </div>
+    </div>
+
+    <div class="setting-item">
+      <span class="setting-label"><span class="icon">📊</span>Mermaid 图表</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="toggleMermaid" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <span class="setting-label"><span class="icon">🔢</span>数学公式渲染</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="toggleMathJax">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- 底部操作 -->
+  <div class="footer">
+    <button class="footer-btn" id="btnReset">🔄 重置</button>
+    <button class="footer-btn" id="btnOptions">⚙ 更多设置</button>
+    <button class="footer-btn primary" id="btnRefresh">🔃 刷新页面</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

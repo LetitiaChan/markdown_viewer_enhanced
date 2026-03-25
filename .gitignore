@@ -1,0 +1,38 @@
+# 构建/目录输出文件
+build_tree.txt
+dir_output.txt
+src_tree.txt
+
+# 测试文件
+test.md
+
+# 图标生成工具（非运行时资源）
+icons/generate_icons.html
+icons/generate_icons.ps1
+
+# Cursor/AI 规则文件
+rules_PT.mdc
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# 编辑器配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node.js（如有）
+node_modules/
+package-lock.json
+
+# 打包产物
+*.zip
+*.crx
+*.pem
+
+# CodeBuddy
+.codebuddy/
