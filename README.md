@@ -1,6 +1,10 @@
 # Markdown Viewer Enhanced
 
-![设置](https://raw.githubusercontent.com/LetitiaChan/markdown_viewer_enhanced/refs/heads/master/setting.png)
+<p>
+  <img src="image/setting.png" alt="setting" width="30%">
+  <img src="image/view_light.png" alt="view_light" width="34%">
+  <img src="image/view_dark.png" alt="view_dark" width="34%">
+</p>
 
 > 🌐 [English](#english) | 🇨🇳 [中文](#中文)
 

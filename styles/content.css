@@ -1542,7 +1542,8 @@ html:has(.theme-dark) {
   text-align: center;
 }
 
-.md-image {
+.md-image,
+#md-content img {
   max-width: 100%;
   height: auto;
   border-radius: 6px;

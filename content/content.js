@@ -1987,15 +1987,18 @@
       }
     });
 
-    // 图片点击放大
+    // 图片点击放大（支持 Markdown 渲染的图片和 HTML <img> 标签）
     document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('md-image')) {
-        const overlay = document.getElementById('md-image-overlay');
-        const preview = document.getElementById('md-image-preview');
-        if (overlay && preview) {
-          preview.src = e.target.src;
-          overlay.style.display = 'flex';
-        }
+      const img = e.target.closest('img');
+      if (!img) return;
+      // 排除预览遮罩内部的图片和非内容区域的图片
+      if (img.closest('#md-image-overlay') || img.closest('#md-mermaid-overlay')) return;
+      if (!img.closest('#md-content')) return;
+      const overlay = document.getElementById('md-image-overlay');
+      const preview = document.getElementById('md-image-preview');
+      if (overlay && preview) {
+        preview.src = img.src;
+        overlay.style.display = 'flex';
       }
     });
 
