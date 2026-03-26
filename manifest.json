@@ -51,6 +51,7 @@
         "libs/marked-footnote.umd.js",
         "libs/purify.min.js",
         "libs/highlight.min.js",
+        "libs/hljs-protobuf.min.js",
         "libs/mermaid.min.js",
         "libs/katex.min.js",
         "content/content.js"
