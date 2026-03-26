@@ -577,9 +577,7 @@ console.log("折叠区域中的代码块");
 <details>
 <summary>颜色标记示例</summary>
 
-<span style="color: red;">红色文字</span> |
-<span style="color: green;">绿色文字</span> |
-<span style="color: blue;">蓝色文字</span>
+<span style="color: red;">红色文字</span> | <span style="color: green;">绿色文字</span> | <span style="color: blue;">蓝色文字</span>
 
 </details>
 

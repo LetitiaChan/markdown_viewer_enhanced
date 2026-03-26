@@ -3,9 +3,6 @@ build_tree.txt
 dir_output.txt
 src_tree.txt
 
-# 测试文件
-test.md
-
 # 图标生成工具（非运行时资源）
 icons/generate_icons.html
 icons/generate_icons.ps1

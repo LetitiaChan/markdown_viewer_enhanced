@@ -1004,9 +1004,17 @@ code.hljs {
 [data-code-theme="default-light-modern"] .hljs-template-variable {
   color: #001080;
 }
-[data-code-theme="default-light-modern"] .hljs-attr,
+[data-code-theme="default-light-modern"] .hljs-variable.language_ {
+  color: #0000ff;
+}
+[data-code-theme="default-light-modern"] .hljs-attr {
+  color: #001080;
+}
 [data-code-theme="default-light-modern"] .hljs-attribute {
   color: #e50000;
+}
+[data-code-theme="default-light-modern"] .hljs-property {
+  color: #001080;
 }
 [data-code-theme="default-light-modern"] .hljs-name,
 [data-code-theme="default-light-modern"] .hljs-section {
@@ -1024,6 +1032,9 @@ code.hljs {
 }
 [data-code-theme="default-light-modern"] .hljs-meta,
 [data-code-theme="default-light-modern"] .hljs-symbol {
+  color: #0000ff;
+}
+[data-code-theme="default-light-modern"] .hljs-doctag {
   color: #0000ff;
 }
 [data-code-theme="default-light-modern"] .hljs-bullet {
@@ -1045,9 +1056,6 @@ code.hljs {
 }
 [data-code-theme="default-light-modern"] .hljs-subst {
   color: #3b3b3b;
-}
-[data-code-theme="default-light-modern"] .hljs-property {
-  color: #e50000;
 }
 [data-code-theme="default-light-modern"] .hljs-params {
   color: #3b3b3b;
@@ -1102,8 +1110,16 @@ code.hljs {
 [data-code-theme="default-dark-modern"] .hljs-template-variable {
   color: #9CDCFE;
 }
-[data-code-theme="default-dark-modern"] .hljs-attr,
+[data-code-theme="default-dark-modern"] .hljs-variable.language_ {
+  color: #569cd6;
+}
+[data-code-theme="default-dark-modern"] .hljs-attr {
+  color: #9cdcfe;
+}
 [data-code-theme="default-dark-modern"] .hljs-attribute {
+  color: #9cdcfe;
+}
+[data-code-theme="default-dark-modern"] .hljs-property {
   color: #9cdcfe;
 }
 [data-code-theme="default-dark-modern"] .hljs-name,
@@ -1122,6 +1138,9 @@ code.hljs {
 }
 [data-code-theme="default-dark-modern"] .hljs-meta,
 [data-code-theme="default-dark-modern"] .hljs-symbol {
+  color: #569cd6;
+}
+[data-code-theme="default-dark-modern"] .hljs-doctag {
   color: #569cd6;
 }
 [data-code-theme="default-dark-modern"] .hljs-bullet {
@@ -1143,9 +1162,6 @@ code.hljs {
 }
 [data-code-theme="default-dark-modern"] .hljs-subst {
   color: #d4d4d4;
-}
-[data-code-theme="default-dark-modern"] .hljs-property {
-  color: #9cdcfe;
 }
 [data-code-theme="default-dark-modern"] .hljs-params {
   color: #cccccc;
@@ -1200,3 +1216,106 @@ code.hljs {
 
 
 /* 代码块 header/边框暗色适配已移至 content.css（通过 .code-theme-dark 类实现） */
+
+/* ==================== Diff 代码整行背景色（按主题） ==================== */
+/* 给 .code-line.diff-addition / .diff-deletion 设置整行背景，与主题色调一致 */
+
+[data-code-theme="github"] .code-line.diff-addition,
+:not([data-code-theme]) .code-line.diff-addition {
+  background-color: #f0fff4;
+}
+[data-code-theme="github"] .code-line.diff-deletion,
+:not([data-code-theme]) .code-line.diff-deletion {
+  background-color: #ffeef0;
+}
+
+[data-code-theme="github-dark"] .code-line.diff-addition {
+  background-color: rgba(46, 160, 67, 0.2);
+}
+[data-code-theme="github-dark"] .code-line.diff-deletion {
+  background-color: rgba(248, 81, 73, 0.2);
+}
+
+[data-code-theme="monokai"] .code-line.diff-addition {
+  background-color: rgba(166, 226, 46, 0.15);
+}
+[data-code-theme="monokai"] .code-line.diff-deletion {
+  background-color: rgba(249, 38, 114, 0.15);
+}
+
+[data-code-theme="vs2015"] .code-line.diff-addition {
+  background-color: rgba(181, 206, 168, 0.15);
+}
+[data-code-theme="vs2015"] .code-line.diff-deletion {
+  background-color: rgba(206, 145, 120, 0.15);
+}
+
+[data-code-theme="atom-one-dark"] .code-line.diff-addition {
+  background-color: rgba(152, 195, 121, 0.15);
+}
+[data-code-theme="atom-one-dark"] .code-line.diff-deletion {
+  background-color: rgba(224, 108, 117, 0.15);
+}
+
+[data-code-theme="atom-one-light"] .code-line.diff-addition {
+  background-color: rgba(80, 161, 79, 0.12);
+}
+[data-code-theme="atom-one-light"] .code-line.diff-deletion {
+  background-color: rgba(228, 86, 73, 0.12);
+}
+
+[data-code-theme="dracula"] .code-line.diff-addition {
+  background-color: rgba(80, 250, 123, 0.15);
+}
+[data-code-theme="dracula"] .code-line.diff-deletion {
+  background-color: rgba(255, 85, 85, 0.15);
+}
+
+[data-code-theme="nord"] .code-line.diff-addition {
+  background-color: rgba(163, 190, 140, 0.15);
+}
+[data-code-theme="nord"] .code-line.diff-deletion {
+  background-color: rgba(191, 97, 106, 0.15);
+}
+
+[data-code-theme="solarized-light"] .code-line.diff-addition {
+  background-color: rgba(133, 153, 0, 0.1);
+}
+[data-code-theme="solarized-light"] .code-line.diff-deletion {
+  background-color: rgba(220, 50, 47, 0.1);
+}
+
+[data-code-theme="solarized-dark"] .code-line.diff-addition {
+  background-color: rgba(133, 153, 0, 0.15);
+}
+[data-code-theme="solarized-dark"] .code-line.diff-deletion {
+  background-color: rgba(220, 50, 47, 0.15);
+}
+
+[data-code-theme="tokyo-night"] .code-line.diff-addition {
+  background-color: rgba(158, 206, 106, 0.15);
+}
+[data-code-theme="tokyo-night"] .code-line.diff-deletion {
+  background-color: rgba(247, 118, 142, 0.15);
+}
+
+[data-code-theme="one-dark-pro"] .code-line.diff-addition {
+  background-color: rgba(152, 195, 121, 0.15);
+}
+[data-code-theme="one-dark-pro"] .code-line.diff-deletion {
+  background-color: rgba(224, 108, 117, 0.15);
+}
+
+[data-code-theme="default-light-modern"] .code-line.diff-addition {
+  background-color: rgba(9, 134, 88, 0.1);
+}
+[data-code-theme="default-light-modern"] .code-line.diff-deletion {
+  background-color: rgba(163, 21, 21, 0.1);
+}
+
+[data-code-theme="default-dark-modern"] .code-line.diff-addition {
+  background-color: rgba(181, 206, 168, 0.15);
+}
+[data-code-theme="default-dark-modern"] .code-line.diff-deletion {
+  background-color: rgba(206, 145, 120, 0.15);
+}

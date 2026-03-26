@@ -65,8 +65,8 @@
 
     // 代码高亮主题
     if (codeThemeSelect) {
-      codeThemeSelect.value = settings.codeTheme || 'github';
-      updateCodeThemePreview(settings.codeTheme || 'github');
+      codeThemeSelect.value = settings.codeTheme || 'default-dark-modern';
+      updateCodeThemePreview(settings.codeTheme || 'default-dark-modern');
     }
 
     // 字体
@@ -83,8 +83,8 @@
     lineHeightValue.textContent = settings.lineHeight || 1.6;
 
     // 内容宽度
-    maxWidthSlider.value = settings.maxWidth || 1000;
-    maxWidthValue.textContent = (settings.maxWidth || 1000) + 'px';
+    maxWidthSlider.value = settings.maxWidth || 1200;
+    maxWidthValue.textContent = (settings.maxWidth || 1200) + 'px';
 
     // 目录
     toggleToc.checked = settings.showToc !== false;

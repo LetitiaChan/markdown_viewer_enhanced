@@ -14,6 +14,14 @@
   const MD_EXTENSIONS = /\.(md|mdc|markdown|mkd|mdown|mdtxt|mdtext)([?#].*)?$/i;
   const MERMAID_REGEX = /^```mermaid\s*\n([\s\S]*?)```/gm;
 
+  // 支持在文件浏览器中显示的文件扩展名（Markdown 格式 + 常见关联文件）
+  const SUPPORTED_FILE_EXTENSIONS = /\.(md|mdc|markdown|mkd|mdown|mdtxt|mdtext)$/i;
+
+  // 预缓存的目录文件列表（通过 background 临时 tab 获取）
+  let __cachedDirItems = null;
+  // 目录获取 Promise（用于等待预获取完成）
+  let __dirFetchPromise = null;
+
   // KaTeX CDN 地址
   const KATEX_VERSION = '0.16.11';
   const KATEX_CDN_BASE = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist`;
@@ -26,7 +34,7 @@
   // 默认设置（与 background.js 保持一致）
   const DEFAULT_SETTINGS = {
     theme: 'light',
-    codeTheme: 'default-light-modern',
+    codeTheme: 'default-dark-modern',
     fontSize: 16,
     lineHeight: 1.6,
     showToc: true,
@@ -34,7 +42,7 @@
     enableMermaid: true,
     enableMathJax: true,
     autoDetect: true,
-    maxWidth: 1000,
+    maxWidth: 1200,
     fontFamily: 'system',
     showLineNumbers: false,
   };
@@ -337,15 +345,36 @@
       /**
        * 将高亮后的 HTML 代码按行包裹 <span class="code-line">
        * 以支持 CSS counter 行号显示
+       * 对 diff 语言，自动检测 addition/deletion 行并添加辅助类名实现整行背景色
        */
-      function wrapLines(highlightedCode) {
+      function wrapLines(highlightedCode, language) {
         // 按换行符拆分，保留 HTML 标签完整性
         const lines = highlightedCode.split('\n');
         // 去除最后一行的空行（通常代码末尾有一个换行）
         if (lines.length > 0 && lines[lines.length - 1] === '') {
           lines.pop();
         }
-        return lines.map(line => `<span class="code-line">${line}</span>`).join('\n');
+        const isDiff = language === 'diff';
+        return lines.map(line => {
+          let lineClass = 'code-line';
+          if (isDiff) {
+            // 优先检测 hljs 生成的 class（如果 hljs 支持 diff 语言）
+            if (line.includes('hljs-addition')) {
+              lineClass += ' diff-addition';
+            } else if (line.includes('hljs-deletion')) {
+              lineClass += ' diff-deletion';
+            } else {
+              // hljs 未识别 diff 语言时，通过纯文本行首字符判断
+              const plainText = line.replace(/<[^>]*>/g, '');
+              if (plainText.startsWith('+')) {
+                lineClass += ' diff-addition';
+              } else if (plainText.startsWith('-')) {
+                lineClass += ' diff-deletion';
+              }
+            }
+          }
+          return `<span class="${lineClass}">${line}</span>`;
+        }).join('\n');
       }
 
       // 普通代码块 - 使用 highlight.js
@@ -354,7 +383,7 @@
       if (lang && typeof hljs !== 'undefined' && hljs.getLanguage(lang)) {
         try {
           const highlighted = hljs.highlight(code, { language: lang }).value;
-          return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang}</span><button class="code-copy-btn" title="复制代码">📋 复制</button></div><pre><code class="hljs language-${lang}">${wrapLines(highlighted)}</code></pre></div>`;
+          return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang}</span><button class="code-copy-btn" title="复制代码">📋 复制</button></div><pre><code class="hljs language-${lang}">${wrapLines(highlighted, lang)}</code></pre></div>`;
         } catch (e) {
           // 高亮失败，使用默认渲染
         }
@@ -364,7 +393,7 @@
       if (typeof hljs !== 'undefined') {
         try {
           const highlighted = hljs.highlightAuto(code).value;
-          return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang || 'code'}</span><button class="code-copy-btn" title="复制代码">📋 复制</button></div><pre><code class="hljs">${wrapLines(highlighted)}</code></pre></div>`;
+          return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang || 'code'}</span><button class="code-copy-btn" title="复制代码">📋 复制</button></div><pre><code class="hljs">${wrapLines(highlighted, lang)}</code></pre></div>`;
         } catch (e) {
           // 忽略
         }
@@ -650,20 +679,40 @@
             <button id="btn-toggle-toc" class="md-toolbar-btn" title="切换目录">📑 目录</button>
             <button id="btn-toggle-theme" class="md-toolbar-btn" title="切换主题">🌓 主题</button>
             <button id="btn-toggle-raw" class="md-toolbar-btn" title="查看源码">📝 源码</button>
+            <button id="btn-settings" class="md-toolbar-btn" title="设置">⚙️ 设置</button>
             <button id="btn-scroll-top" class="md-toolbar-btn" title="回到顶部">⬆️ 顶部</button>
             <button id="btn-refresh" class="md-toolbar-btn" title="刷新">🔃 刷新</button>
           </div>
         </div>
 
         <div class="md-main-container">
-          <!-- 目录侧边栏 -->
+          <!-- 侧边栏（含文件浏览器 + 目录页签） -->
           <aside id="md-toc-sidebar" class="md-toc-sidebar toc-${currentSettings.tocPosition} ${currentSettings.showToc ? 'visible' : 'hidden'}">
-            <div class="md-toc-header">
-              <span>📋 目录</span>
-              <button id="btn-close-toc" class="md-toc-close" title="关闭目录">✕</button>
+            <!-- 页签栏 -->
+            <div class="sidebar-tabs">
+              <button class="sidebar-tab" data-tab="files" title="文件浏览器">📁</button>
+              <button class="sidebar-tab active" data-tab="toc" title="目录导航">≡</button>
+              <span class="sidebar-tab-spacer"></span>
+              <div class="sidebar-tab-actions">
+                <button id="btn-sidebar-menu" class="sidebar-action-btn" title="更多操作">⋯</button>
+                <button id="btn-close-toc" class="md-toc-close" title="关闭侧边栏">✕</button>
+              </div>
             </div>
-            <nav id="md-toc-nav" class="md-toc-nav"></nav>
+            <!-- 侧边栏菜单（内联折叠） -->
+            <div id="sidebar-context-menu" class="sidebar-context-menu" style="display:none;"></div>
+            <!-- 文件浏览器面板 -->
+            <div id="sidebar-panel-files" class="sidebar-panel" style="display:none;">
+              <div id="file-tree-breadcrumb" class="file-tree-breadcrumb"></div>
+              <div id="file-tree" class="file-tree"></div>
+            </div>
+            <!-- 目录面板 -->
+            <div id="sidebar-panel-toc" class="sidebar-panel">
+              <nav id="md-toc-nav" class="md-toc-nav"></nav>
+            </div>
           </aside>
+
+          <!-- 侧边栏拖拽调整宽度的手柄 -->
+          <div id="sidebar-resize-handle" class="sidebar-resize-handle" style="${currentSettings.showToc ? '' : 'display:none;'}"></div>
 
           <!-- 主内容区域 -->
           <main id="md-content" class="md-content markdown-viewer-enhanced" style="max-width:${currentSettings.maxWidth}px; font-size:${currentSettings.fontSize}px; line-height:${currentSettings.lineHeight}; --code-font-size:${currentSettings.codeFontSize || 14}px;">
@@ -710,25 +759,91 @@
   // ==================== 目录（TOC）====================
 
   /**
-   * 生成目录导航
+   * 生成目录导航（支持折叠/展开）
+   * 构建层级树结构，每个有子级的项目会显示折叠按钮
    */
   function buildToc() {
     const tocNav = document.getElementById('md-toc-nav');
     if (!tocNav || tocItems.length === 0) return;
 
-    let tocHtml = '<ul class="md-toc-list">';
     const minDepth = Math.min(...tocItems.map(item => item.depth));
 
+    // 构建层级结构：判断每个 item 是否有子项
+    const hasChildren = new Array(tocItems.length).fill(false);
+    for (let i = 0; i < tocItems.length; i++) {
+      const currentDepth = tocItems[i].depth;
+      for (let j = i + 1; j < tocItems.length; j++) {
+        if (tocItems[j].depth <= currentDepth) break;
+        if (tocItems[j].depth > currentDepth) {
+          hasChildren[i] = true;
+          break;
+        }
+      }
+    }
+
+    let tocHtml = '<ul class="md-toc-list">';
     tocItems.forEach((item, index) => {
       const indent = item.depth - minDepth;
-      tocHtml += `<li class="md-toc-item toc-level-${indent}" style="padding-left:${indent * 16}px;">
-        <a href="#${item.id}" class="md-toc-link" data-index="${index}" title="${item.text}">
+      const isParent = hasChildren[index];
+      const parentClass = isParent ? ' md-toc-parent' : '';
+      const toggleBtn = isParent
+        ? `<span class="md-toc-toggle" data-index="${index}" title="折叠/展开">▾</span>`
+        : `<span class="md-toc-toggle-placeholder"></span>`;
+
+      tocHtml += `<li class="md-toc-item toc-level-${indent}${parentClass}" data-toc-index="${index}" data-toc-depth="${item.depth}" style="padding-left:${indent * 16}px;">
+        ${toggleBtn}<a href="#${item.id}" class="md-toc-link" data-index="${index}" title="${item.text}">
           ${item.text}
         </a>
       </li>`;
     });
     tocHtml += '</ul>';
     tocNav.innerHTML = tocHtml;
+  }
+
+  /**
+   * 切换目录项的折叠/展开状态
+   */
+  function toggleTocItem(index) {
+    const allItems = document.querySelectorAll('.md-toc-item');
+    if (!allItems[index]) return;
+
+    const parentItem = allItems[index];
+    const parentDepth = parseInt(parentItem.dataset.tocDepth);
+    const toggle = parentItem.querySelector('.md-toc-toggle');
+    const isCollapsed = parentItem.classList.contains('toc-collapsed');
+
+    if (isCollapsed) {
+      // 展开：显示直接子项（非递归，已折叠的子项保持折叠）
+      parentItem.classList.remove('toc-collapsed');
+      if (toggle) toggle.textContent = '▾';
+      for (let i = index + 1; i < allItems.length; i++) {
+        const depth = parseInt(allItems[i].dataset.tocDepth);
+        if (depth <= parentDepth) break;
+        // 只展开直接子级
+        if (depth === parentDepth + 1) {
+          allItems[i].style.display = '';
+        }
+        // 如果子项是一个已展开的父项，也递归显示其子项
+        if (depth === parentDepth + 1 && allItems[i].classList.contains('md-toc-parent') && !allItems[i].classList.contains('toc-collapsed')) {
+          // 子项已展开，显示子项的子项
+          const subDepth = depth;
+          for (let j = i + 1; j < allItems.length; j++) {
+            const d = parseInt(allItems[j].dataset.tocDepth);
+            if (d <= subDepth) break;
+            allItems[j].style.display = '';
+          }
+        }
+      }
+    } else {
+      // 折叠：隐藏所有后代项
+      parentItem.classList.add('toc-collapsed');
+      if (toggle) toggle.textContent = '▸';
+      for (let i = index + 1; i < allItems.length; i++) {
+        const depth = parseInt(allItems[i].dataset.tocDepth);
+        if (depth <= parentDepth) break;
+        allItems[i].style.display = 'none';
+      }
+    }
   }
 
   /**
@@ -755,6 +870,628 @@
       // 滚动目录使当前项可见
       tocLinks[currentIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
+  }
+
+  // ==================== 文件浏览器 ====================
+
+  /**
+   * 当前文件浏览器的状态
+   */
+  let fileTreeState = {
+    sortBy: 'name',      // name | size | modified
+    sortAsc: true,        // 升序
+    foldersFirst: true,   // 文件夹置顶
+    showHidden: true,     // 显示隐藏文件
+    expandedDirs: {},     // 已展开的目录路径
+    data: null,           // 缓存的文件数据
+  };
+
+  /**
+   * 判断当前页面是否为 file:// 协议（文件浏览器仅在本地文件生效）
+   */
+  function isFileProtocol() {
+    return window.location.protocol === 'file:';
+  }
+
+  /**
+   * 获取当前文件所在目录的 URL
+   */
+  function getCurrentDirUrl() {
+    const href = window.location.href;
+    return href.substring(0, href.lastIndexOf('/') + 1);
+  }
+
+  /**
+   * 获取当前目录的路径名（从 file:// URL 中解析）
+   */
+  function getCurrentDirPath() {
+    const dirUrl = getCurrentDirUrl();
+    try {
+      const pathname = decodeURIComponent(new URL(dirUrl).pathname);
+      return pathname;
+    } catch {
+      return dirUrl;
+    }
+  }
+
+  /**
+   * 渲染文件浏览器面包屑导航（显示当前目录路径）
+   */
+  function renderBreadcrumb() {
+    const breadcrumbEl = document.getElementById('file-tree-breadcrumb');
+    if (!breadcrumbEl) return;
+
+    const dirUrl = getCurrentDirUrl();
+    const dirPath = getCurrentDirPath();
+
+    // 将路径拆成片段用于导航
+    // 如 /C:/Users/xxx/docs/ → ['C:', 'Users', 'xxx', 'docs']
+    const segments = dirPath.split('/').filter(Boolean);
+
+    let html = '<span class="breadcrumb-icon">📂</span>';
+
+    // 构建每一级的可点击路径
+    let accUrl = dirUrl.split('/').slice(0, 3).join('/') + '/'; // file:///
+    segments.forEach((seg, idx) => {
+      const isLast = idx === segments.length - 1;
+      accUrl += seg + '/';
+      if (isLast) {
+        html += `<span class="breadcrumb-current" title="${escapeHtml(dirPath)}">${escapeHtml(seg)}</span>`;
+      } else {
+        html += `<a class="breadcrumb-link" href="#" data-url="${escapeHtml(accUrl)}" title="${escapeHtml(accUrl)}">${escapeHtml(seg)}</a>`;
+        html += '<span class="breadcrumb-sep">/</span>';
+      }
+    });
+
+    breadcrumbEl.innerHTML = html;
+  }
+
+  /**
+   * 获取当前文件名
+   */
+  function getCurrentFileName() {
+    return decodeURIComponent(window.location.pathname.split('/').pop() || '');
+  }
+
+  /**
+   * 在 init() 中 buildPage() 之后调用：
+   * 预获取当前目录的文件列表
+   * 通过 background service worker 临时 tab + executeScript 获取
+   */
+  function prefetchDirectoryHtml() {
+    const href = window.location.href;
+    const dirUrl = href.substring(0, href.lastIndexOf('/') + 1);
+
+    __dirFetchPromise = new Promise((resolve) => {
+      console.log('[MD Viewer] 开始通过 background 预获取目录:', dirUrl);
+      fetchDirectoryViaBackground(dirUrl).then(items => {
+        if (items.length > 0) {
+          __cachedDirItems = items;
+          console.log('[MD Viewer] 目录预获取成功，文件数:', items.length);
+        } else {
+          console.warn('[MD Viewer] 目录预获取返回空列表');
+        }
+        resolve(items);
+      }).catch(err => {
+        console.warn('[MD Viewer] 目录预获取异常:', err.message || String(err));
+        resolve([]);
+      });
+    });
+  }
+
+  /**
+   * 通过 background service worker 获取目录列表
+   * background 使用 chrome.tabs.create + chrome.scripting.executeScript
+   */
+  function fetchDirectoryViaBackground(dirUrl) {
+    return new Promise((resolve) => {
+      try {
+        chrome.runtime.sendMessage({ type: 'FETCH_DIRECTORY', url: dirUrl }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.warn('[MD Viewer] background 目录获取失败:', chrome.runtime.lastError.message);
+            resolve([]);
+            return;
+          }
+          if (response && response.items && response.items.length > 0) {
+            __cachedDirItems = response.items;
+            console.log('[MD Viewer] background 返回目录文件数:', response.items.length);
+            resolve(response.items);
+          } else {
+            console.warn('[MD Viewer] background 返回空结果');
+            resolve([]);
+          }
+        });
+      } catch (err) {
+        console.warn('[MD Viewer] background 目录预获取异常:', err.message || String(err));
+        resolve([]);
+      }
+    });
+  }
+
+  /**
+   * 获取目录文件列表
+   * 优先使用预缓存的列表，回退到 background 消息方式
+   */
+  async function fetchDirectoryListing(dirUrl) {
+    // 方法 1：使用预缓存的目录列表
+    if (__cachedDirItems && __cachedDirItems.length > 0) {
+      console.log('[MD Viewer] 从预缓存获取到', __cachedDirItems.length, '个文件/目录');
+      return __cachedDirItems;
+    }
+
+    // 方法 2：等待预获取 Promise 完成
+    if (__dirFetchPromise) {
+      try {
+        const items = await __dirFetchPromise;
+        if (items && items.length > 0) {
+          return items;
+        }
+      } catch (err) {
+        console.warn('[MD Viewer] 等待预获取失败:', err.message || String(err));
+      }
+    }
+
+    // 方法 3：通过 background 获取
+    try {
+      const items = await fetchDirectoryViaBackground(dirUrl);
+      if (items.length > 0) {
+        __cachedDirItems = items;
+        return items;
+      }
+    } catch (err) {
+      console.warn('[MD Viewer] background 获取目录失败:', err.message || String(err));
+    }
+
+    return [];
+  }
+
+  /**
+   * 解析浏览器生成的文件目录 HTML 字符串
+   * 支持多种 Chrome/Firefox 的目录页面格式
+   */
+  function parseDirectoryHtml(html, baseUrl) {
+    const items = [];
+
+    // 方法 A：DOMParser 解析（支持标准 HTML 结构）
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Chrome 目录页面：table#table > tbody > tr
+      const rows = doc.querySelectorAll('#table tbody tr');
+      if (rows.length > 0) {
+        rows.forEach(row => {
+          const linkEl = row.querySelector('a');
+          if (!linkEl) return;
+          const name = linkEl.textContent.trim();
+          if (name === '.' || name === '..') return;
+
+          const isDir = name.endsWith('/');
+          const displayName = isDir ? name.slice(0, -1) : name;
+
+          const cells = row.querySelectorAll('td');
+          const sizeText = cells[1] ? cells[1].textContent.trim() : '';
+          const dateText = cells[2] ? cells[2].textContent.trim() : '';
+
+          items.push({
+            name: displayName,
+            isDir,
+            url: new URL(linkEl.getAttribute('href'), baseUrl).href,
+            size: sizeText,
+            date: dateText,
+          });
+        });
+        if (items.length > 0) return items;
+      }
+
+      // Firefox / 旧版 Chrome：简单 <a> 列表
+      const links = doc.querySelectorAll('a');
+      links.forEach(a => {
+        const name = a.textContent.trim();
+        if (!name || name === '.' || name === '..' || name === 'Parent Directory') return;
+        const isDir = name.endsWith('/');
+        const displayName = isDir ? name.slice(0, -1) : name;
+        items.push({
+          name: displayName,
+          isDir,
+          url: new URL(a.getAttribute('href'), baseUrl).href,
+          size: '',
+          date: '',
+        });
+      });
+      if (items.length > 0) return items;
+    } catch (err) {
+      console.warn('[MD Viewer] DOMParser 解析失败，尝试正则:', err);
+    }
+
+    // 方法 B：正则表达式解析（兼容 DOMParser 无法处理的特殊格式）
+    const linkRegex = /<a[^>]+href="([^"]+)"[^>]*>([^<]+)<\/a>/gi;
+    let match;
+    while ((match = linkRegex.exec(html)) !== null) {
+      const href = match[1];
+      const name = match[2].trim();
+
+      if (!name || name === '.' || name === '..' || name === 'Parent Directory' ||
+          name === 'Name' || name === 'Size' || name === 'Date Modified') continue;
+      if (href.startsWith('?')) continue;
+
+      const isDir = name.endsWith('/');
+      const displayName = isDir ? name.slice(0, -1) : name;
+
+      try {
+        items.push({
+          name: displayName,
+          isDir,
+          url: new URL(href, baseUrl).href,
+          size: '',
+          date: '',
+        });
+      } catch (e) {
+        // URL 解析失败
+      }
+    }
+
+    return items;
+  }
+
+  /**
+   * 对文件列表排序
+   */
+  function sortFileList(items) {
+    const { sortBy, sortAsc, foldersFirst, showHidden } = fileTreeState;
+
+    // 过滤隐藏文件
+    let filtered = items;
+    if (!showHidden) {
+      filtered = items.filter(item => !item.name.startsWith('.'));
+    }
+
+    return filtered.sort((a, b) => {
+      // 文件夹置顶
+      if (foldersFirst) {
+        if (a.isDir && !b.isDir) return -1;
+        if (!a.isDir && b.isDir) return 1;
+      }
+
+      let cmp = 0;
+      if (sortBy === 'name') {
+        cmp = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      } else if (sortBy === 'size') {
+        cmp = parseSizeToBytes(a.size) - parseSizeToBytes(b.size);
+      } else if (sortBy === 'modified') {
+        cmp = (a.date || '').localeCompare(b.date || '');
+      }
+
+      return sortAsc ? cmp : -cmp;
+    });
+  }
+
+  /**
+   * 简单的文件大小解析
+   */
+  function parseSizeToBytes(sizeStr) {
+    if (!sizeStr || sizeStr === '-') return 0;
+    const match = sizeStr.match(/([\d.]+)\s*(B|K|KB|M|MB|G|GB|T|TB)?/i);
+    if (!match) return 0;
+    const num = parseFloat(match[1]);
+    const unit = (match[2] || 'B').toUpperCase();
+    const multipliers = { B: 1, K: 1024, KB: 1024, M: 1048576, MB: 1048576, G: 1073741824, GB: 1073741824, T: 1099511627776, TB: 1099511627776 };
+    return num * (multipliers[unit] || 1);
+  }
+
+  /**
+   * 获取文件图标
+   */
+  function getFileIcon(name, isDir) {
+    if (isDir) return '📁';
+    const ext = name.split('.').pop().toLowerCase();
+    const iconMap = {
+      md: 'M', mdc: 'M', markdown: 'M', mkd: 'M', mdown: 'M',
+      js: '📜', ts: '📜', jsx: '📜', tsx: '📜',
+      html: '🌐', htm: '🌐', css: '🎨',
+      json: '📋', xml: '📋', yaml: '📋', yml: '📋', toml: '📋',
+      py: '🐍', rb: '💎', go: '🔵', rs: '🦀', java: '☕', c: '⚙️', cpp: '⚙️', h: '⚙️',
+      png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', svg: '🖼️', webp: '🖼️', ico: '🖼️',
+      pdf: '📕', doc: '📄', docx: '📄', xls: '📊', xlsx: '📊', ppt: '📊', pptx: '📊',
+      zip: '📦', tar: '📦', gz: '📦', rar: '📦', '7z': '📦',
+      txt: '📝', log: '📝', csv: '📝',
+      sh: '🖥️', bat: '🖥️', cmd: '🖥️', ps1: '🖥️',
+      gitignore: '⚙️', env: '⚙️', lock: '🔒',
+    };
+    return iconMap[ext] || '📄';
+  }
+
+  /**
+   * 构建并渲染文件树
+   */
+  async function buildFileTree() {
+    if (!isFileProtocol()) return;
+
+    const fileTreeEl = document.getElementById('file-tree');
+    if (!fileTreeEl) return;
+
+    fileTreeEl.innerHTML = '<div class="file-tree-loading">加载中...</div>';
+
+    // 渲染面包屑路径
+    renderBreadcrumb();
+
+    const dirUrl = getCurrentDirUrl();
+    const items = await fetchDirectoryListing(dirUrl);
+    fileTreeState.data = items;
+
+    renderFileTree(fileTreeEl, items);
+  }
+
+  /**
+   * 渲染文件树列表
+   * 只显示支持格式的文件（Markdown）和子级文件夹
+   * @param {HTMLElement} container - 容器元素
+   * @param {Array} items - 文件列表
+   * @param {number} depth - 缩进层级（0 = 根目录）
+   */
+  function renderFileTree(container, items, depth = 0) {
+    if (!items || items.length === 0) {
+      if (depth === 0) {
+        container.innerHTML = '<div class="file-tree-empty">暂无文件</div>';
+      }
+      return;
+    }
+
+    // 过滤：只保留子级文件夹 + 支持的文件格式（Markdown）
+    const filtered = items.filter(item => {
+      if (item.isDir) return true;
+      return SUPPORTED_FILE_EXTENSIONS.test(item.name);
+    });
+
+    if (filtered.length === 0) {
+      if (depth === 0) {
+        container.innerHTML = '<div class="file-tree-empty">当前目录无 Markdown 文件</div>';
+      }
+      return;
+    }
+
+    const sorted = sortFileList(filtered);
+    const currentFile = getCurrentFileName();
+
+    let html = '<ul class="file-tree-list">';
+    sorted.forEach(item => {
+      const icon = getFileIcon(item.name, item.isDir);
+      const activeClass = (!item.isDir && item.name === currentFile && depth === 0) ? ' file-tree-active' : '';
+      const isMd = !item.isDir && SUPPORTED_FILE_EXTENSIONS.test(item.name);
+      const dirClass = item.isDir ? ' file-tree-dir' : '';
+      const mdClass = isMd ? ' file-tree-md' : '';
+      const isExpanded = item.isDir && fileTreeState.expandedDirs[item.url];
+      const expandedClass = isExpanded ? ' file-tree-expanded' : '';
+      const indentStyle = depth > 0 ? ` style="padding-left:${12 + depth * 16}px"` : '';
+
+      if (item.isDir) {
+        // 文件夹：带展开/折叠箭头 + 子目录容器
+        const arrow = isExpanded ? '▾' : '▸';
+        html += `<li class="file-tree-item${dirClass}${expandedClass}" data-url="${escapeHtml(item.url)}" data-is-dir="true" data-name="${escapeHtml(item.name)}" title="${escapeHtml(item.name)}"${indentStyle}>
+          <span class="file-tree-arrow">${arrow}</span>
+          <span class="file-tree-icon">${icon}</span>
+          <span class="file-tree-name">${escapeHtml(item.name)}</span>
+        </li>`;
+        // 子目录容器（展开时显示）
+        html += `<li class="file-tree-subdir" data-dir-url="${escapeHtml(item.url)}" style="${isExpanded ? '' : 'display:none;'}">`;
+        if (isExpanded && fileTreeState.expandedDirs[item.url]?.items) {
+          // 已有缓存数据，递归渲染子目录
+          html += '<ul class="file-tree-list">';
+          const subFiltered = fileTreeState.expandedDirs[item.url].items.filter(sub => {
+            if (sub.isDir) return true;
+            return SUPPORTED_FILE_EXTENSIONS.test(sub.name);
+          });
+          const subSorted = sortFileList(subFiltered);
+          subSorted.forEach(sub => {
+            const subIcon = getFileIcon(sub.name, sub.isDir);
+            const subIsMd = !sub.isDir && SUPPORTED_FILE_EXTENSIONS.test(sub.name);
+            const subDirClass = sub.isDir ? ' file-tree-dir' : '';
+            const subMdClass = subIsMd ? ' file-tree-md' : '';
+            const subIsExpanded = sub.isDir && fileTreeState.expandedDirs[sub.url];
+            const subExpandedClass = subIsExpanded ? ' file-tree-expanded' : '';
+            const subIndent = ` style="padding-left:${12 + (depth + 1) * 16}px"`;
+
+            if (sub.isDir) {
+              const subArrow = subIsExpanded ? '▾' : '▸';
+              html += `<li class="file-tree-item${subDirClass}${subExpandedClass}" data-url="${escapeHtml(sub.url)}" data-is-dir="true" data-name="${escapeHtml(sub.name)}" title="${escapeHtml(sub.name)}"${subIndent}>
+                <span class="file-tree-arrow">${subArrow}</span>
+                <span class="file-tree-icon">${subIcon}</span>
+                <span class="file-tree-name">${escapeHtml(sub.name)}</span>
+              </li>`;
+              html += `<li class="file-tree-subdir" data-dir-url="${escapeHtml(sub.url)}" style="${subIsExpanded ? '' : 'display:none;'}">`;
+              if (subIsExpanded && fileTreeState.expandedDirs[sub.url]?.items) {
+                // 继续递归（最多支持多层嵌套）
+                html += buildSubTreeHtml(fileTreeState.expandedDirs[sub.url].items, depth + 2);
+              }
+              html += '</li>';
+            } else {
+              html += `<li class="file-tree-item${subMdClass}" data-url="${escapeHtml(sub.url)}" data-is-dir="false" data-name="${escapeHtml(sub.name)}" title="${escapeHtml(sub.name)}"${subIndent}>
+                <span class="file-tree-arrow-placeholder"></span>
+                <span class="file-tree-icon">${subIcon}</span>
+                <span class="file-tree-name">${escapeHtml(sub.name)}</span>
+              </li>`;
+            }
+          });
+          html += '</ul>';
+        }
+        html += '</li>';
+      } else {
+        // 文件：无箭头，有箭头占位符保持对齐
+        html += `<li class="file-tree-item${activeClass}${mdClass}" data-url="${escapeHtml(item.url)}" data-is-dir="false" data-name="${escapeHtml(item.name)}" title="${escapeHtml(item.name)}"${indentStyle}>
+          <span class="file-tree-arrow-placeholder"></span>
+          <span class="file-tree-icon">${icon}</span>
+          <span class="file-tree-name">${escapeHtml(item.name)}</span>
+        </li>`;
+      }
+    });
+    html += '</ul>';
+    container.innerHTML = html;
+
+    // 滚动到当前文件
+    requestAnimationFrame(() => {
+      const activeItem = container.querySelector('.file-tree-active');
+      if (activeItem) {
+        activeItem.scrollIntoView({ block: 'nearest' });
+      }
+    });
+  }
+
+  /**
+   * 构建子目录树 HTML（递归辅助函数）
+   */
+  function buildSubTreeHtml(items, depth) {
+    if (!items || items.length === 0) return '';
+
+    const filtered = items.filter(item => {
+      if (item.isDir) return true;
+      return SUPPORTED_FILE_EXTENSIONS.test(item.name);
+    });
+    const sorted = sortFileList(filtered);
+
+    let html = '<ul class="file-tree-list">';
+    sorted.forEach(item => {
+      const icon = getFileIcon(item.name, item.isDir);
+      const isMd = !item.isDir && SUPPORTED_FILE_EXTENSIONS.test(item.name);
+      const dirClass = item.isDir ? ' file-tree-dir' : '';
+      const mdClass = isMd ? ' file-tree-md' : '';
+      const isExpanded = item.isDir && fileTreeState.expandedDirs[item.url];
+      const expandedClass = isExpanded ? ' file-tree-expanded' : '';
+      const indentStyle = ` style="padding-left:${12 + depth * 16}px"`;
+
+      if (item.isDir) {
+        const arrow = isExpanded ? '▾' : '▸';
+        html += `<li class="file-tree-item${dirClass}${expandedClass}" data-url="${escapeHtml(item.url)}" data-is-dir="true" data-name="${escapeHtml(item.name)}" title="${escapeHtml(item.name)}"${indentStyle}>
+          <span class="file-tree-arrow">${arrow}</span>
+          <span class="file-tree-icon">${icon}</span>
+          <span class="file-tree-name">${escapeHtml(item.name)}</span>
+        </li>`;
+        html += `<li class="file-tree-subdir" data-dir-url="${escapeHtml(item.url)}" style="${isExpanded ? '' : 'display:none;'}">`;
+        if (isExpanded && fileTreeState.expandedDirs[item.url]?.items) {
+          html += buildSubTreeHtml(fileTreeState.expandedDirs[item.url].items, depth + 1);
+        }
+        html += '</li>';
+      } else {
+        html += `<li class="file-tree-item${mdClass}" data-url="${escapeHtml(item.url)}" data-is-dir="false" data-name="${escapeHtml(item.name)}" title="${escapeHtml(item.name)}"${indentStyle}>
+          <span class="file-tree-arrow-placeholder"></span>
+          <span class="file-tree-icon">${icon}</span>
+          <span class="file-tree-name">${escapeHtml(item.name)}</span>
+        </li>`;
+      }
+    });
+    html += '</ul>';
+    return html;
+  }
+
+  /**
+   * 展开或折叠文件夹
+   * @param {HTMLElement} itemEl - 文件夹的 <li> 元素
+   */
+  async function toggleDirectory(itemEl) {
+    const url = itemEl.dataset.url;
+    if (!url) return;
+
+    const isExpanded = itemEl.classList.contains('file-tree-expanded');
+    const subdirEl = itemEl.nextElementSibling;
+    if (!subdirEl || !subdirEl.classList.contains('file-tree-subdir')) return;
+
+    const arrow = itemEl.querySelector('.file-tree-arrow');
+
+    if (isExpanded) {
+      // 折叠
+      itemEl.classList.remove('file-tree-expanded');
+      subdirEl.style.display = 'none';
+      if (arrow) arrow.textContent = '▸';
+      // 更新图标为关闭文件夹
+      const iconEl = itemEl.querySelector('.file-tree-icon');
+      if (iconEl) iconEl.textContent = '📁';
+      delete fileTreeState.expandedDirs[url];
+    } else {
+      // 展开
+      itemEl.classList.add('file-tree-expanded');
+      subdirEl.style.display = '';
+      if (arrow) arrow.textContent = '▾';
+      // 更新图标为打开文件夹
+      const iconEl = itemEl.querySelector('.file-tree-icon');
+      if (iconEl) iconEl.textContent = '📂';
+
+      // 如果子目录内容尚未加载
+      if (!subdirEl.querySelector('.file-tree-list')) {
+        subdirEl.innerHTML = '<div class="file-tree-loading" style="padding:4px 12px;font-size:12px;">加载中...</div>';
+
+        try {
+          const items = await fetchDirectoryViaBackground(url);
+          if (items && items.length > 0) {
+            // 缓存子目录数据
+            fileTreeState.expandedDirs[url] = { items };
+
+            // 计算当前层级
+            const depth = getItemDepth(itemEl);
+
+            // 渲染子目录内容
+            subdirEl.innerHTML = buildSubTreeHtml(items, depth + 1);
+          } else {
+            subdirEl.innerHTML = '<div class="file-tree-empty" style="padding:4px 12px;font-size:12px;padding-left:' + (12 + (getItemDepth(itemEl) + 1) * 16) + 'px;">空文件夹</div>';
+          }
+        } catch (err) {
+          console.warn('[MD Viewer] 加载子目录失败:', err);
+          subdirEl.innerHTML = '<div class="file-tree-empty" style="padding:4px 12px;font-size:12px;">加载失败</div>';
+        }
+      }
+
+      fileTreeState.expandedDirs[url] = fileTreeState.expandedDirs[url] || true;
+    }
+  }
+
+  /**
+   * 获取文件树项的缩进层级
+   */
+  function getItemDepth(itemEl) {
+    const paddingLeft = parseInt(itemEl.style.paddingLeft) || 12;
+    return Math.max(0, Math.round((paddingLeft - 12) / 16));
+  }
+
+  /**
+   * 构建侧边栏右键菜单内容（根据当前页签）
+   */
+  function buildSidebarMenu(activeTab) {
+    const menu = document.getElementById('sidebar-context-menu');
+    if (!menu) return;
+
+    if (activeTab === 'toc') {
+      menu.innerHTML = `
+        <div class="ctx-menu-item" data-action="toc-collapse-all">折叠全部</div>
+        <div class="ctx-menu-item" data-action="toc-expand-all">展开全部</div>
+      `;
+    } else if (activeTab === 'files') {
+      const { sortBy, sortAsc, foldersFirst, showHidden } = fileTreeState;
+      menu.innerHTML = `
+        <div class="ctx-menu-item" data-action="file-refresh">刷新</div>
+        <div class="ctx-menu-item" data-action="file-collapse-all">折叠全部</div>
+        <div class="ctx-menu-divider"></div>
+        <div class="ctx-menu-group">
+          <div class="ctx-menu-item ctx-menu-group-trigger" data-action="toggle-sort-group">排序顺序 <span class="ctx-menu-arrow">▸</span></div>
+          <div class="ctx-menu-group-content" style="display: none;">
+            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'name' ? ' ctx-checked' : ''}" data-action="sort-name">按名称</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'size' ? ' ctx-checked' : ''}" data-action="sort-size">按大小</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'modified' ? ' ctx-checked' : ''}" data-action="sort-modified">按修改日期</div>
+            <div class="ctx-menu-divider"></div>
+            <div class="ctx-menu-item ctx-menu-sub-item${sortAsc ? ' ctx-checked' : ''}" data-action="sort-asc">升序</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${!sortAsc ? ' ctx-checked' : ''}" data-action="sort-desc">降序</div>
+            <div class="ctx-menu-divider"></div>
+            <div class="ctx-menu-item ctx-menu-sub-item${foldersFirst ? ' ctx-checked' : ''}" data-action="toggle-folders-first">文件夹置顶</div>
+          </div>
+        </div>
+        <div class="ctx-menu-item${showHidden ? ' ctx-checked' : ''}" data-action="toggle-hidden">显示隐藏文件</div>
+      `;
+    }
+  }
+
+  /**
+   * 获取当前激活的页签
+   */
+  function getActiveSidebarTab() {
+    const activeTab = document.querySelector('.sidebar-tab.active');
+    return activeTab ? activeTab.dataset.tab : 'toc';
   }
 
   // ==================== Mermaid 渲染 ====================
@@ -882,29 +1619,256 @@
    * 绑定页面交互事件
    */
   function bindEvents() {
-    // 目录开关
+    // 侧边栏开关
     const btnToggleToc = document.getElementById('btn-toggle-toc');
     const tocSidebar = document.getElementById('md-toc-sidebar');
+    const resizeHandle = document.getElementById('sidebar-resize-handle');
     if (btnToggleToc && tocSidebar) {
       btnToggleToc.addEventListener('click', () => {
         tocSidebar.classList.toggle('visible');
         tocSidebar.classList.toggle('hidden');
+        if (resizeHandle) {
+          resizeHandle.style.display = tocSidebar.classList.contains('visible') ? '' : 'none';
+        }
       });
     }
 
-    // 关闭目录
+    // 关闭侧边栏
     const btnCloseToc = document.getElementById('btn-close-toc');
     if (btnCloseToc && tocSidebar) {
       btnCloseToc.addEventListener('click', () => {
         tocSidebar.classList.remove('visible');
         tocSidebar.classList.add('hidden');
+        if (resizeHandle) resizeHandle.style.display = 'none';
       });
     }
 
-    // 目录点击平滑滚动
+    // ========== 侧边栏拖拽调整宽度 ==========
+    if (resizeHandle && tocSidebar) {
+      let isResizing = false;
+      let startX = 0;
+      let startWidth = 0;
+      const minWidth = 180;
+      const maxWidth = 600;
+      const isRight = tocSidebar.classList.contains('toc-right');
+
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = tocSidebar.getBoundingClientRect().width;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        resizeHandle.classList.add('active');
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const isCurrentlyRight = tocSidebar.classList.contains('toc-right');
+        const diff = isCurrentlyRight ? (startX - e.clientX) : (e.clientX - startX);
+        const newWidth = Math.min(maxWidth, Math.max(minWidth, startWidth + diff));
+        tocSidebar.style.width = newWidth + 'px';
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isResizing) {
+          isResizing = false;
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+          resizeHandle.classList.remove('active');
+        }
+      });
+    }
+
+    // ========== 页签切换 ==========
+    const sidebarTabs = document.querySelectorAll('.sidebar-tab');
+    sidebarTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        if (!tabName) return;
+        // 切换激活状态
+        sidebarTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        // 切换面板
+        document.querySelectorAll('.sidebar-panel').forEach(p => p.style.display = 'none');
+        const panel = document.getElementById(`sidebar-panel-${tabName}`);
+        if (panel) panel.style.display = 'block';
+        // 懒加载文件树
+        if (tabName === 'files' && !fileTreeState.data) {
+          buildFileTree();
+        }
+        // 关闭菜单
+        const menu = document.getElementById('sidebar-context-menu');
+        if (menu) menu.style.display = 'none';
+      });
+    });
+
+    // ========== 侧边栏菜单按钮 ==========
+    const btnSidebarMenu = document.getElementById('btn-sidebar-menu');
+    const sidebarCtxMenu = document.getElementById('sidebar-context-menu');
+    if (btnSidebarMenu && sidebarCtxMenu) {
+      btnSidebarMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (sidebarCtxMenu.style.display === 'none' || !sidebarCtxMenu.style.display) {
+          buildSidebarMenu(getActiveSidebarTab());
+          sidebarCtxMenu.style.display = 'block';
+        } else {
+          sidebarCtxMenu.style.display = 'none';
+        }
+      });
+
+      // 菜单项点击
+      sidebarCtxMenu.addEventListener('click', (e) => {
+        const actionEl = e.target.closest('[data-action]');
+        if (!actionEl) return;
+        e.stopPropagation();
+        const action = actionEl.dataset.action;
+
+        // 排序组展开/折叠
+        if (action === 'toggle-sort-group') {
+          const group = actionEl.closest('.ctx-menu-group');
+          if (group) {
+            const content = group.querySelector('.ctx-menu-group-content');
+            const arrow = actionEl.querySelector('.ctx-menu-arrow');
+            if (content) {
+              const isOpen = content.style.display !== 'none';
+              content.style.display = isOpen ? 'none' : 'block';
+              if (arrow) arrow.textContent = isOpen ? '▸' : '▾';
+            }
+          }
+          return;
+        }
+
+        // 目录操作
+        if (action === 'toc-collapse-all') {
+          document.querySelectorAll('.md-toc-item').forEach(item => {
+            const level = parseInt(item.className.match(/toc-level-(\d+)/)?.[1] || 0);
+            if (level > 0) item.style.display = 'none';
+            if (item.classList.contains('md-toc-parent')) {
+              item.classList.add('toc-collapsed');
+              const toggle = item.querySelector('.md-toc-toggle');
+              if (toggle) toggle.textContent = '▸';
+            }
+          });
+        } else if (action === 'toc-expand-all') {
+          document.querySelectorAll('.md-toc-item').forEach(item => {
+            item.style.display = '';
+            if (item.classList.contains('md-toc-parent')) {
+              item.classList.remove('toc-collapsed');
+              const toggle = item.querySelector('.md-toc-toggle');
+              if (toggle) toggle.textContent = '▾';
+            }
+          });
+        }
+
+        // 文件树操作
+        if (action === 'file-refresh') {
+          fileTreeState.data = null;
+          buildFileTree();
+        } else if (action === 'file-collapse-all') {
+          // 折叠所有展开的文件夹
+          fileTreeState.expandedDirs = {};
+          const fileTreeEl = document.getElementById('file-tree');
+          if (fileTreeEl) {
+            // 隐藏所有子目录容器
+            fileTreeEl.querySelectorAll('.file-tree-subdir').forEach(el => {
+              el.style.display = 'none';
+            });
+            // 重置所有展开状态
+            fileTreeEl.querySelectorAll('.file-tree-expanded').forEach(el => {
+              el.classList.remove('file-tree-expanded');
+              const arrow = el.querySelector('.file-tree-arrow');
+              if (arrow) arrow.textContent = '▸';
+              const iconEl = el.querySelector('.file-tree-icon');
+              if (iconEl) iconEl.textContent = '📁';
+            });
+          }
+        } else if (action === 'sort-name') {
+          fileTreeState.sortBy = 'name';
+        } else if (action === 'sort-size') {
+          fileTreeState.sortBy = 'size';
+        } else if (action === 'sort-modified') {
+          fileTreeState.sortBy = 'modified';
+        } else if (action === 'sort-asc') {
+          fileTreeState.sortAsc = true;
+        } else if (action === 'sort-desc') {
+          fileTreeState.sortAsc = false;
+        } else if (action === 'toggle-folders-first') {
+          fileTreeState.foldersFirst = !fileTreeState.foldersFirst;
+        } else if (action === 'toggle-hidden') {
+          fileTreeState.showHidden = !fileTreeState.showHidden;
+        }
+
+        // 排序/过滤操作后重新渲染
+        if (action.startsWith('sort-') || action.startsWith('toggle-')) {
+          const fileTreeEl = document.getElementById('file-tree');
+          if (fileTreeEl && fileTreeState.data) renderFileTree(fileTreeEl, fileTreeState.data);
+          // 重建菜单以更新勾选状态
+          buildSidebarMenu('files');
+          return; // 不关闭菜单
+        }
+
+        sidebarCtxMenu.style.display = 'none';
+      });
+
+      // 点击外部关闭菜单
+      document.addEventListener('click', (e) => {
+        if (!sidebarCtxMenu.contains(e.target) && e.target !== btnSidebarMenu) {
+          sidebarCtxMenu.style.display = 'none';
+        }
+      });
+    }
+
+    // ========== 文件树点击导航 ==========
+    const fileTreeEl = document.getElementById('file-tree');
+    if (fileTreeEl) {
+      fileTreeEl.addEventListener('click', (e) => {
+        const item = e.target.closest('.file-tree-item');
+        if (!item) return;
+        const url = item.dataset.url;
+        if (!url) return;
+        const isDir = item.dataset.isDir === 'true';
+
+        if (isDir) {
+          // 文件夹：就地展开/折叠
+          e.preventDefault();
+          toggleDirectory(item);
+        } else {
+          // 文件：在新标签页打开
+          e.preventDefault();
+          window.open(url, '_blank');
+        }
+      });
+    }
+
+    // ========== 面包屑导航点击 ==========
+    const breadcrumbEl = document.getElementById('file-tree-breadcrumb');
+    if (breadcrumbEl) {
+      breadcrumbEl.addEventListener('click', (e) => {
+        const link = e.target.closest('.breadcrumb-link');
+        if (link) {
+          e.preventDefault();
+          const url = link.dataset.url;
+          if (url) window.open(url, '_blank');
+        }
+      });
+    }
+
+    // 目录点击平滑滚动 + 折叠按钮
     const tocNav = document.getElementById('md-toc-nav');
     if (tocNav) {
       tocNav.addEventListener('click', (e) => {
+        // 折叠/展开按钮
+        const toggle = e.target.closest('.md-toc-toggle');
+        if (toggle) {
+          e.preventDefault();
+          e.stopPropagation();
+          const index = parseInt(toggle.dataset.index);
+          if (!isNaN(index)) toggleTocItem(index);
+          return;
+        }
+
+        // 链接点击
         const link = e.target.closest('.md-toc-link');
         if (link) {
           e.preventDefault();
@@ -983,6 +1947,18 @@
       });
     }
 
+    // 设置
+    const btnSettings = document.getElementById('btn-settings');
+    if (btnSettings) {
+      btnSettings.addEventListener('click', () => {
+        try {
+          chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS' });
+        } catch (e) {
+          console.warn('[MD Viewer] 打开设置页面失败:', e);
+        }
+      });
+    }
+
     // 代码复制按钮
     document.addEventListener('click', (e) => {
       // 代码块复制
@@ -1051,7 +2027,7 @@
     function updateMermaidTransform() {
       const canvas = document.getElementById('md-mermaid-canvas');
       if (canvas) {
-        canvas.style.transform = `translate(${mermaidZoomState.translateX}px, ${mermaidZoomState.translateY}px) scale(${mermaidZoomState.scale})`;
+        canvas.style.transform = `translate(calc(-50% + ${mermaidZoomState.translateX}px), calc(-50% + ${mermaidZoomState.translateY}px)) scale(${mermaidZoomState.scale})`;
       }
       const zoomLevel = document.getElementById('md-mermaid-zoom-level');
       if (zoomLevel) {
@@ -1296,13 +2272,14 @@
   function loadSettings() {
     return new Promise((resolve) => {
       try {
-        chrome.runtime.sendMessage({ type: 'GET_SETTINGS' }, (response) => {
+        // 直接从 storage 读取，无需经过 background service worker
+        chrome.storage.sync.get('settings', (data) => {
           if (chrome.runtime.lastError) {
-            console.warn('[MD Viewer] 获取设置失败:', chrome.runtime.lastError);
+            console.warn('[MD Viewer] 获取设置失败:', chrome.runtime.lastError.message);
             resolve(DEFAULT_SETTINGS);
             return;
           }
-          resolve(response?.settings || DEFAULT_SETTINGS);
+          resolve(data?.settings ? { ...DEFAULT_SETTINGS, ...data.settings } : DEFAULT_SETTINGS);
         });
       } catch {
         resolve(DEFAULT_SETTINGS);
@@ -1315,9 +2292,11 @@
    */
   function saveSettings() {
     try {
-      chrome.runtime.sendMessage({
-        type: 'SAVE_SETTINGS',
-        settings: currentSettings
+      // 直接写入 storage，无需经过 background service worker
+      chrome.storage.sync.set({ settings: currentSettings }, () => {
+        if (chrome.runtime.lastError) {
+          console.warn('[MD Viewer] 保存设置失败:', chrome.runtime.lastError.message);
+        }
       });
     } catch (e) {
       console.warn('[MD Viewer] 保存设置失败:', e);
@@ -1346,6 +2325,10 @@
     const tocSidebar = document.getElementById('md-toc-sidebar');
     if (tocSidebar) {
       tocSidebar.className = `md-toc-sidebar toc-${currentSettings.tocPosition} ${currentSettings.showToc ? 'visible' : 'hidden'}`;
+    }
+    const resizeHandle = document.getElementById('sidebar-resize-handle');
+    if (resizeHandle) {
+      resizeHandle.style.display = currentSettings.showToc ? '' : 'none';
     }
 
     // 应用代码高亮主题
@@ -1614,6 +2597,12 @@
     // 构建渲染页面
     buildPage(htmlContent);
 
+    // ★ 在 buildPage 替换 DOM 之后，预获取目录文件列表（file:// 协议下）
+    // 通过 background service worker 临时 tab + executeScript 获取
+    if (window.location.protocol === 'file:') {
+      prefetchDirectoryHtml();
+    }
+
     // 应用代码高亮主题
     applyCodeTheme(currentSettings.codeTheme);
 
@@ -1625,6 +2614,12 @@
 
     // 渲染数学公式
     await renderMathFormulas();
+
+    // 非 file:// 协议时隐藏文件浏览器页签
+    if (!isFileProtocol()) {
+      const filesTab = document.querySelector('.sidebar-tab[data-tab="files"]');
+      if (filesTab) filesTab.style.display = 'none';
+    }
 
     // 绑定事件
     bindEvents();

@@ -65,6 +65,30 @@
       margin-top: 2px;
     }
 
+    /* 提示条 */
+    .tips-bar {
+      display: flex;
+      align-items: center;
+      padding: 12px 18px;
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #6d5c00;
+      gap: 8px;
+      line-height: 1.5;
+    }
+
+    .tips-bar .tips-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .tips-bar strong {
+      color: #e65100;
+    }
+
     /* 设置卡片 */
     .settings-card {
       background: #ffffff;
@@ -622,6 +646,12 @@
       </div>
     </div>
 
+    <!-- 提示信息 -->
+    <div class="tips-bar">
+      <span class="tips-icon">💡</span>
+      <span>修改设置后，请点击页面最下方的 <strong>「💾 保存设置」</strong> 按钮以使更改生效。</span>
+    </div>
+
     <!-- 主题设置 -->
     <div class="settings-card">
       <div class="card-header">
@@ -649,12 +679,13 @@
           <div class="setting-control">
             <select class="select-control" id="codeThemeSelect">
               <optgroup label="🔆 亮色主题">
+                <option value="default-light-modern">Default Light Modern</option>
                 <option value="github">GitHub</option>
                 <option value="atom-one-light">Atom One Light</option>
                 <option value="solarized-light">Solarized Light</option>
-                <option value="default-light-modern">Default Light Modern</option>
               </optgroup>
               <optgroup label="🌙 暗色主题">
+                <option value="default-dark-modern">Default Dark Modern</option>
                 <option value="github-dark">GitHub Dark</option>
                 <option value="monokai">Monokai</option>
                 <option value="vs2015">VS 2015</option>
@@ -664,7 +695,6 @@
                 <option value="nord">Nord</option>
                 <option value="solarized-dark">Solarized Dark</option>
                 <option value="tokyo-night">Tokyo Night</option>
-                <option value="default-dark-modern">Default Dark Modern</option>
               </optgroup>
               <optgroup label="🔄 自动">
                 <option value="auto">跟随页面主题</option>
@@ -747,9 +777,9 @@
         </div>
         <div class="slider-control">
           <span class="slider-label">窄</span>
-          <input type="range" id="maxWidthSlider" min="600" max="1400" step="50" value="1000">
+          <input type="range" id="maxWidthSlider" min="600" max="1400" step="50" value="1200">
           <span class="slider-label">宽</span>
-          <span class="slider-value" id="maxWidthValue">1000px</span>
+          <span class="slider-value" id="maxWidthValue">1200px</span>
         </div>
 
         <!-- 排版预览 -->
@@ -905,6 +935,9 @@
     <!-- 版本信息 -->
     <div class="version-info">
       <p>Markdown Viewer Enhanced v1.0.0 · 基于 <a href="https://github.com/markedjs/marked" target="_blank">Marked.js</a> + <a href="https://github.com/mermaid-js/mermaid" target="_blank">Mermaid</a> + <a href="https://github.com/highlightjs/highlight.js" target="_blank">highlight.js</a></p>
+      <p style="margin-top: 6px;">
+        <a href="https://github.com/LetitiaChan/markdown_viewer_enhanced" target="_blank">⭐ GitHub</a> · 欢迎 Star & 反馈
+      </p>
     </div>
   </div>
 

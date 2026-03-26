@@ -62,8 +62,8 @@
     fontSizeValue.textContent = (settings.fontSize || 16) + 'px';
 
     // 内容宽度
-    maxWidthSlider.value = settings.maxWidth || 1000;
-    maxWidthValue.textContent = (settings.maxWidth || 1000) + 'px';
+    maxWidthSlider.value = settings.maxWidth || 1200;
+    maxWidthValue.textContent = (settings.maxWidth || 1200) + 'px';
 
     // 目录
     toggleToc.checked = settings.showToc !== false;

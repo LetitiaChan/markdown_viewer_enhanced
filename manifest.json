@@ -10,7 +10,12 @@
   },
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "file://*/*"
   ],
   "background": {
     "service_worker": "background.js"

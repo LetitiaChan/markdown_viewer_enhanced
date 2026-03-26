@@ -1,6 +1,6 @@
 # Markdown Viewer Enhanced
 
-> A browser extension that elegantly renders Markdown files with Mermaid diagrams, syntax highlighting, KaTeX math formulas, table of contents navigation, multiple themes, and more.
+> A browser extension that elegantly renders Markdown files with a file browser sidebar, Mermaid diagrams, syntax highlighting, KaTeX math formulas, table of contents navigation, multiple themes, and more.
 
 ---
 
@@ -8,7 +8,7 @@
 
 ### 🎨 Multiple Themes & Code Highlighting
 - **Three page themes** — Light / Dark / Auto (follows system preference)
-- **14 code highlight themes** — GitHub, Monokai, VS 2015, Atom One Dark, Dracula, Nord, Tokyo Night, and more
+- **15 code highlight themes** (including auto) — Default Light/Dark Modern, GitHub, Monokai, VS 2015, Atom One Dark/Light, One Dark Pro, Dracula, Nord, Solarized Light/Dark, Tokyo Night
 - Code theme can be set to "follow page theme" for automatic switching
 
 ### 📊 Mermaid Diagram Rendering
@@ -22,6 +22,7 @@
 - Powered by highlight.js with **180+** supported programming languages
 - Code blocks display a **language label** and a **one-click copy** button
 - Optional **line numbers** for easy code referencing
+- **Diff syntax highlighting**: auto-detects `+` / `-` lines with full-line background colors for additions/deletions
 - Code highlight theme is independent of page theme — use dark code themes on light pages
 
 ### 🔢 KaTeX Math Formulas
@@ -32,9 +33,12 @@
 ### 📑 Table of Contents Navigation
 - Automatically generates a **TOC tree** from document headings
 - Supports **left / right** sidebar layout
+- TOC items support **fold/expand** children (▸/▾ toggle buttons)
 - Click any TOC item to **smooth-scroll** to the corresponding section
 - Current reading position is **automatically highlighted** and tracked in real time
+- **URL hash navigation** — automatically scrolls to anchor position on page load
 - Toggle the TOC sidebar on or off at any time
+- Sidebar supports **drag-to-resize** (180px - 600px)
 
 ### 📐 Flexible Typography Settings
 - **Font Size**: Adjustable from 12px to 24px
@@ -42,6 +46,17 @@
 - **Content Width**: Customizable from 600px to 1400px
 - **Body Font**: System default / Serif / Monospace
 - Real-time typography preview
+
+### 📁 File Browser Sidebar (file:// protocol only)
+- Automatically reads the **file list of the current directory**
+- **Folder expand/collapse**: Click folders to expand sub-directory contents in-place with lazy loading
+- **Open files in new tab**: Click files to open them in a new browser tab
+- **Breadcrumb navigation**: Displays current file path; click parent directories to open in new tab
+- **Sort mode** switching: by name / type / default
+- **Folders first** and **show/hide hidden files** toggles
+- Auto-filters to show only supported Markdown file formats
+- Current file is automatically highlighted
+- Sidebar **tab switching**: 📁 File Browser / ≡ TOC Navigation
 
 ### 🖼️ Image Enhancement
 - Click images to **zoom in with fullscreen overlay**
@@ -63,9 +78,9 @@
 | 📑 TOC | Toggle the table of contents sidebar |
 | 🌓 Theme | Quickly switch between light/dark themes |
 | 📝 Source | View / return from raw Markdown source |
+| ⚙️ Settings | Open the extension's advanced settings page |
 | ⬆️ Top | Smooth-scroll back to the top of the page |
 | 🔃 Refresh | Reload the current page |
-| 🖨️ Print | Print the page / export as PDF |
 
 - A **floating back-to-top button** appears automatically after scrolling 300px
 - `Esc` key closes both image preview and Mermaid diagram preview
@@ -84,6 +99,7 @@
 | Extension | Description |
 |-----------|-------------|
 | `.md` | Markdown file |
+| `.mdc` | Markdown component file |
 | `.markdown` | Markdown file |
 | `.mkd` | Markdown file |
 | `.mdown` | Markdown file |
@@ -129,7 +145,7 @@ To render local Markdown files, make sure file access is enabled for the extensi
 - This extension **does NOT** collect any user data
 - This extension **does NOT** send any information to external servers (except KaTeX font CDN loading)
 - All settings are stored locally in the browser (`storage.sync`)
-- Only requires minimal permissions: `activeTab` and `storage`
+- Only requires `activeTab`, `storage`, `tabs`, `scripting` permissions (the latter two for local file browser feature)
 
 ---
 
