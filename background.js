@@ -208,20 +208,66 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       });
       return true; // 异步响应
 
+    case 'CHECK_FILE_PERMISSION':
+      // 检查是否拥有 file:// 可选权限
+      hasFilePermission().then(has => {
+        sendResponse({ hasPermission: has });
+      });
+      return true;
+
+    case 'REQUEST_FILE_PERMISSION':
+      // 请求 file:// 可选权限（注意：chrome.permissions.request 需要用户手势，
+      // 从 popup 调用时 popup 本身就是用户手势上下文）
+      requestFilePermission().then(granted => {
+        sendResponse({ granted });
+      });
+      return true;
+
     default:
       return false;
   }
 });
 
 /**
+ * 检查是否拥有 file:// 主机权限
+ */
+async function hasFilePermission() {
+  try {
+    return await chrome.permissions.contains({ origins: ['file://*/*'] });
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * 请求 file:// 可选主机权限（需要用户手势触发）
+ */
+async function requestFilePermission() {
+  try {
+    return await chrome.permissions.request({ origins: ['file://*/*'] });
+  } catch (err) {
+    console.warn('[MD Viewer BG] 请求 file:// 权限失败:', err.message || String(err));
+    return false;
+  }
+}
+
+/**
  * 通过临时 tab + chrome.scripting.executeScript 获取 file:// 目录列表
- * 1. 创建一个不可见的 tab 打开目录 URL
- * 2. 在该 tab 中注入脚本提取文件列表
- * 3. 关闭 tab 并返回结果
+ * 1. 检查/请求 file:// 权限
+ * 2. 创建一个不可见的 tab 打开目录 URL
+ * 3. 在该 tab 中注入脚本提取文件列表
+ * 4. 关闭 tab 并返回结果
  */
 async function fetchDirectoryViaTab(dirUrl) {
   let tabId = null;
   try {
+    // 检查是否拥有 file:// 权限
+    const hasPerm = await hasFilePermission();
+    if (!hasPerm) {
+      console.warn('[MD Viewer BG] 缺少 file:// 权限，无法获取目录');
+      return [];
+    }
+
     console.log('[MD Viewer BG] 开始获取目录:', dirUrl);
 
     // 创建不活跃的 tab（不会获取焦点）
