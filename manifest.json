@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Markdown Viewer Enhanced",
   "version": "1.1.0",
-  "description": "Elegantly render Markdown files in your browser with Mermaid diagrams, syntax highlighting, TOC navigation, multiple themes, and more.",
+  "description": "Render Markdown in your browser with Mermaid diagrams, syntax highlighting, TOC navigation, multiple themes, and more.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -11,7 +11,6 @@
   "permissions": [
     "activeTab",
     "storage",
-    "tabs",
     "scripting"
   ],
   "host_permissions": [
@@ -38,13 +37,7 @@
         "file:///*/*.mdown",
         "file:///*/*.mdtxt",
         "file:///*/*.mdtext",
-        "file:///*/*.txt",
-        "https://*/*.md",
-        "https://*/*.mdc",
-        "https://*/*.markdown",
-        "http://*/*.md",
-        "http://*/*.mdc",
-        "http://*/*.markdown"
+        "file:///*/*.txt"
       ],
       "js": [
         "libs/marked.min.js",
@@ -72,11 +65,9 @@
         "libs/*",
         "icons/*"
       ],
-      "matches": ["<all_urls>"]
+      "matches": [
+        "file:///*"
+      ]
     }
-  ],
-  "options_ui": {
-    "page": "options/options.html",
-    "open_in_tab": true
-  }
+  ]
 }

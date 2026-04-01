@@ -758,6 +758,236 @@
           </div>
           <button class="md-mermaid-close">✕ 关闭</button>
         </div>
+
+        <!-- 内嵌设置弹窗（全屏卡片式） -->
+        <div id="md-settings-overlay" class="md-settings-overlay" style="display:none;">
+          <div class="md-settings-panel">
+            <!-- 渐变头部 -->
+            <div class="md-settings-header">
+              <div class="md-settings-header-info">
+                <div class="md-settings-header-title">⚙️ 设置</div>
+                <div class="md-settings-header-desc">自定义阅读工具的外观与行为</div>
+              </div>
+              <button id="btn-settings-close" class="md-settings-close">✕</button>
+            </div>
+
+            <!-- 可滚动内容区 -->
+            <div class="md-settings-body">
+              <!-- 提示条 -->
+              <div class="md-settings-tip">✨ 调整设置后可实时预览效果</div>
+
+              <!-- 外观主题卡片 -->
+              <div class="md-settings-card">
+                <div class="md-settings-card-header">
+                  <span class="md-settings-card-icon">🎨</span>
+                  <div>
+                    <div class="md-settings-card-title">外观主题</div>
+                    <div class="md-settings-card-desc">选择界面的整体风格</div>
+                  </div>
+                </div>
+                <div class="md-settings-card-body">
+                  <div class="md-settings-theme-selector">
+                    <button class="md-stg-theme-btn" data-theme="light"><span>🌞</span> 亮色</button>
+                    <button class="md-stg-theme-btn" data-theme="dark"><span>🌙</span> 暗色</button>
+                    <button class="md-stg-theme-btn" data-theme="auto"><span>💻</span> 跟随系统</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 代码高亮主题卡片 -->
+              <div class="md-settings-card">
+                <div class="md-settings-card-header">
+                  <span class="md-settings-card-icon">🖌️</span>
+                  <div>
+                    <div class="md-settings-card-title">代码高亮主题</div>
+                    <div class="md-settings-card-desc">选择代码块的高亮配色方案</div>
+                  </div>
+                </div>
+                <div class="md-settings-card-body">
+                  <div class="md-settings-code-theme-row">
+                    <div class="md-settings-code-theme-label">
+                      <span class="md-settings-label">代码高亮主题</span>
+                      <span class="md-settings-label-desc">选择代码块的高亮配色方案</span>
+                    </div>
+                    <select id="stg-codeTheme" class="md-settings-select">
+                    <optgroup label="🔆 亮色">
+                      <option value="default-light-modern">Default Light Modern</option>
+                      <option value="github">GitHub</option>
+                      <option value="atom-one-light">Atom One Light</option>
+                      <option value="solarized-light">Solarized Light</option>
+                    </optgroup>
+                    <optgroup label="🌙 暗色">
+                      <option value="default-dark-modern">Default Dark Modern</option>
+                      <option value="github-dark">GitHub Dark</option>
+                      <option value="monokai">Monokai</option>
+                      <option value="vs2015">VS 2015</option>
+                      <option value="atom-one-dark">Atom One Dark</option>
+                      <option value="one-dark-pro">One Dark Pro</option>
+                      <option value="dracula">Dracula</option>
+                      <option value="nord">Nord</option>
+                      <option value="solarized-dark">Solarized Dark</option>
+                      <option value="tokyo-night">Tokyo Night</option>
+                    </optgroup>
+                    <optgroup label="🔄 自动">
+                      <option value="auto">跟随页面主题</option>
+                    </optgroup>
+                  </select>
+                  </div>
+                  <!-- 代码预览 -->
+                  <div class="md-settings-code-preview" id="stg-code-preview">
+                    <pre><code><span class="cp">function</span> <span class="cf">fibonacci</span>(n) {
+  <span class="cm">// 递归实现斐波那契数列</span>
+  <span class="cp">if</span> (n <= 1) <span class="cp">return</span> n;
+  <span class="cp">return</span> <span class="cf">fibonacci</span>(n - 1) + <span class="cf">fibonacci</span>(n - 2);
+}
+<span class="cp">const</span> result = <span class="cf">fibonacci</span>(10);
+console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</span>);</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 排版设置卡片 -->
+              <div class="md-settings-card">
+                <div class="md-settings-card-header">
+                  <span class="md-settings-card-icon">📐</span>
+                  <div>
+                    <div class="md-settings-card-title">排版设置</div>
+                    <div class="md-settings-card-desc">调整文档阅读体验</div>
+                  </div>
+                </div>
+                <div class="md-settings-card-body">
+                  <!-- 正文字体 -->
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">🔤</span>
+                      <div>
+                        <span class="md-settings-label">正文字体</span>
+                        <span class="md-settings-label-desc">选择 Markdown 正文的显示字体</span>
+                      </div>
+                    </div>
+                    <div class="md-stg-btn-group">
+                      <button class="md-stg-btn-option" data-font="system">系统默认</button>
+                      <button class="md-stg-btn-option" data-font="serif">衬线体</button>
+                      <button class="md-stg-btn-option" data-font="mono">等宽字体</button>
+                    </div>
+                  </div>
+                  <!-- 字体大小 -->
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">🔠</span>
+                      <div>
+                        <span class="md-settings-label">字体大小</span>
+                        <span class="md-settings-label-desc">调整正文字体大小 (12px - 24px)</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="md-stg-slider-row">
+                    <span class="md-stg-slider-label">A</span>
+                    <input type="range" id="stg-fontSize" min="12" max="24" step="1" value="16">
+                    <span class="md-stg-slider-label" style="font-size:18px;">A</span>
+                    <span class="md-stg-slider-value" id="stg-fontSizeVal">16px</span>
+                  </div>
+                  <!-- 行高 -->
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">↕️</span>
+                      <div>
+                        <span class="md-settings-label">行高</span>
+                        <span class="md-settings-label-desc">调整段落行高 (1.2 - 2.0)</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="md-stg-slider-row">
+                    <span class="md-stg-slider-label">紧凑</span>
+                    <input type="range" id="stg-lineHeight" min="1.2" max="2.0" step="0.1" value="1.6">
+                    <span class="md-stg-slider-label">宽松</span>
+                    <span class="md-stg-slider-value" id="stg-lineHeightVal">1.6</span>
+                  </div>
+                  <!-- 内容最大宽度 -->
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">↔️</span>
+                      <div>
+                        <span class="md-settings-label">内容最大宽度</span>
+                        <span class="md-settings-label-desc">调整正文区域最大宽度 (600px - 1400px)</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="md-stg-slider-row">
+                    <span class="md-stg-slider-label">窄</span>
+                    <input type="range" id="stg-maxWidth" min="600" max="1400" step="50" value="1200">
+                    <span class="md-stg-slider-label">宽</span>
+                    <span class="md-stg-slider-value" id="stg-maxWidthVal">1200px</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 功能开关卡片 -->
+              <div class="md-settings-card">
+                <div class="md-settings-card-header">
+                  <span class="md-settings-card-icon">⚙️</span>
+                  <div>
+                    <div class="md-settings-card-title">功能开关</div>
+                    <div class="md-settings-card-desc">启用或禁用各项功能</div>
+                  </div>
+                </div>
+                <div class="md-settings-card-body">
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">📑</span>
+                      <span class="md-settings-label">显示目录</span>
+                    </div>
+                    <label class="md-stg-toggle"><input type="checkbox" id="stg-showToc" checked><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                  <div class="md-settings-item" id="stg-tocPosRow">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">📌</span>
+                      <span class="md-settings-label">目录位置</span>
+                    </div>
+                    <div class="md-stg-btn-group">
+                      <button class="md-stg-toc-pos-btn" data-pos="left">左侧</button>
+                      <button class="md-stg-toc-pos-btn" data-pos="right">右侧</button>
+                    </div>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">📊</span>
+                      <span class="md-settings-label">Mermaid 图表</span>
+                    </div>
+                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMermaid" checked><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">🔢</span>
+                      <span class="md-settings-label">数学公式渲染</span>
+                    </div>
+                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMathJax"><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">#️⃣</span>
+                      <span class="md-settings-label">显示代码行号</span>
+                    </div>
+                    <label class="md-stg-toggle"><input type="checkbox" id="stg-showLineNumbers"><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">🔍</span>
+                      <span class="md-settings-label">自动检测 Markdown</span>
+                    </div>
+                    <label class="md-stg-toggle"><input type="checkbox" id="stg-autoDetect" checked><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 底部固定栏 -->
+            <div class="md-settings-footer">
+              <span class="md-settings-footer-hint">🔖 设置修改后自动保存</span>
+              <button id="btn-settings-reset" class="md-stg-footer-btn">恢复默认</button>
+            </div>
+          </div>
+        </div>
       </div>
     `;
 
@@ -1961,11 +2191,7 @@
     const btnSettings = document.getElementById('btn-settings');
     if (btnSettings) {
       btnSettings.addEventListener('click', () => {
-        try {
-          chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS' });
-        } catch (e) {
-          console.warn('[MD Viewer] 打开设置页面失败:', e);
-        }
+        openSettingsPanel();
       });
     }
 
@@ -2275,11 +2501,14 @@
       // Ctrl+R 刷新（保持浏览器默认行为）
     });
 
-    // 监听来自 background 的设置更新消息
+    // 监听来自 background/popup 的消息
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.type === 'SETTINGS_UPDATED') {
         applySettings(message.settings);
         sendResponse({ success: true });
+      } else if (message.type === 'PING') {
+        // 用于检测 content script 是否已注入
+        sendResponse({ alive: true });
       }
       return false;
     });
@@ -2340,6 +2569,258 @@
       });
     } catch (e) {
       console.warn('[MD Viewer] 保存设置失败:', e);
+    }
+  }
+
+  // ==================== 内嵌设置弹窗 ====================
+
+  /**
+   * 打开设置弹窗，并将当前设置同步到弹窗 UI
+   */
+  function openSettingsPanel() {
+    const overlay = document.getElementById('md-settings-overlay');
+    if (!overlay) return;
+
+    // 同步当前设置到弹窗 UI
+    syncSettingsToPanel();
+
+    overlay.style.display = 'flex';
+
+    // 绑定弹窗事件（仅绑定一次）
+    if (!overlay.__eventsBound) {
+      bindSettingsPanelEvents();
+      overlay.__eventsBound = true;
+    }
+  }
+
+  /**
+   * 关闭设置弹窗
+   */
+  function closeSettingsPanel() {
+    const overlay = document.getElementById('md-settings-overlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+
+  /**
+   * 将当前设置同步到弹窗 UI 控件
+   */
+  function syncSettingsToPanel() {
+    // 主题按钮
+    document.querySelectorAll('.md-stg-theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === currentSettings.theme);
+    });
+
+    // 代码高亮主题
+    const codeThemeSel = document.getElementById('stg-codeTheme');
+    if (codeThemeSel) codeThemeSel.value = currentSettings.codeTheme || 'default-dark-modern';
+
+    // 正文字体
+    document.querySelectorAll('.md-stg-btn-option[data-font]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.font === (currentSettings.fontFamily || 'system'));
+    });
+
+    // 字体大小
+    const fontSizeEl = document.getElementById('stg-fontSize');
+    const fontSizeValEl = document.getElementById('stg-fontSizeVal');
+    if (fontSizeEl) fontSizeEl.value = currentSettings.fontSize || 16;
+    if (fontSizeValEl) fontSizeValEl.textContent = (currentSettings.fontSize || 16) + 'px';
+
+    // 行高
+    const lineHeightEl = document.getElementById('stg-lineHeight');
+    const lineHeightValEl = document.getElementById('stg-lineHeightVal');
+    if (lineHeightEl) lineHeightEl.value = currentSettings.lineHeight || 1.6;
+    if (lineHeightValEl) lineHeightValEl.textContent = (currentSettings.lineHeight || 1.6).toFixed(1);
+
+    // 内容宽度
+    const maxWidthEl = document.getElementById('stg-maxWidth');
+    const maxWidthValEl = document.getElementById('stg-maxWidthVal');
+    if (maxWidthEl) maxWidthEl.value = currentSettings.maxWidth || 1200;
+    if (maxWidthValEl) maxWidthValEl.textContent = (currentSettings.maxWidth || 1200) + 'px';
+
+    // 开关
+    const stgShowToc = document.getElementById('stg-showToc');
+    if (stgShowToc) stgShowToc.checked = currentSettings.showToc !== false;
+
+    // 目录位置
+    document.querySelectorAll('.md-stg-toc-pos-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.pos === (currentSettings.tocPosition || 'right'));
+    });
+    const tocPosRow = document.getElementById('stg-tocPosRow');
+    if (tocPosRow) tocPosRow.style.display = (currentSettings.showToc !== false) ? 'flex' : 'none';
+
+    const stgMermaid = document.getElementById('stg-enableMermaid');
+    if (stgMermaid) stgMermaid.checked = currentSettings.enableMermaid !== false;
+
+    const stgMathJax = document.getElementById('stg-enableMathJax');
+    if (stgMathJax) stgMathJax.checked = currentSettings.enableMathJax === true;
+
+    const stgLineNumbers = document.getElementById('stg-showLineNumbers');
+    if (stgLineNumbers) stgLineNumbers.checked = currentSettings.showLineNumbers === true;
+
+    const stgAutoDetect = document.getElementById('stg-autoDetect');
+    if (stgAutoDetect) stgAutoDetect.checked = currentSettings.autoDetect !== false;
+  }
+
+  /**
+   * 绑定设置弹窗内部的交互事件
+   */
+  function bindSettingsPanelEvents() {
+    const overlay = document.getElementById('md-settings-overlay');
+    if (!overlay) return;
+
+    // 点击遮罩关闭
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeSettingsPanel();
+    });
+
+    // 关闭按钮
+    const btnClose = document.getElementById('btn-settings-close');
+    if (btnClose) btnClose.addEventListener('click', closeSettingsPanel);
+
+    // 主题切换
+    document.querySelectorAll('.md-stg-theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.md-stg-theme-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSettings.theme = btn.dataset.theme;
+        applySettings(currentSettings);
+        saveSettings();
+        reRenderMermaid();
+      });
+    });
+
+    // 代码高亮主题
+    const codeThemeSel = document.getElementById('stg-codeTheme');
+    if (codeThemeSel) {
+      codeThemeSel.addEventListener('change', () => {
+        currentSettings.codeTheme = codeThemeSel.value;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    }
+
+    // 正文字体
+    document.querySelectorAll('.md-stg-btn-option[data-font]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.md-stg-btn-option[data-font]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSettings.fontFamily = btn.dataset.font;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    });
+
+    // 字体大小
+    const fontSizeEl = document.getElementById('stg-fontSize');
+    const fontSizeValEl = document.getElementById('stg-fontSizeVal');
+    if (fontSizeEl) {
+      fontSizeEl.addEventListener('input', () => {
+        const size = parseInt(fontSizeEl.value);
+        if (fontSizeValEl) fontSizeValEl.textContent = size + 'px';
+        currentSettings.fontSize = size;
+        applySettings(currentSettings);
+      });
+      fontSizeEl.addEventListener('change', () => saveSettings());
+    }
+
+    // 行高
+    const lineHeightEl = document.getElementById('stg-lineHeight');
+    const lineHeightValEl = document.getElementById('stg-lineHeightVal');
+    if (lineHeightEl) {
+      lineHeightEl.addEventListener('input', () => {
+        const lh = parseFloat(lineHeightEl.value);
+        if (lineHeightValEl) lineHeightValEl.textContent = lh.toFixed(1);
+        currentSettings.lineHeight = lh;
+        applySettings(currentSettings);
+      });
+      lineHeightEl.addEventListener('change', () => saveSettings());
+    }
+
+    // 内容宽度
+    const maxWidthEl = document.getElementById('stg-maxWidth');
+    const maxWidthValEl = document.getElementById('stg-maxWidthVal');
+    if (maxWidthEl) {
+      maxWidthEl.addEventListener('input', () => {
+        const w = parseInt(maxWidthEl.value);
+        if (maxWidthValEl) maxWidthValEl.textContent = w + 'px';
+        currentSettings.maxWidth = w;
+        applySettings(currentSettings);
+      });
+      maxWidthEl.addEventListener('change', () => saveSettings());
+    }
+
+    // 显示目录
+    const stgShowToc = document.getElementById('stg-showToc');
+    if (stgShowToc) {
+      stgShowToc.addEventListener('change', () => {
+        currentSettings.showToc = stgShowToc.checked;
+        const tocPosRow = document.getElementById('stg-tocPosRow');
+        if (tocPosRow) tocPosRow.style.display = stgShowToc.checked ? 'flex' : 'none';
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    }
+
+    // 目录位置
+    document.querySelectorAll('.md-stg-toc-pos-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.md-stg-toc-pos-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSettings.tocPosition = btn.dataset.pos;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    });
+
+    // Mermaid 开关
+    const stgMermaid = document.getElementById('stg-enableMermaid');
+    if (stgMermaid) {
+      stgMermaid.addEventListener('change', () => {
+        currentSettings.enableMermaid = stgMermaid.checked;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    }
+
+    // 数学公式开关
+    const stgMathJax = document.getElementById('stg-enableMathJax');
+    if (stgMathJax) {
+      stgMathJax.addEventListener('change', () => {
+        currentSettings.enableMathJax = stgMathJax.checked;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    }
+
+    // 代码行号开关
+    const stgLineNumbers = document.getElementById('stg-showLineNumbers');
+    if (stgLineNumbers) {
+      stgLineNumbers.addEventListener('change', () => {
+        currentSettings.showLineNumbers = stgLineNumbers.checked;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    }
+
+    // 自动检测开关
+    const stgAutoDetect = document.getElementById('stg-autoDetect');
+    if (stgAutoDetect) {
+      stgAutoDetect.addEventListener('change', () => {
+        currentSettings.autoDetect = stgAutoDetect.checked;
+        saveSettings();
+      });
+    }
+
+    // 重置按钮
+    const btnReset = document.getElementById('btn-settings-reset');
+    if (btnReset) {
+      btnReset.addEventListener('click', () => {
+        currentSettings = { ...DEFAULT_SETTINGS };
+        syncSettingsToPanel();
+        applySettings(currentSettings);
+        saveSettings();
+        reRenderMermaid();
+      });
     }
   }
 
@@ -2696,6 +3177,11 @@
 
     isRendered = true;
     console.log('[MD Viewer] Markdown 渲染完成 ✅');
+
+    // 通知 background 设置 MD badge（因为没有 tabs 权限，background 无法自动检测）
+    try {
+      chrome.runtime.sendMessage({ type: 'SET_BADGE', tabId: undefined, isMarkdown: true });
+    } catch (_) { /* 忽略 */ }
   }
 
   // 启动

@@ -64,26 +64,76 @@ function isTextContentType(contentType) {
          contentType.includes('text/x-markdown');
 }
 
-// 监听标签页更新，动态更新图标状态
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.url) {
-    if (isMarkdownUrl(tab.url)) {
-      // 设置图标为激活状态
-      chrome.action.setIcon({
-        tabId: tabId,
-        path: {
-          16: 'icons/icon16.png',
-          48: 'icons/icon48.png',
-          128: 'icons/icon128.png'
-        }
-      });
-      chrome.action.setBadgeText({ tabId: tabId, text: 'MD' });
-      chrome.action.setBadgeBackgroundColor({ tabId: tabId, color: '#4CAF50' });
-    } else {
-      chrome.action.setBadgeText({ tabId: tabId, text: '' });
-    }
-  }
+// 已注入过脚本的标签页集合（避免重复注入）
+const injectedTabs = new Set();
+
+// 清理已关闭的标签页记录
+chrome.tabs.onRemoved.addListener((tabId) => {
+  injectedTabs.delete(tabId);
 });
+
+/**
+ * 为指定标签页设置 MD badge
+ * 由 popup 或 content script 通过消息触发（因为没有 tabs 权限，无法在 onUpdated 中读取 tab.url）
+ */
+function setMarkdownBadge(tabId, isMarkdown) {
+  if (isMarkdown) {
+    chrome.action.setIcon({
+      tabId: tabId,
+      path: {
+        16: 'icons/icon16.png',
+        48: 'icons/icon48.png',
+        128: 'icons/icon128.png'
+      }
+    });
+    chrome.action.setBadgeText({ tabId: tabId, text: 'MD' });
+    chrome.action.setBadgeBackgroundColor({ tabId: tabId, color: '#4CAF50' });
+  } else {
+    chrome.action.setBadgeText({ tabId: tabId, text: '' });
+  }
+}
+
+/**
+ * 动态注入内容脚本到指定标签页
+ * 用于 http/https 上的 Markdown 文件（通过用户点击 popup 中的"渲染"按钮触发）
+ * 依赖 activeTab 权限（用户打开 popup 时自动获得当前标签页的临时权限）
+ */
+async function injectContentScripts(tabId) {
+  try {
+    // 先注入 CSS
+    await chrome.scripting.insertCSS({
+      target: { tabId },
+      files: [
+        'styles/github-markdown.css',
+        'styles/themes.css',
+        'styles/highlight-themes.css',
+        'styles/content.css',
+      ],
+    });
+
+    // 再注入 JS（顺序与 manifest content_scripts 中一致）
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: [
+        'libs/marked.min.js',
+        'libs/marked-footnote.umd.js',
+        'libs/purify.min.js',
+        'libs/highlight.min.js',
+        'libs/hljs-protobuf.min.js',
+        'libs/mermaid.min.js',
+        'libs/katex.min.js',
+        'content/content.js',
+      ],
+    });
+
+    injectedTabs.add(tabId);
+    console.log(`[MD Viewer BG] 已动态注入内容脚本到标签页 ${tabId}`);
+    return true;
+  } catch (err) {
+    console.warn(`[MD Viewer BG] 动态注入失败 (tabId=${tabId}):`, err.message || String(err));
+    return false;
+  }
+}
 
 // 监听来自 content script 和 popup 的消息
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -115,6 +165,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ isMarkdown: isMarkdownUrl(message.url) });
       return false;
 
+    case 'SET_BADGE':
+      // 由 popup 或 content script 触发，设置标签页的 MD badge
+      // content script 不知道自己的 tabId，从 sender.tab.id 获取
+      const badgeTabId = message.tabId || (sender && sender.tab && sender.tab.id);
+      if (badgeTabId) {
+        setMarkdownBadge(badgeTabId, message.isMarkdown);
+      }
+      sendResponse({ success: true });
+      return false;
+
     case 'GET_DEFAULT_SETTINGS':
       sendResponse({ settings: DEFAULT_SETTINGS });
       return false;
@@ -127,6 +187,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     case 'OPEN_OPTIONS':
       chrome.runtime.openOptionsPage();
+      return false;
+
+    case 'INJECT_CONTENT_SCRIPTS':
+      // 由 popup 触发，利用 activeTab 权限动态注入内容脚本到当前标签页
+      injectContentScripts(message.tabId).then(success => {
+        sendResponse({ success });
+      });
+      return true; // 异步响应
+
+    case 'CHECK_INJECTED':
+      // 检查指定标签页是否已注入过脚本
+      sendResponse({ injected: injectedTabs.has(message.tabId) });
       return false;
 
     case 'FETCH_DIRECTORY':

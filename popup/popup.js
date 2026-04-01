@@ -1,6 +1,6 @@
 /**
  * Markdown Viewer Enhanced - Popup 弹出窗口脚本
- * 负责：快捷设置界面的交互逻辑
+ * 负责：所有设置界面的交互逻辑
  */
 
 (function () {
@@ -11,17 +11,24 @@
   const statusText = document.getElementById('statusText');
   const fontSizeSlider = document.getElementById('fontSizeSlider');
   const fontSizeValue = document.getElementById('fontSizeValue');
+  const lineHeightSlider = document.getElementById('lineHeightSlider');
+  const lineHeightValue = document.getElementById('lineHeightValue');
   const maxWidthSlider = document.getElementById('maxWidthSlider');
   const maxWidthValue = document.getElementById('maxWidthValue');
+  const codeThemeSelect = document.getElementById('codeThemeSelect');
   const toggleToc = document.getElementById('toggleToc');
   const tocPositionRow = document.getElementById('tocPositionRow');
   const toggleMermaid = document.getElementById('toggleMermaid');
   const toggleMathJax = document.getElementById('toggleMathJax');
+  const toggleLineNumbers = document.getElementById('toggleLineNumbers');
+  const toggleAutoDetect = document.getElementById('toggleAutoDetect');
   const btnReset = document.getElementById('btnReset');
-  const btnOptions = document.getElementById('btnOptions');
   const btnRefresh = document.getElementById('btnRefresh');
+  const renderBar = document.getElementById('renderBar');
+  const btnRender = document.getElementById('btnRender');
 
   const themeBtns = document.querySelectorAll('.theme-btn');
+  const fontBtns = document.querySelectorAll('.btn-option[data-font]');
   const tocPosBtns = document.querySelectorAll('.toc-pos-btn');
 
   // 当前设置
@@ -57,9 +64,25 @@
       btn.classList.toggle('active', btn.dataset.theme === settings.theme);
     });
 
+    // 代码高亮主题
+    if (codeThemeSelect) {
+      codeThemeSelect.value = settings.codeTheme || 'default-dark-modern';
+    }
+
+    // 正文字体
+    fontBtns.forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.font === (settings.fontFamily || 'system'));
+    });
+
     // 字体大小
     fontSizeSlider.value = settings.fontSize || 16;
     fontSizeValue.textContent = (settings.fontSize || 16) + 'px';
+
+    // 行高
+    if (lineHeightSlider) {
+      lineHeightSlider.value = settings.lineHeight || 1.6;
+      lineHeightValue.textContent = (settings.lineHeight || 1.6).toFixed(1);
+    }
 
     // 内容宽度
     maxWidthSlider.value = settings.maxWidth || 1200;
@@ -79,6 +102,16 @@
 
     // 数学公式渲染
     toggleMathJax.checked = settings.enableMathJax === true;
+
+    // 代码行号
+    if (toggleLineNumbers) {
+      toggleLineNumbers.checked = settings.showLineNumbers === true;
+    }
+
+    // 自动检测
+    if (toggleAutoDetect) {
+      toggleAutoDetect.checked = settings.autoDetect !== false;
+    }
   }
 
   // ========== 检测页面状态 ==========
@@ -94,6 +127,22 @@
       chrome.runtime.sendMessage({ type: 'IS_MARKDOWN', url: tab.url }, (response) => {
         if (response && response.isMarkdown) {
           setStatus(true, '当前页面为 Markdown 文件 ✓');
+
+          // 设置 badge
+          chrome.runtime.sendMessage({ type: 'SET_BADGE', tabId: tab.id, isMarkdown: true });
+
+          // 对 http/https 页面，检查是否已注入脚本，未注入则显示渲染按钮
+          if (tab.url.startsWith('http://') || tab.url.startsWith('https://')) {
+            chrome.runtime.sendMessage({ type: 'CHECK_INJECTED', tabId: tab.id }, (checkResp) => {
+              if (checkResp && !checkResp.injected) {
+                chrome.tabs.sendMessage(tab.id, { type: 'PING' }).then(() => {
+                  renderBar.style.display = 'none';
+                }).catch(() => {
+                  renderBar.style.display = 'block';
+                });
+              }
+            });
+          }
         } else {
           setStatus(false, '当前页面非 Markdown 文件');
         }
@@ -157,6 +206,24 @@
       });
     });
 
+    // 代码高亮主题
+    if (codeThemeSelect) {
+      codeThemeSelect.addEventListener('change', () => {
+        currentSettings.codeTheme = codeThemeSelect.value;
+        saveSettings();
+      });
+    }
+
+    // 正文字体选择
+    fontBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        fontBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSettings.fontFamily = btn.dataset.font;
+        saveSettings();
+      });
+    });
+
     // 字体大小
     fontSizeSlider.addEventListener('input', () => {
       const size = parseInt(fontSizeSlider.value);
@@ -166,6 +233,18 @@
     fontSizeSlider.addEventListener('change', () => {
       saveSettings();
     });
+
+    // 行高
+    if (lineHeightSlider) {
+      lineHeightSlider.addEventListener('input', () => {
+        const lh = parseFloat(lineHeightSlider.value);
+        lineHeightValue.textContent = lh.toFixed(1);
+        currentSettings.lineHeight = lh;
+      });
+      lineHeightSlider.addEventListener('change', () => {
+        saveSettings();
+      });
+    }
 
     // 内容宽度
     maxWidthSlider.addEventListener('input', () => {
@@ -206,6 +285,22 @@
       saveSettings();
     });
 
+    // 代码行号开关
+    if (toggleLineNumbers) {
+      toggleLineNumbers.addEventListener('change', () => {
+        currentSettings.showLineNumbers = toggleLineNumbers.checked;
+        saveSettings();
+      });
+    }
+
+    // 自动检测开关
+    if (toggleAutoDetect) {
+      toggleAutoDetect.addEventListener('change', () => {
+        currentSettings.autoDetect = toggleAutoDetect.checked;
+        saveSettings();
+      });
+    }
+
     // 重置按钮
     btnReset.addEventListener('click', () => {
       chrome.runtime.sendMessage({ type: 'RESET_SETTINGS' }, (response) => {
@@ -215,12 +310,6 @@
           notifyCurrentTab();
         }
       });
-    });
-
-    // 更多设置（打开选项页）
-    btnOptions.addEventListener('click', () => {
-      chrome.runtime.openOptionsPage();
-      window.close();
     });
 
     // 刷新页面
@@ -235,6 +324,33 @@
         // 忽略
       }
     });
+
+    // 渲染按钮（对 http/https Markdown 页面动态注入脚本）
+    if (btnRender) {
+      btnRender.addEventListener('click', async () => {
+        try {
+          btnRender.disabled = true;
+          btnRender.textContent = '⏳ 渲染中...';
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (tab && tab.id) {
+            chrome.runtime.sendMessage({ type: 'INJECT_CONTENT_SCRIPTS', tabId: tab.id }, (response) => {
+              if (response && response.success) {
+                btnRender.textContent = '✅ 渲染完成';
+                renderBar.style.display = 'none';
+                setStatus(true, '当前页面为 Markdown 文件 ✓');
+                setTimeout(() => window.close(), 500);
+              } else {
+                btnRender.textContent = '❌ 渲染失败，请重试';
+                btnRender.disabled = false;
+              }
+            });
+          }
+        } catch (err) {
+          btnRender.textContent = '❌ 渲染失败';
+          btnRender.disabled = false;
+        }
+      });
+    }
   }
 
   // ========== 启动 ==========
