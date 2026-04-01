@@ -97,6 +97,10 @@
       .replace(/^-|-$/g, '') || 'heading';
   }
 
+  // 记录已使用的 baseId，避免重复锚点
+  let usedBaseIds = new Set();
+  let markedExtensionsRegistered = false;
+
   /**
    * 防抖函数
    */
@@ -310,16 +314,26 @@
 
     const renderer = new marked.Renderer();
     let headingIndex = 0;
+    usedBaseIds = new Set();
 
     // 自定义标题渲染 - 收集目录信息
     renderer.heading = function (data) {
       const depth = data.depth;
       const text = data.text;
-      const id = generateId(text) + '-' + headingIndex++;
-      tocItems.push({ id, text, depth });
+      const textHtml = data.tokens ? this.parser.parseInline(data.tokens) : text;
+      const baseId = generateId(text);
+      const id = baseId + '-' + headingIndex++;
+      tocItems.push({ id, text, depth, baseId });
+      // 同时输出一个不带后缀的隐形锚点，使 Markdown 中手写的 [xxx](#anchor) 锚点链接也能匹配
+      // 仅在该 baseId 首次出现时添加，避免重复 ID
+      let extraAnchor = '';
+      if (!usedBaseIds.has(baseId)) {
+        usedBaseIds.add(baseId);
+        extraAnchor = `<span id="${baseId}" class="md-anchor-alias"></span>`;
+      }
       return `<h${depth} id="${id}" class="md-heading">
-        <a class="md-anchor" href="#${id}">#</a>
-        ${text}
+        ${extraAnchor}<a class="md-anchor" href="#${id}">#</a>
+        ${textHtml}
       </h${depth}>`;
     };
 
@@ -406,19 +420,17 @@
     renderer.link = function (data) {
       const href = data.href;
       const title = data.title;
-      let text = data.text;
+      let text = data.tokens ? this.parser.parseInline(data.tokens) : data.text;
       const titleAttr = title ? ` title="${title}"` : '';
       const isExternal = href && (href.startsWith('http://') || href.startsWith('https://'));
       const targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
 
       // 处理链接内嵌套图片的情况，如 [![alt](img-url)](link-url)
       // marked 新版本中 data.tokens 包含已解析的子 token，data.text 是未渲染的原始文本
-      if (data.tokens && data.tokens.length > 0) {
+      if (data.tokens && data.tokens.length === 1 && data.tokens[0].type === 'image') {
         const firstToken = data.tokens[0];
-        if (firstToken.type === 'image') {
-          const imgTitle = firstToken.title ? ` title="${firstToken.title}"` : '';
-          text = `<img src="${firstToken.href}" alt="${firstToken.text}"${imgTitle} loading="lazy" class="md-image" />`;
-        }
+        const imgTitle = firstToken.title ? ` title="${firstToken.title}"` : '';
+        text = `<img src="${firstToken.href}" alt="${firstToken.text}"${imgTitle} loading="lazy" class="md-image" />`;
       }
 
       return `<a href="${href}"${titleAttr}${targetAttr}>${text}</a>`;
@@ -434,7 +446,6 @@
       const titleAttr = title ? ` title="${title}"` : '';
       return `<span class="md-image-container">
         <img src="${href}" alt="${text}"${titleAttr} loading="lazy" class="md-image" />
-        ${text ? `<span class="md-image-caption">${text}</span>` : ''}
       </span>`;
     };
 
@@ -547,83 +558,86 @@
     marked.setOptions({
       renderer: renderer,
       gfm: true,
-      breaks: true,
+      breaks: false,
       pedantic: false,
       smartLists: true,
       smartypants: false,
     });
 
-    // 注册脚注扩展（marked-footnote）
-    if (typeof markedFootnote !== 'undefined') {
-      marked.use(markedFootnote({
-        prefixId: 'footnote-',
-        description: 'Footnotes',
-      }));
-      console.log('[MD Viewer] 脚注扩展已注册');
-    } else {
-      console.warn('[MD Viewer] marked-footnote 未加载，脚注功能不可用');
-    }
+    if (!markedExtensionsRegistered) {
+      // 注册脚注扩展（marked-footnote）
+      if (typeof markedFootnote !== 'undefined') {
+        marked.use(markedFootnote({
+          prefixId: 'footnote-',
+          description: 'Footnotes',
+        }));
+        console.log('[MD Viewer] 脚注扩展已注册');
+      } else {
+        console.warn('[MD Viewer] marked-footnote 未加载，脚注功能不可用');
+      }
 
-    // 注册定义列表扩展
-    // 语法：Term\n:   Definition（PHP Markdown Extra 风格）
-    marked.use({
-      extensions: [{
-        name: 'deflist',
-        level: 'block',
-        start(src) {
-          // 查找可能的定义列表起始位置：非空行后跟 ": " 定义行
-          const match = src.match(/^[^\n]+\n(?=:[  \t])/m);
-          return match ? match.index : undefined;
-        },
-        tokenizer(src) {
-          // 匹配完整的定义列表块：
-          // Term1\n:   Definition1\n\nTerm2\n:   Definition2\n...
-          const rule = /^(?:[^\n]+\n(?::[  \t]+[^\n]+(?:\n|$))+(?:\n|$)?)+/;
-          const match = rule.exec(src);
-          if (match) {
-            const raw = match[0];
-            const items = [];
-            // 按定义项分组：每个 term 后面跟一个或多个 ": definition" 行
-            const parts = raw.split(/\n(?=[^\n:])/).filter(Boolean);
-            for (const part of parts) {
-              const lines = part.split('\n').filter(Boolean);
-              if (lines.length >= 1) {
-                const dt = lines[0].trim();
-                const dds = [];
-                for (let i = 1; i < lines.length; i++) {
-                  const ddMatch = lines[i].match(/^:[  \t]+(.*)/);
-                  if (ddMatch) {
-                    dds.push(ddMatch[1].trim());
+      // 注册定义列表扩展
+      // 语法：Term\n:   Definition（PHP Markdown Extra 风格）
+      marked.use({
+        extensions: [{
+          name: 'deflist',
+          level: 'block',
+          start(src) {
+            // 查找可能的定义列表起始位置：非空行后跟 ": " 定义行
+            const match = src.match(/^[^\n]+\n(?=:[  \t])/m);
+            return match ? match.index : undefined;
+          },
+          tokenizer(src) {
+            // 匹配完整的定义列表块：
+            // Term1\n:   Definition1\n\nTerm2\n:   Definition2\n...
+            const rule = /^(?:[^\n]+\n(?::[  \t]+[^\n]+(?:\n|$))+(?:\n|$)?)+/;
+            const match = rule.exec(src);
+            if (match) {
+              const raw = match[0];
+              const items = [];
+              // 按定义项分组：每个 term 后面跟一个或多个 ": definition" 行
+              const parts = raw.split(/\n(?=[^\n:])/).filter(Boolean);
+              for (const part of parts) {
+                const lines = part.split('\n').filter(Boolean);
+                if (lines.length >= 1) {
+                  const dt = lines[0].trim();
+                  const dds = [];
+                  for (let i = 1; i < lines.length; i++) {
+                    const ddMatch = lines[i].match(/^:[  \t]+(.*)/);
+                    if (ddMatch) {
+                      dds.push(ddMatch[1].trim());
+                    }
+                  }
+                  if (dds.length > 0) {
+                    items.push({ dt, dds });
                   }
                 }
-                if (dds.length > 0) {
-                  items.push({ dt, dds });
-                }
+              }
+              if (items.length > 0) {
+                return {
+                  type: 'deflist',
+                  raw: raw,
+                  items: items,
+                };
               }
             }
-            if (items.length > 0) {
-              return {
-                type: 'deflist',
-                raw: raw,
-                items: items,
-              };
+          },
+          renderer(token) {
+            let html = '<dl>\n';
+            for (const item of token.items) {
+              html += `<dt>${item.dt}</dt>\n`;
+              for (const dd of item.dds) {
+                html += `<dd>${dd}</dd>\n`;
+              }
             }
-          }
-        },
-        renderer(token) {
-          let html = '<dl>\n';
-          for (const item of token.items) {
-            html += `<dt>${item.dt}</dt>\n`;
-            for (const dd of item.dds) {
-              html += `<dd>${dd}</dd>\n`;
-            }
-          }
-          html += '</dl>\n';
-          return html;
-        },
-      }],
-    });
-    console.log('[MD Viewer] 定义列表扩展已注册');
+            html += '</dl>\n';
+            return html;
+          },
+        }],
+      });
+      console.log('[MD Viewer] 定义列表扩展已注册');
+      markedExtensionsRegistered = true;
+    }
   }
 
   /**
@@ -680,7 +694,6 @@
             <button id="btn-toggle-theme" class="md-toolbar-btn" title="切换主题">🌓 主题</button>
             <button id="btn-toggle-raw" class="md-toolbar-btn" title="查看源码">📝 源码</button>
             <button id="btn-settings" class="md-toolbar-btn" title="设置">⚙️ 设置</button>
-            <button id="btn-scroll-top" class="md-toolbar-btn" title="回到顶部">⬆️ 顶部</button>
             <button id="btn-refresh" class="md-toolbar-btn" title="刷新">🔃 刷新</button>
           </div>
         </div>
@@ -709,10 +722,9 @@
             <div id="sidebar-panel-toc" class="sidebar-panel">
               <nav id="md-toc-nav" class="md-toc-nav"></nav>
             </div>
+            <!-- 侧边栏拖拽调整宽度的手柄 -->
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle" style="${currentSettings.showToc ? '' : 'display:none;'}"></div>
           </aside>
-
-          <!-- 侧边栏拖拽调整宽度的手柄 -->
-          <div id="sidebar-resize-handle" class="sidebar-resize-handle" style="${currentSettings.showToc ? '' : 'display:none;'}"></div>
 
           <!-- 主内容区域 -->
           <main id="md-content" class="md-content markdown-viewer-enhanced" style="max-width:${currentSettings.maxWidth}px; font-size:${currentSettings.fontSize}px; line-height:${currentSettings.lineHeight}; --code-font-size:${currentSettings.codeFontSize || 14}px;">
@@ -1921,12 +1933,10 @@
     }
 
     // 回到顶部
-    const btnScrollTop = document.getElementById('btn-scroll-top');
     const btnFloatTop = document.getElementById('btn-float-top');
     const scrollTopHandler = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-    if (btnScrollTop) btnScrollTop.addEventListener('click', scrollTopHandler);
     if (btnFloatTop) btnFloatTop.addEventListener('click', scrollTopHandler);
 
     // 滚动事件 - 显示/隐藏浮动按钮 + 目录高亮
@@ -1989,6 +1999,33 @@
 
     // 图片点击放大（支持 Markdown 渲染的图片和 HTML <img> 标签）
     document.addEventListener('click', (e) => {
+      // 处理正文内的锚点链接点击跳转
+      const anchor = e.target.closest('#md-content a[href^="#"]');
+      if (anchor) {
+        const href = anchor.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          e.preventDefault();
+          const targetId = href.slice(1);
+          let target = document.getElementById(targetId);
+          // 如果精确匹配不到，尝试模糊匹配（用户手写锚点可能不含计数后缀）
+          if (!target) {
+            target = document.getElementById(decodeURIComponent(targetId));
+          }
+          if (!target) {
+            // 尝试通过 baseId 查找标题（遍历 tocItems）
+            const matchedItem = tocItems.find(item => item.baseId === targetId || item.id === targetId);
+            if (matchedItem) {
+              target = document.getElementById(matchedItem.id);
+            }
+          }
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.replaceState(null, '', '#' + targetId);
+          }
+          return;
+        }
+      }
+
       const img = e.target.closest('img');
       if (!img) return;
       // 排除预览遮罩内部的图片和非内容区域的图片
@@ -2641,7 +2678,15 @@
 
     // 处理 URL hash 定位
     if (window.location.hash) {
-      const target = document.getElementById(window.location.hash.slice(1));
+      const targetId = decodeURIComponent(window.location.hash.slice(1));
+      let target = document.getElementById(targetId);
+      // 如果精确匹配不到，尝试通过 baseId 查找
+      if (!target) {
+        const matchedItem = tocItems.find(item => item.baseId === targetId || item.id === targetId);
+        if (matchedItem) {
+          target = document.getElementById(matchedItem.id);
+        }
+      }
       if (target) {
         setTimeout(() => {
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });

@@ -26,11 +26,12 @@
   const toggleAutoDetect = document.getElementById('toggleAutoDetect');
   const typographyPreview = document.getElementById('typographyPreview');
   const btnReset = document.getElementById('btnReset');
-  const btnSave = document.getElementById('btnSave');
   const saveToast = document.getElementById('saveToast');
 
   // 当前设置
   let currentSettings = {};
+  let autoSaveTimer = null;
+  let saveToastTimer = null;
 
   // ========== 初始化 ==========
   async function init() {
@@ -161,8 +162,6 @@
       }
       if (response && response.success) {
         if (showToast) showSaveToast();
-        // 通知所有打开的 Markdown 标签页更新设置
-        notifyAllTabs();
       }
     });
   }
@@ -187,12 +186,29 @@
   }
 
   // ========== 显示保存提示 ==========
-  function showSaveToast() {
+  function showSaveToast(message = '✅ 设置已保存') {
     if (!saveToast) return;
+    saveToast.textContent = message;
     saveToast.classList.add('visible');
-    setTimeout(() => {
+    if (saveToastTimer) {
+      clearTimeout(saveToastTimer);
+    }
+    saveToastTimer = setTimeout(() => {
       saveToast.classList.remove('visible');
+      saveToast.textContent = '✅ 设置已保存';
+      saveToastTimer = null;
     }, 2000);
+  }
+
+  // ========== 自动保存（连续操作防抖） ==========
+  function scheduleAutoSave(delay = 300) {
+    if (autoSaveTimer) {
+      clearTimeout(autoSaveTimer);
+    }
+    autoSaveTimer = setTimeout(() => {
+      autoSaveTimer = null;
+      saveSettings(true);
+    }, delay);
   }
 
   // ========== 绑定事件 ==========
@@ -204,6 +220,7 @@
         btn.classList.add('active');
         currentSettings.theme = btn.dataset.theme;
         updatePreview();
+        scheduleAutoSave(0);
       });
     });
 
@@ -212,6 +229,7 @@
       codeThemeSelect.addEventListener('change', () => {
         currentSettings.codeTheme = codeThemeSelect.value;
         updateCodeThemePreview(codeThemeSelect.value);
+        scheduleAutoSave(0);
       });
     }
 
@@ -222,6 +240,7 @@
         btn.classList.add('active');
         currentSettings.fontFamily = btn.dataset.font;
         updatePreview();
+        scheduleAutoSave(0);
       });
     });
 
@@ -231,6 +250,7 @@
       fontSizeValue.textContent = size + 'px';
       currentSettings.fontSize = size;
       updatePreview();
+      scheduleAutoSave();
     });
 
     // 行高
@@ -239,6 +259,7 @@
       lineHeightValue.textContent = lh.toFixed(1);
       currentSettings.lineHeight = lh;
       updatePreview();
+      scheduleAutoSave();
     });
 
     // 内容宽度
@@ -246,12 +267,14 @@
       const width = parseInt(maxWidthSlider.value);
       maxWidthValue.textContent = width + 'px';
       currentSettings.maxWidth = width;
+      scheduleAutoSave();
     });
 
     // 目录开关
     toggleToc.addEventListener('change', () => {
       currentSettings.showToc = toggleToc.checked;
       updateTocPositionVisibility();
+      scheduleAutoSave(0);
     });
 
     // 目录位置
@@ -260,32 +283,32 @@
         tocPosBtns.forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
         currentSettings.tocPosition = btn.dataset.pos;
+        scheduleAutoSave(0);
       });
     });
 
     // Mermaid 开关
     toggleMermaid.addEventListener('change', () => {
       currentSettings.enableMermaid = toggleMermaid.checked;
+      scheduleAutoSave(0);
     });
 
     // MathJax 开关
     toggleMathJax.addEventListener('change', () => {
       currentSettings.enableMathJax = toggleMathJax.checked;
+      scheduleAutoSave(0);
     });
 
     // 自动检测开关
     toggleAutoDetect.addEventListener('change', () => {
       currentSettings.autoDetect = toggleAutoDetect.checked;
+      scheduleAutoSave(0);
     });
 
     // 行号开关
     toggleLineNumbers.addEventListener('change', () => {
       currentSettings.showLineNumbers = toggleLineNumbers.checked;
-    });
-
-    // 保存按钮
-    btnSave.addEventListener('click', () => {
-      saveSettings(true);
+      scheduleAutoSave(0);
     });
 
     // 恢复默认设置
@@ -301,14 +324,8 @@
         if (response && response.settings) {
           currentSettings = response.settings;
           applySettingsToUI(currentSettings);
-          showSaveToast();
-          // 更新提示文案
-          if (saveToast) {
-            saveToast.textContent = '✅ 已恢复默认设置';
-            setTimeout(() => {
-              saveToast.textContent = '✅ 设置已保存';
-            }, 2500);
-          }
+          notifyAllTabs();
+          showSaveToast('✅ 已恢复默认设置');
         }
       });
     });

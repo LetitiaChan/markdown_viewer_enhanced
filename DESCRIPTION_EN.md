@@ -52,7 +52,7 @@
 - **Folder expand/collapse**: Click folders to expand sub-directory contents in-place with lazy loading
 - **Open files in new tab**: Click files to open them in a new browser tab
 - **Breadcrumb navigation**: Displays current file path; click parent directories to open in new tab
-- **Sort mode** switching: by name / type / default
+- **Sort mode** switching: by name / size / modified date, plus ascending / descending order
 - **Folders first** and **show/hide hidden files** toggles
 - Auto-filters to show only supported Markdown file formats
 - Current file is automatically highlighted
@@ -61,11 +61,10 @@
 ### 🖼️ Image Enhancement
 - Click images to **zoom in with fullscreen overlay**
 - Images support **lazy loading** for optimized performance on long documents
-- Image alt text is automatically displayed as **captions**
 - Press `Esc` to quickly close the preview
 
 ### 📝 Extended Markdown Syntax
-- ✅ **GitHub-style alerts**: `> [!NOTE]` / `> [!TIP]` / `> [!IMPORTANT]` / `> [!WARNING]` / `> [!CAUTION]`
+- ✅ **GitHub-style alerts**: `> [!NOTE]` / `> [!TIP]` / `> [!IMPORTANT]` / `> [!WARNING]` / `> [!CAUTION]`, plus `> [!BLANK]`
 - ✅ **Task lists**: `- [x]` / `- [ ]` with beautiful checkbox styling
 - ✅ **Footnotes**: Powered by the marked-footnote extension
 - ✅ **Definition lists**: `Term` + `: Definition` format (PHP Markdown Extra style)
@@ -79,7 +78,6 @@
 | 🌓 Theme | Quickly switch between light/dark themes |
 | 📝 Source | View / return from raw Markdown source |
 | ⚙️ Settings | Open the extension's advanced settings page |
-| ⬆️ Top | Smooth-scroll back to the top of the page |
 | 🔃 Refresh | Reload the current page |
 
 - A **floating back-to-top button** appears automatically after scrolling 300px
@@ -105,9 +103,8 @@
 | `.mdown` | Markdown file |
 | `.mdtxt` | Markdown text file |
 | `.mdtext` | Markdown text file |
-| `.txt` | Plain text file (auto-detected) |
 
-Supports Markdown files via `file://`, `http://`, and `https://` protocols.
+Local `file://` supports all extensions above; remote `http://` / `https://` currently support `.md`, `.mdc`, and `.markdown`.
 
 ---
 

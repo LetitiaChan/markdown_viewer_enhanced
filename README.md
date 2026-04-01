@@ -25,8 +25,8 @@
 - 🔢 **KaTeX 数学公式** — 行内 `$...$` 和块级 `$$...$$` LaTeX 公式渲染，占位符保护机制
 - 📑 **目录导航** — 自动生成目录树，支持折叠/展开子项，左/右侧边栏，滚动高亮追踪，URL hash 定位
 - 📐 **排版设置** — 字体大小、行高、内容宽度、字体族自由调节，侧边栏拖拽调整宽度
-- 🖼️ **图片增强** — 点击放大预览、懒加载、自动图注
-- 📝 **扩展语法** — GitHub 告警块、任务列表、脚注、定义列表、增强表格
+- 🖼️ **图片增强** — 点击放大预览、懒加载
+- 📝 **扩展语法** — GitHub 告警块（含 `[!BLANK]`）、任务列表、脚注、定义列表、增强表格
 - ⚙️ **设置系统** — Popup 快捷面板 + Options 高级设置，实时推送到所有标签页
 
 ### 📋 支持的文件格式
@@ -40,9 +40,8 @@
 | `.mdown` | Markdown 文件 |
 | `.mdtxt` | Markdown 文本文件 |
 | `.mdtext` | Markdown 文本文件 |
-| `.txt` | 纯文本文件（自动检测） |
 
-支持 `file://`、`http://`、`https://` 协议。
+本地 `file://` 支持以上全部扩展名；远程 `http://` / `https://` 当前支持 `.md`、`.mdc`、`.markdown`。
 
 ### 🚀 快速开始
 
@@ -113,8 +112,8 @@ A browser extension that elegantly renders Markdown files with a file browser si
 - 🔢 **KaTeX Math** — Inline `$...$` and block `$$...$$` LaTeX formula rendering with placeholder protection
 - 📑 **TOC Navigation** — Auto-generated heading tree with fold/expand, left/right sidebar, scroll tracking, URL hash navigation
 - 📐 **Typography** — Font size, line height, content width, font family customization, sidebar drag-to-resize
-- 🖼️ **Image Enhancement** — Click-to-zoom, lazy loading, auto captions
-- 📝 **Extended Syntax** — GitHub alerts, task lists, footnotes, definition lists, enhanced tables
+- 🖼️ **Image Enhancement** — Click-to-zoom, lazy loading
+- 📝 **Extended Syntax** — GitHub alerts (including `[!BLANK]`), task lists, footnotes, definition lists, enhanced tables
 - ⚙️ **Settings System** — Popup quick panel + Options advanced page, real-time push to all tabs
 
 ### 📋 Supported File Formats
@@ -128,9 +127,8 @@ A browser extension that elegantly renders Markdown files with a file browser si
 | `.mdown` | Markdown file |
 | `.mdtxt` | Markdown text file |
 | `.mdtext` | Markdown text file |
-| `.txt` | Plain text file (auto-detected) |
 
-Supports `file://`, `http://`, and `https://` protocols.
+Local `file://` supports all extensions above; remote `http://` / `https://` currently support `.md`, `.mdc`, and `.markdown`.
 
 ### 🚀 Getting Started
 
