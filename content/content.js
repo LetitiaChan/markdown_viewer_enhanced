@@ -792,14 +792,14 @@
                   </div>
                   <!-- 语言 -->
                   <div class="md-settings-item" style="margin-top:8px;">
-                    <div class="md-settings-item-left">
+                    <div class="md-settings-item-left" style="flex:1;min-width:0;">
                       <span class="md-settings-item-icon">🌐</span>
                       <div>
                         <span class="md-settings-label">${t('settings.language.title')}</span>
                         <span class="md-settings-label-desc">${t('settings.language.desc')}</span>
                       </div>
                     </div>
-                    <select id="stg-language" class="md-settings-select">
+                    <select id="stg-language" class="md-settings-select" style="max-width:160px;flex-shrink:0;">
                       <option value="zh-CN">CN 中文</option>
                       <option value="en">US English</option>
                     </select>
