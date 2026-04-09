@@ -53,8 +53,9 @@
     'code.copied': '✅ 已复制',
     'code.mermaidCopy.title': '复制 Mermaid 源码',
 
-    // ========== 图片预览 ==========
+    // ========== 图片灯箱 ==========
     'imagePreview.close': '✕ 关闭',
+    'lightbox.close': '✕ 关闭',
 
     // ========== Mermaid 预览 ==========
     'mermaid.close': '✕ 关闭',

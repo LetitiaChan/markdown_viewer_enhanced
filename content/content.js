@@ -739,11 +739,6 @@
         <!-- 回到顶部浮动按钮 -->
         <button id="btn-float-top" class="md-float-top" style="display:none;" title="${t('sidebar.backToTop.title')}">⬆️</button>
 
-        <!-- 图片预览遮罩 -->
-        <div id="md-image-overlay" class="md-image-overlay" style="display:none;">
-          <img id="md-image-preview" class="md-image-preview" />
-          <button class="md-image-close">${t('imagePreview.close')}</button>
-        </div>
 
         <!-- Mermaid 图表预览遮罩 -->
         <div id="md-mermaid-overlay" class="md-mermaid-overlay" style="display:none;">
@@ -2236,6 +2231,155 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       }
     });
 
+    // ==================== 图片灯箱 ====================
+    const IMG_LIGHTBOX = {
+      MIN_SCALE: 0.1,
+      MAX_SCALE: 20,
+      ZOOM_FACTOR: 1.15,
+      DRAG_THRESHOLD: 5,
+      TIP_DURATION: 800,
+    };
+
+    function openImageLightbox(src) {
+      let scale = 1, translateX = 0, translateY = 0;
+      let isDragging = false, dragMoved = false, startX = 0, startY = 0;
+      let tipTimer = null;
+
+      // 创建 DOM
+      const overlay = document.createElement('div');
+      overlay.className = 'md-lightbox-overlay';
+      overlay.innerHTML = `
+        <img class="md-lightbox-img" src="${src}" draggable="false" />
+        <button class="md-lightbox-close">${t('lightbox.close')}</button>
+        <div class="md-lightbox-zoom-tip"></div>
+      `;
+      document.body.appendChild(overlay);
+
+      const img = overlay.querySelector('.md-lightbox-img');
+      const zoomTip = overlay.querySelector('.md-lightbox-zoom-tip');
+
+      // 淡入
+      requestAnimationFrame(() => overlay.classList.add('active'));
+
+      function updateTransform() {
+        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        img.style.cursor = scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in';
+      }
+
+      function showZoomTip() {
+        zoomTip.textContent = Math.round(scale * 100) + '%';
+        zoomTip.classList.add('visible');
+        clearTimeout(tipTimer);
+        tipTimer = setTimeout(() => zoomTip.classList.remove('visible'), IMG_LIGHTBOX.TIP_DURATION);
+      }
+
+      function closeLightbox() {
+        overlay.classList.remove('active');
+        overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
+        // 如果 transition 未触发（例如 display:none），延迟兜底移除
+        setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 300);
+        document.removeEventListener('keydown', onKeydown);
+      }
+
+      // 滚轮缩放（以鼠标位置为中心）
+      overlay.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = img.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left - rect.width / 2;
+        const mouseY = e.clientY - rect.top - rect.height / 2;
+        const prevScale = scale;
+        scale = e.deltaY < 0
+          ? Math.min(scale * IMG_LIGHTBOX.ZOOM_FACTOR, IMG_LIGHTBOX.MAX_SCALE)
+          : Math.max(scale / IMG_LIGHTBOX.ZOOM_FACTOR, IMG_LIGHTBOX.MIN_SCALE);
+        const ratio = 1 - scale / prevScale;
+        translateX += mouseX * ratio;
+        translateY += mouseY * ratio;
+        updateTransform();
+        showZoomTip();
+      }, { passive: false });
+
+      // 拖拽平移
+      img.addEventListener('mousedown', (e) => {
+        if (scale <= 1) return;
+        e.preventDefault();
+        isDragging = true;
+        dragMoved = false;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        img.style.cursor = 'grabbing';
+      });
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+
+      function onMouseMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX - translateX;
+        const dy = e.clientY - startY - translateY;
+        if (Math.abs(dx) > IMG_LIGHTBOX.DRAG_THRESHOLD || Math.abs(dy) > IMG_LIGHTBOX.DRAG_THRESHOLD) {
+          dragMoved = true;
+        }
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        updateTransform();
+      }
+
+      function onMouseUp() {
+        if (!isDragging) return;
+        isDragging = false;
+        img.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+        // 延迟重置 dragMoved，让 click 事件能读到
+        setTimeout(() => { dragMoved = false; }, 0);
+      }
+
+      // 双击还原
+      img.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        scale = 1; translateX = 0; translateY = 0;
+        updateTransform();
+        showZoomTip();
+      });
+
+      // 点击遮罩/关闭按钮 关闭（拖拽不触发）
+      overlay.addEventListener('click', (e) => {
+        if (dragMoved) return;
+        if (e.target === overlay || e.target.classList.contains('md-lightbox-close')) {
+          closeLightbox();
+        }
+      });
+
+      // 键盘快捷键
+      function onKeydown(e) {
+        if (!overlay.parentNode) return;
+        switch (e.key) {
+          case '+': case '=':
+            e.preventDefault();
+            scale = Math.min(scale * IMG_LIGHTBOX.ZOOM_FACTOR, IMG_LIGHTBOX.MAX_SCALE);
+            updateTransform(); showZoomTip(); break;
+          case '-':
+            e.preventDefault();
+            scale = Math.max(scale / IMG_LIGHTBOX.ZOOM_FACTOR, IMG_LIGHTBOX.MIN_SCALE);
+            updateTransform(); showZoomTip(); break;
+          case '0':
+            e.preventDefault();
+            // 适应窗口
+            const vw = window.innerWidth * 0.9, vh = window.innerHeight * 0.9;
+            const nw = img.naturalWidth || img.width, nh = img.naturalHeight || img.height;
+            scale = Math.min(vw / nw, vh / nh, 1);
+            translateX = 0; translateY = 0;
+            updateTransform(); showZoomTip(); break;
+          case 'r': case 'R':
+            e.preventDefault();
+            scale = 1; translateX = 0; translateY = 0;
+            updateTransform(); showZoomTip(); break;
+          case 'Escape':
+            e.preventDefault();
+            closeLightbox(); break;
+        }
+      }
+      document.addEventListener('keydown', onKeydown);
+    }
+
     // 图片点击放大（支持 Markdown 渲染的图片和 HTML <img> 标签）
     document.addEventListener('click', (e) => {
       // 处理正文内的锚点链接点击跳转
@@ -2267,26 +2411,12 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
 
       const img = e.target.closest('img');
       if (!img) return;
-      // 排除预览遮罩内部的图片和非内容区域的图片
-      if (img.closest('#md-image-overlay') || img.closest('#md-mermaid-overlay')) return;
+      // 排除灯箱/Mermaid 遮罩内部的图片和非内容区域的图片
+      if (img.closest('.md-lightbox-overlay') || img.closest('#md-mermaid-overlay')) return;
       if (!img.closest('#md-content')) return;
-      const overlay = document.getElementById('md-image-overlay');
-      const preview = document.getElementById('md-image-preview');
-      if (overlay && preview) {
-        preview.src = img.src;
-        overlay.style.display = 'flex';
-      }
+      openImageLightbox(img.src);
     });
 
-    // 关闭图片预览
-    const imageOverlay = document.getElementById('md-image-overlay');
-    if (imageOverlay) {
-      imageOverlay.addEventListener('click', (e) => {
-        if (e.target === imageOverlay || e.target.classList.contains('md-image-close')) {
-          imageOverlay.style.display = 'none';
-        }
-      });
-    }
 
     // ==================== Mermaid 弹窗缩放/拖拽 ====================
     const mermaidZoomState = {
@@ -2485,10 +2615,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
 
     // 键盘快捷键
     document.addEventListener('keydown', (e) => {
-      // ESC 关闭图片预览和 Mermaid 预览
+      // ESC 关闭 Mermaid 预览（图片灯箱已有独立 ESC 处理）
       if (e.key === 'Escape') {
-        const imgOverlay = document.getElementById('md-image-overlay');
-        if (imgOverlay) imgOverlay.style.display = 'none';
         const mmdOverlay = document.getElementById('md-mermaid-overlay');
         if (mmdOverlay) mmdOverlay.style.display = 'none';
       }

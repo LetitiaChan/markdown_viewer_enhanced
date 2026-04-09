@@ -53,8 +53,9 @@
     'code.copied': '✅ Copied',
     'code.mermaidCopy.title': 'Copy Mermaid source',
 
-    // ========== Image Preview ==========
+    // ========== Image Lightbox ==========
     'imagePreview.close': '✕ Close',
+    'lightbox.close': '✕ Close',
 
     // ========== Mermaid Preview ==========
     'mermaid.close': '✕ Close',

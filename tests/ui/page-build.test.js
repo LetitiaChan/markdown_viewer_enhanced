@@ -75,8 +75,8 @@ describe('BT-page-build.1 DOM 结构', () => {
     expect(document.getElementById('btn-float-top')).not.toBeNull();
   });
 
-  test('1.7 图片预览遮罩存在', () => {
-    expect(document.getElementById('md-image-overlay')).not.toBeNull();
+  test('1.7 图片灯箱为动态创建（不预存在于 DOM）', () => {
+    expect(document.querySelector('.md-lightbox-overlay')).toBeNull();
   });
 
   test('1.8 Mermaid 预览遮罩存在', () => {
