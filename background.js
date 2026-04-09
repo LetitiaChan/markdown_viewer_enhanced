@@ -17,6 +17,7 @@ const DEFAULT_SETTINGS = {
   maxWidth: 1200,           // 内容最大宽度(px)
   fontFamily: 'system',     // 字体：system / serif / mono
   showLineNumbers: false,   // 代码块显示行号
+  language: 'zh-CN',        // 界面语言：zh-CN / en
 };
 
 // 插件安装时初始化设置
@@ -122,6 +123,9 @@ async function injectContentScripts(tabId) {
         'libs/hljs-protobuf.min.js',
         'libs/mermaid.min.js',
         'libs/katex.min.js',
+        'i18n/zh-CN.js',
+        'i18n/en.js',
+        'i18n/i18n.js',
         'content/content.js',
       ],
     });

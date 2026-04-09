@@ -31,6 +31,8 @@
   const fontBtns = document.querySelectorAll('.btn-option[data-font]');
   const tocPosBtns = document.querySelectorAll('.toc-pos-btn');
 
+  const langBtns = document.querySelectorAll('.lang-btn');
+
   // 当前设置
   let currentSettings = {};
 
@@ -38,6 +40,15 @@
   async function init() {
     // 加载设置
     await loadSettings();
+    // 初始化 i18n
+    if (typeof window.__I18N__ !== 'undefined' && currentSettings.language) {
+      window.__I18N__.setLanguage(currentSettings.language);
+      window.__I18N__.applyLanguage();
+    }
+    // 同步语言按钮状态
+    langBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === (currentSettings.language || 'zh-CN'));
+    });
     // 检测当前页面状态
     await detectPageStatus();
     // 绑定事件
@@ -119,14 +130,14 @@
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab || !tab.url) {
-        setStatus(false, '无法检测当前页面');
+        setStatus(false, typeof t === 'function' ? t('popup.cannotDetect') : '无法检测当前页面');
         return;
       }
 
       // 检测是否为 Markdown 文件
       chrome.runtime.sendMessage({ type: 'IS_MARKDOWN', url: tab.url }, (response) => {
         if (response && response.isMarkdown) {
-          setStatus(true, '当前页面为 Markdown 文件 ✓');
+          setStatus(true, typeof t === 'function' ? t('popup.isMarkdown') : '当前页面为 Markdown 文件 ✓');
 
           // 设置 badge
           chrome.runtime.sendMessage({ type: 'SET_BADGE', tabId: tab.id, isMarkdown: true });
@@ -144,11 +155,11 @@
             });
           }
         } else {
-          setStatus(false, '当前页面非 Markdown 文件');
+          setStatus(false, typeof t === 'function' ? t('popup.notMarkdown') : '当前页面非 Markdown 文件');
         }
       });
     } catch (err) {
-      setStatus(false, '检测失败');
+      setStatus(false, typeof t === 'function' ? t('popup.detectFailed') : '检测失败');
     }
   }
 
@@ -301,6 +312,24 @@
       });
     }
 
+    // 语言切换
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const newLang = btn.dataset.lang;
+        if (newLang && newLang !== currentSettings.language) {
+          langBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentSettings.language = newLang;
+          saveSettings();
+          // 应用新语言到 popup UI
+          if (typeof window.__I18N__ !== 'undefined') {
+            window.__I18N__.setLanguage(newLang);
+            window.__I18N__.applyLanguage();
+          }
+        }
+      });
+    });
+
     // 重置按钮
     btnReset.addEventListener('click', () => {
       chrome.runtime.sendMessage({ type: 'RESET_SETTINGS' }, (response) => {
@@ -330,23 +359,23 @@
       btnRender.addEventListener('click', async () => {
         try {
           btnRender.disabled = true;
-          btnRender.textContent = '⏳ 渲染中...';
+          btnRender.textContent = typeof t === 'function' ? t('popup.rendering') : '⏳ 渲染中...';
           const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
           if (tab && tab.id) {
             chrome.runtime.sendMessage({ type: 'INJECT_CONTENT_SCRIPTS', tabId: tab.id }, (response) => {
               if (response && response.success) {
-                btnRender.textContent = '✅ 渲染完成';
+                btnRender.textContent = typeof t === 'function' ? t('popup.renderDone') : '✅ 渲染完成';
                 renderBar.style.display = 'none';
-                setStatus(true, '当前页面为 Markdown 文件 ✓');
+                setStatus(true, typeof t === 'function' ? t('popup.isMarkdown') : '当前页面为 Markdown 文件 ✓');
                 setTimeout(() => window.close(), 500);
               } else {
-                btnRender.textContent = '❌ 渲染失败，请重试';
+                btnRender.textContent = typeof t === 'function' ? t('popup.renderFailed') : '❌ 渲染失败，请重试';
                 btnRender.disabled = false;
               }
             });
           }
         } catch (err) {
-          btnRender.textContent = '❌ 渲染失败';
+          btnRender.textContent = typeof t === 'function' ? t('popup.renderError') : '❌ 渲染失败';
           btnRender.disabled = false;
         }
       });

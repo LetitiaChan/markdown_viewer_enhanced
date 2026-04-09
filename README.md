@@ -28,6 +28,7 @@ A browser extension that elegantly renders Markdown files with a file browser si
 - 🖼️ **Image Enhancement** — Click-to-zoom, lazy loading
 - 📝 **Extended Syntax** — GitHub alerts (including `[!BLANK]`), task lists, footnotes, definition lists, enhanced tables
 - ⚙️ **Settings System** — Popup quick panel + Options advanced page, real-time push to all tabs
+- 🌐 **Multi-language** — Chinese and English interface, switchable in settings
 
 ### 📋 Supported File Formats
 
@@ -133,6 +134,7 @@ npm run test:coverage
 - 🖼️ **图片增强** — 点击放大预览、懒加载
 - 📝 **扩展语法** — GitHub 告警块（含 `[!BLANK]`）、任务列表、脚注、定义列表、增强表格
 - ⚙️ **设置系统** — Popup 快捷面板 + Options 高级设置，实时推送到所有标签页
+- 🌐 **多语言支持** — 中文和英文界面，可在设置中切换
 
 ### 📋 支持的文件格式
 

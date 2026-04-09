@@ -36,6 +36,15 @@
   // ========== 初始化 ==========
   async function init() {
     await loadSettings();
+    // 初始化 i18n
+    if (typeof window.__I18N__ !== 'undefined' && currentSettings.language) {
+      window.__I18N__.setLanguage(currentSettings.language);
+      window.__I18N__.applyLanguage();
+    }
+    // 同步语言按钮状态
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === (currentSettings.language || 'zh-CN'));
+    });
     bindEvents();
   }
 
@@ -186,16 +195,17 @@
   }
 
   // ========== 显示保存提示 ==========
-  function showSaveToast(message = '✅ 设置已保存') {
+  function showSaveToast(message) {
     if (!saveToast) return;
-    saveToast.textContent = message;
+    const defaultMsg = typeof t === 'function' ? t('options.saved') : '✅ 设置已保存';
+    saveToast.textContent = message || defaultMsg;
     saveToast.classList.add('visible');
     if (saveToastTimer) {
       clearTimeout(saveToastTimer);
     }
     saveToastTimer = setTimeout(() => {
       saveToast.classList.remove('visible');
-      saveToast.textContent = '✅ 设置已保存';
+      saveToast.textContent = typeof t === 'function' ? t('options.saved') : '✅ 设置已保存';
       saveToastTimer = null;
     }, 2000);
   }
@@ -311,9 +321,27 @@
       scheduleAutoSave(0);
     });
 
+    // 语言切换
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const newLang = btn.dataset.lang;
+        if (newLang && newLang !== currentSettings.language) {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentSettings.language = newLang;
+          scheduleAutoSave(0);
+          // 应用新语言
+          if (typeof window.__I18N__ !== 'undefined') {
+            window.__I18N__.setLanguage(newLang);
+            window.__I18N__.applyLanguage();
+          }
+        }
+      });
+    });
+
     // 恢复默认设置
     btnReset.addEventListener('click', () => {
-      if (!confirm('确定要恢复所有设置为默认值吗？此操作不可撤销。')) {
+      if (!confirm(typeof t === 'function' ? t('options.resetConfirm') : '确定要恢复所有设置为默认值吗？此操作不可撤销。')) {
         return;
       }
       chrome.runtime.sendMessage({ type: 'RESET_SETTINGS' }, (response) => {
@@ -325,7 +353,7 @@
           currentSettings = response.settings;
           applySettingsToUI(currentSettings);
           notifyAllTabs();
-          showSaveToast('✅ 已恢复默认设置');
+          showSaveToast(typeof t === 'function' ? t('options.resetDone') : '✅ 已恢复默认设置');
         }
       });
     });

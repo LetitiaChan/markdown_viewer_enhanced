@@ -45,6 +45,7 @@
     maxWidth: 1200,
     fontFamily: 'system',
     showLineNumbers: false,
+    language: 'zh-CN',
   };
 
   let currentSettings = { ...DEFAULT_SETTINGS };
@@ -348,7 +349,7 @@
         const base64Code = btoa(unescape(encodeURIComponent(code)));
         return `<div class="mermaid-container">
           <div class="mermaid" data-source="${base64Code}"></div>
-          <button class="mermaid-copy-btn" title="复制 Mermaid 源码">📋</button>
+          <button class="mermaid-copy-btn" title="${t('code.mermaidCopy.title')}">📋</button>
           <pre class="mermaid-source" style="display:none"><code>${escapeHtml(code)}</code></pre>
         </div>`;
       }
@@ -397,7 +398,7 @@
       if (lang && typeof hljs !== 'undefined' && hljs.getLanguage(lang)) {
         try {
           const highlighted = hljs.highlight(code, { language: lang }).value;
-          return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang}</span><button class="code-copy-btn" title="复制代码">📋 复制</button></div><pre><code class="hljs language-${lang}">${wrapLines(highlighted, lang)}</code></pre></div>`;
+          return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang}</span><button class="code-copy-btn" title="${t('code.copy.title')}">${t('code.copy')}</button></div><pre><code class="hljs language-${lang}">${wrapLines(highlighted, lang)}</code></pre></div>`;
         } catch (e) {
           // 高亮失败，使用默认渲染
         }
@@ -407,13 +408,13 @@
       if (typeof hljs !== 'undefined') {
         try {
           const highlighted = hljs.highlightAuto(code).value;
-          return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang || 'code'}</span><button class="code-copy-btn" title="复制代码">📋 复制</button></div><pre><code class="hljs">${wrapLines(highlighted, lang)}</code></pre></div>`;
+          return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang || 'code'}</span><button class="code-copy-btn" title="${t('code.copy.title')}">${t('code.copy')}</button></div><pre><code class="hljs">${wrapLines(highlighted, lang)}</code></pre></div>`;
         } catch (e) {
           // 忽略
         }
       }
 
-      return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang || 'code'}</span><button class="code-copy-btn" title="复制代码">📋 复制</button></div><pre><code>${wrapLines(escapeHtml(code))}</code></pre></div>`;
+      return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang || 'code'}</span><button class="code-copy-btn" title="${t('code.copy.title')}">${t('code.copy')}</button></div><pre><code>${wrapLines(escapeHtml(code))}</code></pre></div>`;
     };
 
     // 自定义链接渲染 - 外部链接新窗口打开
@@ -491,11 +492,11 @@
 
       // 定义支持的告警类型及其图标/标题
       const alertTypes = {
-        NOTE:      { icon: 'ℹ️', title: '注意',  class: 'note' },
-        TIP:       { icon: '💡', title: '提示',  class: 'tip' },
-        IMPORTANT: { icon: '❗', title: '重要',  class: 'important' },
-        WARNING:   { icon: '⚠️', title: '警告',  class: 'warning' },
-        CAUTION:   { icon: '🔴', title: '注意',  class: 'caution' },
+        NOTE:      { icon: 'ℹ️', title: t('alert.note'),      class: 'note' },
+        TIP:       { icon: '💡', title: t('alert.tip'),       class: 'tip' },
+        IMPORTANT: { icon: '❗', title: t('alert.important'),  class: 'important' },
+        WARNING:   { icon: '⚠️', title: t('alert.warning'),   class: 'warning' },
+        CAUTION:   { icon: '🔴', title: t('alert.caution'),   class: 'caution' },
       };
 
       // 尝试匹配 [!TYPE] 语法（在渲染后的 HTML 中匹配）
@@ -690,11 +691,11 @@
             <span class="md-toolbar-title" title="${fileName}">📄 ${fileName}</span>
           </div>
           <div class="md-toolbar-right">
-            <button id="btn-toggle-toc" class="md-toolbar-btn" title="切换目录">📑 目录</button>
-            <button id="btn-toggle-theme" class="md-toolbar-btn" title="切换主题">🌓 主题</button>
-            <button id="btn-toggle-raw" class="md-toolbar-btn" title="查看源码">📝 源码</button>
-            <button id="btn-settings" class="md-toolbar-btn" title="设置">⚙️ 设置</button>
-            <button id="btn-refresh" class="md-toolbar-btn" title="刷新">🔃 刷新</button>
+            <button id="btn-toggle-toc" class="md-toolbar-btn" title="${t('toolbar.toc.title')}">${t('toolbar.toc')}</button>
+            <button id="btn-toggle-theme" class="md-toolbar-btn" title="${t('toolbar.theme.title')}">${t('toolbar.theme')}</button>
+            <button id="btn-toggle-raw" class="md-toolbar-btn" title="${t('toolbar.source.title')}">${t('toolbar.source')}</button>
+            <button id="btn-settings" class="md-toolbar-btn" title="${t('toolbar.settings.title')}">${t('toolbar.settings')}</button>
+            <button id="btn-refresh" class="md-toolbar-btn" title="${t('toolbar.refresh.title')}">${t('toolbar.refresh')}</button>
           </div>
         </div>
 
@@ -703,12 +704,12 @@
           <aside id="md-toc-sidebar" class="md-toc-sidebar toc-${currentSettings.tocPosition} ${currentSettings.showToc ? 'visible' : 'hidden'}">
             <!-- 页签栏 -->
             <div class="sidebar-tabs">
-              <button class="sidebar-tab" data-tab="files" title="文件浏览器">📁</button>
-              <button class="sidebar-tab active" data-tab="toc" title="目录导航">≡</button>
+              <button class="sidebar-tab" data-tab="files" title="${t('sidebar.files.title')}">📁</button>
+              <button class="sidebar-tab active" data-tab="toc" title="${t('sidebar.toc.title')}">≡</button>
               <span class="sidebar-tab-spacer"></span>
               <div class="sidebar-tab-actions">
-                <button id="btn-sidebar-menu" class="sidebar-action-btn" title="更多操作">⋯</button>
-                <button id="btn-close-toc" class="md-toc-close" title="关闭侧边栏">✕</button>
+                <button id="btn-sidebar-menu" class="sidebar-action-btn" title="${t('sidebar.menu.title')}">⋯</button>
+                <button id="btn-close-toc" class="md-toc-close" title="${t('sidebar.close.title')}">✕</button>
               </div>
             </div>
             <!-- 侧边栏菜单（内联折叠） -->
@@ -736,27 +737,27 @@
         </div>
 
         <!-- 回到顶部浮动按钮 -->
-        <button id="btn-float-top" class="md-float-top" style="display:none;" title="回到顶部">⬆️</button>
+        <button id="btn-float-top" class="md-float-top" style="display:none;" title="${t('sidebar.backToTop.title')}">⬆️</button>
 
         <!-- 图片预览遮罩 -->
         <div id="md-image-overlay" class="md-image-overlay" style="display:none;">
           <img id="md-image-preview" class="md-image-preview" />
-          <button class="md-image-close">✕ 关闭</button>
+          <button class="md-image-close">${t('imagePreview.close')}</button>
         </div>
 
         <!-- Mermaid 图表预览遮罩 -->
         <div id="md-mermaid-overlay" class="md-mermaid-overlay" style="display:none;">
           <div class="md-mermaid-zoom-bar">
-            <button class="md-mermaid-zoom-btn" id="btn-mermaid-zoom-out" title="缩小">➖</button>
+            <button class="md-mermaid-zoom-btn" id="btn-mermaid-zoom-out" title="${t('mermaid.zoomOut.title')}">➖</button>
             <span class="md-mermaid-zoom-level" id="md-mermaid-zoom-level">100%</span>
-            <button class="md-mermaid-zoom-btn" id="btn-mermaid-zoom-in" title="放大">➕</button>
-            <button class="md-mermaid-zoom-btn" id="btn-mermaid-zoom-reset" title="重置">↺ 重置</button>
-            <button class="md-mermaid-zoom-btn" id="btn-mermaid-zoom-fit" title="适应窗口">⊡ 适应</button>
+            <button class="md-mermaid-zoom-btn" id="btn-mermaid-zoom-in" title="${t('mermaid.zoomIn.title')}">➕</button>
+            <button class="md-mermaid-zoom-btn" id="btn-mermaid-zoom-reset" title="${t('mermaid.zoomReset.title')}">${t('mermaid.zoomReset')}</button>
+            <button class="md-mermaid-zoom-btn" id="btn-mermaid-zoom-fit" title="${t('mermaid.zoomFit.title')}">${t('mermaid.zoomFit')}</button>
           </div>
           <div id="md-mermaid-preview" class="md-mermaid-preview">
             <div id="md-mermaid-canvas" class="md-mermaid-canvas"></div>
           </div>
-          <button class="md-mermaid-close">✕ 关闭</button>
+          <button class="md-mermaid-close">${t('mermaid.close')}</button>
         </div>
 
         <!-- 内嵌设置弹窗（全屏卡片式） -->
@@ -765,8 +766,8 @@
             <!-- 渐变头部 -->
             <div class="md-settings-header">
               <div class="md-settings-header-info">
-                <div class="md-settings-header-title">⚙️ 设置</div>
-                <div class="md-settings-header-desc">自定义阅读工具的外观与行为</div>
+                <div class="md-settings-header-title">${t('settings.title')}</div>
+                <div class="md-settings-header-desc">${t('settings.desc')}</div>
               </div>
               <button id="btn-settings-close" class="md-settings-close">✕</button>
             </div>
@@ -774,22 +775,22 @@
             <!-- 可滚动内容区 -->
             <div class="md-settings-body">
               <!-- 提示条 -->
-              <div class="md-settings-tip">✨ 调整设置后可实时预览效果</div>
+              <div class="md-settings-tip">${t('settings.tip')}</div>
 
               <!-- 外观主题卡片 -->
               <div class="md-settings-card">
                 <div class="md-settings-card-header">
                   <span class="md-settings-card-icon">🎨</span>
                   <div>
-                    <div class="md-settings-card-title">外观主题</div>
-                    <div class="md-settings-card-desc">选择界面的整体风格</div>
+                    <div class="md-settings-card-title">${t('settings.appearance.title')}</div>
+                    <div class="md-settings-card-desc">${t('settings.appearance.desc')}</div>
                   </div>
                 </div>
                 <div class="md-settings-card-body">
                   <div class="md-settings-theme-selector">
-                    <button class="md-stg-theme-btn" data-theme="light"><span>🌞</span> 亮色</button>
-                    <button class="md-stg-theme-btn" data-theme="dark"><span>🌙</span> 暗色</button>
-                    <button class="md-stg-theme-btn" data-theme="auto"><span>💻</span> 跟随系统</button>
+                    <button class="md-stg-theme-btn" data-theme="light"><span>🌞</span> ${t('settings.theme.light')}</button>
+                    <button class="md-stg-theme-btn" data-theme="dark"><span>🌙</span> ${t('settings.theme.dark')}</button>
+                    <button class="md-stg-theme-btn" data-theme="auto"><span>💻</span> ${t('settings.theme.auto')}</button>
                   </div>
                 </div>
               </div>
@@ -799,24 +800,24 @@
                 <div class="md-settings-card-header">
                   <span class="md-settings-card-icon">🖌️</span>
                   <div>
-                    <div class="md-settings-card-title">代码高亮主题</div>
-                    <div class="md-settings-card-desc">选择代码块的高亮配色方案</div>
+                    <div class="md-settings-card-title">${t('settings.codeTheme.title')}</div>
+                    <div class="md-settings-card-desc">${t('settings.codeTheme.desc')}</div>
                   </div>
                 </div>
                 <div class="md-settings-card-body">
                   <div class="md-settings-code-theme-row">
                     <div class="md-settings-code-theme-label">
-                      <span class="md-settings-label">代码高亮主题</span>
-                      <span class="md-settings-label-desc">选择代码块的高亮配色方案</span>
+                      <span class="md-settings-label">${t('settings.codeTheme.title')}</span>
+                      <span class="md-settings-label-desc">${t('settings.codeTheme.desc')}</span>
                     </div>
                     <select id="stg-codeTheme" class="md-settings-select">
-                    <optgroup label="🔆 亮色">
+                    <optgroup label="${t('settings.codeTheme.groupLight')}">
                       <option value="default-light-modern">Default Light Modern</option>
                       <option value="github">GitHub</option>
                       <option value="atom-one-light">Atom One Light</option>
                       <option value="solarized-light">Solarized Light</option>
                     </optgroup>
-                    <optgroup label="🌙 暗色">
+                    <optgroup label="${t('settings.codeTheme.groupDark')}">
                       <option value="default-dark-modern">Default Dark Modern</option>
                       <option value="github-dark">GitHub Dark</option>
                       <option value="monokai">Monokai</option>
@@ -828,8 +829,8 @@
                       <option value="solarized-dark">Solarized Dark</option>
                       <option value="tokyo-night">Tokyo Night</option>
                     </optgroup>
-                    <optgroup label="🔄 自动">
-                      <option value="auto">跟随页面主题</option>
+                    <optgroup label="${t('settings.codeTheme.groupAuto')}">
+                      <option value="auto">${t('settings.codeTheme.followPage')}</option>
                     </optgroup>
                   </select>
                   </div>
@@ -851,8 +852,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                 <div class="md-settings-card-header">
                   <span class="md-settings-card-icon">📐</span>
                   <div>
-                    <div class="md-settings-card-title">排版设置</div>
-                    <div class="md-settings-card-desc">调整文档阅读体验</div>
+                    <div class="md-settings-card-title">${t('settings.typography.title')}</div>
+                    <div class="md-settings-card-desc">${t('settings.typography.desc')}</div>
                   </div>
                 </div>
                 <div class="md-settings-card-body">
@@ -861,14 +862,14 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🔤</span>
                       <div>
-                        <span class="md-settings-label">正文字体</span>
-                        <span class="md-settings-label-desc">选择 Markdown 正文的显示字体</span>
+                        <span class="md-settings-label">${t('settings.font.title')}</span>
+                        <span class="md-settings-label-desc">${t('settings.font.desc')}</span>
                       </div>
                     </div>
                     <div class="md-stg-btn-group">
-                      <button class="md-stg-btn-option" data-font="system">系统默认</button>
-                      <button class="md-stg-btn-option" data-font="serif">衬线体</button>
-                      <button class="md-stg-btn-option" data-font="mono">等宽字体</button>
+                      <button class="md-stg-btn-option" data-font="system">${t('settings.font.system')}</button>
+                      <button class="md-stg-btn-option" data-font="serif">${t('settings.font.serif')}</button>
+                      <button class="md-stg-btn-option" data-font="mono">${t('settings.font.mono')}</button>
                     </div>
                   </div>
                   <!-- 字体大小 -->
@@ -876,8 +877,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🔠</span>
                       <div>
-                        <span class="md-settings-label">字体大小</span>
-                        <span class="md-settings-label-desc">调整正文字体大小 (12px - 24px)</span>
+                        <span class="md-settings-label">${t('settings.fontSize.title')}</span>
+                        <span class="md-settings-label-desc">${t('settings.fontSize.desc')}</span>
                       </div>
                     </div>
                   </div>
@@ -892,15 +893,15 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">↕️</span>
                       <div>
-                        <span class="md-settings-label">行高</span>
-                        <span class="md-settings-label-desc">调整段落行高 (1.2 - 2.0)</span>
+                        <span class="md-settings-label">${t('settings.lineHeight.title')}</span>
+                        <span class="md-settings-label-desc">${t('settings.lineHeight.desc')}</span>
                       </div>
                     </div>
                   </div>
                   <div class="md-stg-slider-row">
-                    <span class="md-stg-slider-label">紧凑</span>
+                    <span class="md-stg-slider-label">${t('settings.lineHeight.compact')}</span>
                     <input type="range" id="stg-lineHeight" min="1.2" max="2.0" step="0.1" value="1.6">
-                    <span class="md-stg-slider-label">宽松</span>
+                    <span class="md-stg-slider-label">${t('settings.lineHeight.loose')}</span>
                     <span class="md-stg-slider-value" id="stg-lineHeightVal">1.6</span>
                   </div>
                   <!-- 内容最大宽度 -->
@@ -908,15 +909,15 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">↔️</span>
                       <div>
-                        <span class="md-settings-label">内容最大宽度</span>
-                        <span class="md-settings-label-desc">调整正文区域最大宽度 (600px - 1400px)</span>
+                        <span class="md-settings-label">${t('settings.maxWidth.title')}</span>
+                        <span class="md-settings-label-desc">${t('settings.maxWidth.desc')}</span>
                       </div>
                     </div>
                   </div>
                   <div class="md-stg-slider-row">
-                    <span class="md-stg-slider-label">窄</span>
+                    <span class="md-stg-slider-label">${t('settings.maxWidth.narrow')}</span>
                     <input type="range" id="stg-maxWidth" min="600" max="1400" step="50" value="1200">
-                    <span class="md-stg-slider-label">宽</span>
+                    <span class="md-stg-slider-label">${t('settings.maxWidth.wide')}</span>
                     <span class="md-stg-slider-value" id="stg-maxWidthVal">1200px</span>
                   </div>
                 </div>
@@ -927,55 +928,65 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                 <div class="md-settings-card-header">
                   <span class="md-settings-card-icon">⚙️</span>
                   <div>
-                    <div class="md-settings-card-title">功能开关</div>
-                    <div class="md-settings-card-desc">启用或禁用各项功能</div>
+                    <div class="md-settings-card-title">${t('settings.features.title')}</div>
+                    <div class="md-settings-card-desc">${t('settings.features.desc')}</div>
                   </div>
                 </div>
                 <div class="md-settings-card-body">
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">📑</span>
-                      <span class="md-settings-label">显示目录</span>
+                      <span class="md-settings-label">${t('settings.showToc')}</span>
                     </div>
                     <label class="md-stg-toggle"><input type="checkbox" id="stg-showToc" checked><span class="md-stg-toggle-slider"></span></label>
                   </div>
                   <div class="md-settings-item" id="stg-tocPosRow">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">📌</span>
-                      <span class="md-settings-label">目录位置</span>
+                      <span class="md-settings-label">${t('settings.tocPosition')}</span>
                     </div>
                     <div class="md-stg-btn-group">
-                      <button class="md-stg-toc-pos-btn" data-pos="left">左侧</button>
-                      <button class="md-stg-toc-pos-btn" data-pos="right">右侧</button>
+                      <button class="md-stg-toc-pos-btn" data-pos="left">${t('settings.tocPosition.left')}</button>
+                      <button class="md-stg-toc-pos-btn" data-pos="right">${t('settings.tocPosition.right')}</button>
                     </div>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">📊</span>
-                      <span class="md-settings-label">Mermaid 图表</span>
+                      <span class="md-settings-label">${t('settings.mermaid')}</span>
                     </div>
                     <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMermaid" checked><span class="md-stg-toggle-slider"></span></label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🔢</span>
-                      <span class="md-settings-label">数学公式渲染</span>
+                      <span class="md-settings-label">${t('settings.mathJax')}</span>
                     </div>
                     <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMathJax"><span class="md-stg-toggle-slider"></span></label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">#️⃣</span>
-                      <span class="md-settings-label">显示代码行号</span>
+                      <span class="md-settings-label">${t('settings.lineNumbers')}</span>
                     </div>
                     <label class="md-stg-toggle"><input type="checkbox" id="stg-showLineNumbers"><span class="md-stg-toggle-slider"></span></label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🔍</span>
-                      <span class="md-settings-label">自动检测 Markdown</span>
+                      <span class="md-settings-label">${t('settings.autoDetect')}</span>
                     </div>
                     <label class="md-stg-toggle"><input type="checkbox" id="stg-autoDetect" checked><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">🌐</span>
+                      <span class="md-settings-label">${t('settings.language.title')}</span>
+                    </div>
+                    <div class="md-stg-btn-group">
+                      <button class="md-stg-lang-btn" data-lang="zh-CN">中文</button>
+                      <button class="md-stg-lang-btn" data-lang="en">English</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -983,8 +994,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
 
             <!-- 底部固定栏 -->
             <div class="md-settings-footer">
-              <span class="md-settings-footer-hint">🔖 设置修改后自动保存</span>
-              <button id="btn-settings-reset" class="md-stg-footer-btn">恢复默认</button>
+              <span class="md-settings-footer-hint">${t('settings.autoSave')}</span>
+              <button id="btn-settings-reset" class="md-stg-footer-btn">${t('settings.resetDefault')}</button>
             </div>
           </div>
         </div>
@@ -1029,7 +1040,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       const isParent = hasChildren[index];
       const parentClass = isParent ? ' md-toc-parent' : '';
       const toggleBtn = isParent
-        ? `<span class="md-toc-toggle" data-index="${index}" title="折叠/展开">▾</span>`
+        ? `<span class="md-toc-toggle" data-index="${index}" title="${t('sidebar.toc.toggle.title')}">▾</span>`
         : `<span class="md-toc-toggle-placeholder"></span>`;
 
       tocHtml += `<li class="md-toc-item toc-level-${indent}${parentClass}" data-toc-index="${index}" data-toc-depth="${item.depth}" style="padding-left:${indent * 16}px;">
@@ -1452,7 +1463,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     const fileTreeEl = document.getElementById('file-tree');
     if (!fileTreeEl) return;
 
-    fileTreeEl.innerHTML = '<div class="file-tree-loading">加载中...</div>';
+    fileTreeEl.innerHTML = '<div class="file-tree-loading">' + t('fileTree.loading') + '</div>';
 
     // 渲染面包屑路径
     renderBreadcrumb();
@@ -1474,7 +1485,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
   function renderFileTree(container, items, depth = 0) {
     if (!items || items.length === 0) {
       if (depth === 0) {
-        container.innerHTML = '<div class="file-tree-empty">暂无文件</div>';
+        container.innerHTML = '<div class="file-tree-empty">' + t('fileTree.empty') + '</div>';
       }
       return;
     }
@@ -1487,7 +1498,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
 
     if (filtered.length === 0) {
       if (depth === 0) {
-        container.innerHTML = '<div class="file-tree-empty">当前目录无 Markdown 文件</div>';
+        container.innerHTML = '<div class="file-tree-empty">' + t('fileTree.noMarkdown') + '</div>';
       }
       return;
     }
@@ -1658,7 +1669,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
 
       // 如果子目录内容尚未加载
       if (!subdirEl.querySelector('.file-tree-list')) {
-        subdirEl.innerHTML = '<div class="file-tree-loading" style="padding:4px 12px;font-size:12px;">加载中...</div>';
+        subdirEl.innerHTML = '<div class="file-tree-loading" style="padding:4px 12px;font-size:12px;">' + t('fileTree.loading') + '</div>';
 
         try {
           const items = await fetchDirectoryViaBackground(url);
@@ -1672,11 +1683,11 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
             // 渲染子目录内容
             subdirEl.innerHTML = buildSubTreeHtml(items, depth + 1);
           } else {
-            subdirEl.innerHTML = '<div class="file-tree-empty" style="padding:4px 12px;font-size:12px;padding-left:' + (12 + (getItemDepth(itemEl) + 1) * 16) + 'px;">空文件夹</div>';
+            subdirEl.innerHTML = '<div class="file-tree-empty" style="padding:4px 12px;font-size:12px;padding-left:' + (12 + (getItemDepth(itemEl) + 1) * 16) + 'px;">' + t('fileTree.emptyFolder') + '</div>';
           }
         } catch (err) {
           console.warn('[MD Viewer] 加载子目录失败:', err);
-          subdirEl.innerHTML = '<div class="file-tree-empty" style="padding:4px 12px;font-size:12px;">加载失败</div>';
+          subdirEl.innerHTML = '<div class="file-tree-empty" style="padding:4px 12px;font-size:12px;">' + t('fileTree.loadFailed') + '</div>';
         }
       }
 
@@ -1701,29 +1712,29 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
 
     if (activeTab === 'toc') {
       menu.innerHTML = `
-        <div class="ctx-menu-item" data-action="toc-collapse-all">折叠全部</div>
-        <div class="ctx-menu-item" data-action="toc-expand-all">展开全部</div>
+        <div class="ctx-menu-item" data-action="toc-collapse-all">${t('menu.toc.collapseAll')}</div>
+        <div class="ctx-menu-item" data-action="toc-expand-all">${t('menu.toc.expandAll')}</div>
       `;
     } else if (activeTab === 'files') {
       const { sortBy, sortAsc, foldersFirst, showHidden } = fileTreeState;
       menu.innerHTML = `
-        <div class="ctx-menu-item" data-action="file-refresh">刷新</div>
-        <div class="ctx-menu-item" data-action="file-collapse-all">折叠全部</div>
+        <div class="ctx-menu-item" data-action="file-refresh">${t('menu.files.refresh')}</div>
+        <div class="ctx-menu-item" data-action="file-collapse-all">${t('menu.files.collapseAll')}</div>
         <div class="ctx-menu-divider"></div>
         <div class="ctx-menu-group">
-          <div class="ctx-menu-item ctx-menu-group-trigger" data-action="toggle-sort-group">排序顺序 <span class="ctx-menu-arrow">▸</span></div>
+          <div class="ctx-menu-item ctx-menu-group-trigger" data-action="toggle-sort-group">${t('menu.files.sortGroup')} <span class="ctx-menu-arrow">▸</span></div>
           <div class="ctx-menu-group-content" style="display: none;">
-            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'name' ? ' ctx-checked' : ''}" data-action="sort-name">按名称</div>
-            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'size' ? ' ctx-checked' : ''}" data-action="sort-size">按大小</div>
-            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'modified' ? ' ctx-checked' : ''}" data-action="sort-modified">按修改日期</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'name' ? ' ctx-checked' : ''}" data-action="sort-name">${t('menu.files.sortByName')}</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'size' ? ' ctx-checked' : ''}" data-action="sort-size">${t('menu.files.sortBySize')}</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${sortBy === 'modified' ? ' ctx-checked' : ''}" data-action="sort-modified">${t('menu.files.sortByModified')}</div>
             <div class="ctx-menu-divider"></div>
-            <div class="ctx-menu-item ctx-menu-sub-item${sortAsc ? ' ctx-checked' : ''}" data-action="sort-asc">升序</div>
-            <div class="ctx-menu-item ctx-menu-sub-item${!sortAsc ? ' ctx-checked' : ''}" data-action="sort-desc">降序</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${sortAsc ? ' ctx-checked' : ''}" data-action="sort-asc">${t('menu.files.sortAsc')}</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${!sortAsc ? ' ctx-checked' : ''}" data-action="sort-desc">${t('menu.files.sortDesc')}</div>
             <div class="ctx-menu-divider"></div>
-            <div class="ctx-menu-item ctx-menu-sub-item${foldersFirst ? ' ctx-checked' : ''}" data-action="toggle-folders-first">文件夹置顶</div>
+            <div class="ctx-menu-item ctx-menu-sub-item${foldersFirst ? ' ctx-checked' : ''}" data-action="toggle-folders-first">${t('menu.files.foldersFirst')}</div>
           </div>
         </div>
-        <div class="ctx-menu-item${showHidden ? ' ctx-checked' : ''}" data-action="toggle-hidden">显示隐藏文件</div>
+        <div class="ctx-menu-item${showHidden ? ' ctx-checked' : ''}" data-action="toggle-hidden">${t('menu.files.showHidden')}</div>
       `;
     }
   }
@@ -1846,7 +1857,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
           element.innerHTML = `<div class="mermaid-error">
             <p>⚠️ Mermaid 图表渲染失败</p>
             <pre>${escapeHtml(code)}</pre>
-            <p class="error-message">${escapeHtml(err.message || '未知错误')}</p>
+            <p class="error-message">${escapeHtml(err.message || t('error.unknown'))}</p>
           </div>`;
         }
       }
@@ -2153,11 +2164,11 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
         if (isShowingRaw) {
           rawContent.style.display = 'none';
           mdContent.style.display = 'block';
-          btnToggleRaw.textContent = '📝 源码';
+          btnToggleRaw.textContent = t('toolbar.source');
         } else {
           rawContent.style.display = 'block';
           mdContent.style.display = 'none';
-          btnToggleRaw.textContent = '📄 预览';
+          btnToggleRaw.textContent = t('toolbar.preview');
         }
       });
     }
@@ -2204,8 +2215,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
           const code = codeBlock.querySelector('code');
           if (code) {
             copyToClipboard(code.textContent);
-            e.target.textContent = '✅ 已复制';
-            setTimeout(() => { e.target.textContent = '📋 复制'; }, 2000);
+            e.target.textContent = t('code.copied');
+            setTimeout(() => { e.target.textContent = t('code.copy'); }, 2000);
           }
         }
       }
@@ -2659,6 +2670,11 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
 
     const stgAutoDetect = document.getElementById('stg-autoDetect');
     if (stgAutoDetect) stgAutoDetect.checked = currentSettings.autoDetect !== false;
+
+    // 语言按钮
+    document.querySelectorAll('.md-stg-lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === (currentSettings.language || 'zh-CN'));
+    });
   }
 
   /**
@@ -2822,6 +2838,19 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
         reRenderMermaid();
       });
     }
+
+    // 语言切换
+    document.querySelectorAll('.md-stg-lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const newLang = btn.dataset.lang;
+        if (newLang && newLang !== currentSettings.language) {
+          currentSettings.language = newLang;
+          saveSettings();
+          // 语言切换需要 reload 以重新渲染所有模板字符串
+          location.reload();
+        }
+      });
+    });
   }
 
   /**
@@ -3061,6 +3090,11 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     // 加载用户设置
     currentSettings = await loadSettings();
 
+    // 初始化 i18n 语言
+    if (typeof window.__I18N__ !== 'undefined' && currentSettings.language) {
+      window.__I18N__.setLanguage(currentSettings.language);
+    }
+
     // 检测系统主题
     if (currentSettings.theme === 'auto') {
       const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -3112,7 +3146,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       }
     } catch (err) {
       console.error('[MD Viewer] Markdown 解析失败:', err);
-      htmlContent = `<div class="md-error"><p>⚠️ Markdown 解析失败</p><pre>${escapeHtml(rawMarkdown)}</pre></div>`;
+      htmlContent = `<div class="md-error"><p>${t('error.parseFailed')}</p><pre>${escapeHtml(rawMarkdown)}</pre></div>`;
     }
 
     // 构建渲染页面

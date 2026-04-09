@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "Markdown Viewer Enhanced",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Render Markdown in your browser with Mermaid diagrams, syntax highlighting, TOC navigation, multiple themes, and more.",
+    "description": "Extension description"
+  }
+}

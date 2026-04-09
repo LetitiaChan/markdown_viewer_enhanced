@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "Markdown Viewer Enhanced",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "在浏览器中渲染 Markdown 文件，支持 Mermaid 图表、语法高亮、目录导航、多主题等功能。",
+    "description": "Extension description"
+  }
+}

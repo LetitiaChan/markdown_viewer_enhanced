@@ -1,0 +1,252 @@
+/**
+ * Markdown Viewer Enhanced - 中文语言包 (zh-CN)
+ */
+(function () {
+  'use strict';
+
+  const zh_CN = {
+    // ========== 工具栏 ==========
+    'toolbar.toc': '📑 目录',
+    'toolbar.toc.title': '切换目录',
+    'toolbar.theme': '🌓 主题',
+    'toolbar.theme.title': '切换主题',
+    'toolbar.source': '📝 源码',
+    'toolbar.source.title': '查看源码',
+    'toolbar.preview': '📄 预览',
+    'toolbar.settings': '⚙️ 设置',
+    'toolbar.settings.title': '设置',
+    'toolbar.refresh': '🔃 刷新',
+    'toolbar.refresh.title': '刷新',
+
+    // ========== 侧边栏 ==========
+    'sidebar.files.title': '文件浏览器',
+    'sidebar.toc.title': '目录导航',
+    'sidebar.menu.title': '更多操作',
+    'sidebar.close.title': '关闭侧边栏',
+    'sidebar.backToTop.title': '回到顶部',
+    'sidebar.toc.toggle.title': '折叠/展开',
+
+    // ========== 侧边栏菜单 ==========
+    'menu.toc.collapseAll': '折叠全部',
+    'menu.toc.expandAll': '展开全部',
+    'menu.files.refresh': '刷新',
+    'menu.files.collapseAll': '折叠全部',
+    'menu.files.sortGroup': '排序顺序',
+    'menu.files.sortByName': '按名称',
+    'menu.files.sortBySize': '按大小',
+    'menu.files.sortByModified': '按修改日期',
+    'menu.files.sortAsc': '升序',
+    'menu.files.sortDesc': '降序',
+    'menu.files.foldersFirst': '文件夹置顶',
+    'menu.files.showHidden': '显示隐藏文件',
+
+    // ========== 文件浏览器 ==========
+    'fileTree.loading': '加载中...',
+    'fileTree.empty': '暂无文件',
+    'fileTree.noMarkdown': '当前目录无 Markdown 文件',
+    'fileTree.emptyFolder': '空文件夹',
+    'fileTree.loadFailed': '加载失败',
+
+    // ========== 代码复制 ==========
+    'code.copy': '📋 复制',
+    'code.copy.title': '复制代码',
+    'code.copied': '✅ 已复制',
+    'code.mermaidCopy.title': '复制 Mermaid 源码',
+
+    // ========== 图片预览 ==========
+    'imagePreview.close': '✕ 关闭',
+
+    // ========== Mermaid 预览 ==========
+    'mermaid.close': '✕ 关闭',
+    'mermaid.zoomOut.title': '缩小',
+    'mermaid.zoomIn.title': '放大',
+    'mermaid.zoomReset': '↺ 重置',
+    'mermaid.zoomReset.title': '重置',
+    'mermaid.zoomFit': '⊡ 适应',
+    'mermaid.zoomFit.title': '适应窗口',
+
+    // ========== GitHub Alert ==========
+    'alert.note': '注意',
+    'alert.tip': '提示',
+    'alert.important': '重要',
+    'alert.warning': '警告',
+    'alert.caution': '注意',
+
+    // ========== 错误提示 ==========
+    'error.renderFailed': '渲染失败',
+    'error.parseFailed': '⚠️ Markdown 解析失败',
+    'error.unknown': '未知错误',
+
+    // ========== 内嵌设置面板 ==========
+    'settings.title': '⚙️ 设置',
+    'settings.desc': '自定义阅读工具的外观与行为',
+    'settings.tip': '✨ 调整设置后可实时预览效果',
+    'settings.autoSave': '🔖 设置修改后自动保存',
+    'settings.resetDefault': '恢复默认',
+
+    // 外观主题
+    'settings.appearance.title': '外观主题',
+    'settings.appearance.desc': '选择界面的整体风格',
+    'settings.theme.light': '亮色',
+    'settings.theme.dark': '暗色',
+    'settings.theme.auto': '跟随系统',
+
+    // 代码高亮
+    'settings.codeTheme.title': '代码高亮主题',
+    'settings.codeTheme.desc': '选择代码块的高亮配色方案',
+    'settings.codeTheme.groupLight': '🔆 亮色',
+    'settings.codeTheme.groupDark': '🌙 暗色',
+    'settings.codeTheme.groupAuto': '🔄 自动',
+    'settings.codeTheme.followPage': '跟随页面主题',
+
+    // 排版
+    'settings.typography.title': '排版设置',
+    'settings.typography.desc': '调整文档阅读体验',
+    'settings.font.title': '正文字体',
+    'settings.font.desc': '选择 Markdown 正文的显示字体',
+    'settings.font.system': '系统默认',
+    'settings.font.serif': '衬线体',
+    'settings.font.mono': '等宽字体',
+    'settings.fontSize.title': '字体大小',
+    'settings.fontSize.desc': '调整正文字体大小 (12px - 24px)',
+    'settings.lineHeight.title': '行高',
+    'settings.lineHeight.desc': '调整段落行高 (1.2 - 2.0)',
+    'settings.lineHeight.compact': '紧凑',
+    'settings.lineHeight.loose': '宽松',
+    'settings.maxWidth.title': '内容最大宽度',
+    'settings.maxWidth.desc': '调整正文区域最大宽度 (600px - 1400px)',
+    'settings.maxWidth.narrow': '窄',
+    'settings.maxWidth.wide': '宽',
+
+    // 功能开关
+    'settings.features.title': '功能开关',
+    'settings.features.desc': '启用或禁用各项功能',
+    'settings.showToc': '显示目录',
+    'settings.tocPosition': '目录位置',
+    'settings.tocPosition.left': '左侧',
+    'settings.tocPosition.right': '右侧',
+    'settings.mermaid': 'Mermaid 图表',
+    'settings.mathJax': '数学公式渲染',
+    'settings.lineNumbers': '显示代码行号',
+    'settings.autoDetect': '自动检测 Markdown',
+
+    // 语言
+    'settings.language.title': '界面语言',
+    'settings.language.desc': '选择界面显示语言',
+
+    // ========== Options 设置页 ==========
+    'options.title': 'Markdown Viewer Enhanced - 设置',
+    'options.headerDesc': '在浏览器中优雅地渲染 Markdown 文件，支持 Mermaid 图表、代码高亮、目录导航',
+    'options.tip': '修改设置后将<strong>自动实时保存</strong>，并立即应用到已打开的 Markdown 页面。',
+    'options.theme.light': '浅色主题',
+    'options.theme.dark': '深色主题',
+    'options.theme.auto': '跟随系统',
+    'options.codeTheme.title': '代码高亮主题',
+    'options.codeTheme.desc': '选择代码块的高亮配色方案',
+    'options.font.title': '正文字体',
+    'options.font.desc': '选择 Markdown 正文的显示字体',
+    'options.font.system': '系统默认',
+    'options.font.serif': '衬线体',
+    'options.font.mono': '等宽字体',
+    'options.fontSize.title': '字体大小',
+    'options.fontSize.desc': '调整正文字体大小（12px - 24px）',
+    'options.lineHeight.title': '行高',
+    'options.lineHeight.desc': '调整段落行高（1.2 - 2.0）',
+    'options.lineHeight.compact': '紧凑',
+    'options.lineHeight.loose': '宽松',
+    'options.maxWidth.title': '内容最大宽度',
+    'options.maxWidth.desc': '调整正文区域最大宽度（600px - 1400px）',
+    'options.maxWidth.narrow': '窄',
+    'options.maxWidth.wide': '宽',
+    'options.preview.title': '排版预览',
+    'options.preview.text1': '这是一段预览文本，用于展示当前排版设置的效果。The quick brown fox jumps over the lazy dog.',
+    'options.preview.text2': '支持渲染 <code>Mermaid</code> 图表和代码高亮，让 Markdown 阅读体验更加出色。',
+    'options.showToc.title': '显示目录导航',
+    'options.showToc.desc': '在侧边栏显示文档目录，方便快速跳转',
+    'options.tocPosition.title': '目录位置',
+    'options.tocPosition.desc': '选择目录侧边栏的显示位置',
+    'options.tocPosition.left': '📍 左侧',
+    'options.tocPosition.right': '📍 右侧',
+    'options.mermaid.title': 'Mermaid 图表渲染',
+    'options.mermaid.desc': '启用 Mermaid 语法渲染流程图、时序图、甘特图等',
+    'options.mathJax.title': '数学公式渲染',
+    'options.mathJax.desc': '启用 MathJax/KaTeX 渲染 LaTeX 数学公式（实验性功能）',
+    'options.lineNumbers.title': '显示代码行号',
+    'options.lineNumbers.desc': '在代码块左侧显示行号，方便代码引用和阅读',
+    'options.autoDetect.title': '自动检测 Markdown',
+    'options.autoDetect.desc': '自动识别 .md / .markdown 等扩展名的文件并渲染',
+    'options.shortcuts.title': '快捷键',
+    'options.shortcuts.toggleToc': '切换目录侧边栏',
+    'options.shortcuts.toggleTocDesc': '点击工具栏 <span class="kbd">📑 目录</span> 按钮',
+    'options.shortcuts.toggleTheme': '切换主题',
+    'options.shortcuts.toggleThemeDesc': '点击工具栏 <span class="kbd">🌓 主题</span> 按钮',
+    'options.shortcuts.viewSource': '查看 Markdown 源码',
+    'options.shortcuts.viewSourceDesc': '点击工具栏 <span class="kbd">📝 源码</span> 按钮',
+    'options.shortcuts.refresh': '刷新页面',
+    'options.shortcuts.refreshDesc': '点击工具栏 <span class="kbd">🔃 刷新</span> 按钮',
+    'options.shortcuts.closePreview': '关闭图片预览',
+    'options.shortcuts.closePreviewDesc': '<span class="kbd">Esc</span>',
+    'options.resetBtn': '🔄 恢复默认设置',
+    'options.github': '欢迎 Star & 反馈',
+    'options.saved': '✅ 设置已保存',
+    'options.resetConfirm': '确定要恢复所有设置为默认值吗？此操作不可撤销。',
+    'options.resetDone': '✅ 已恢复默认设置',
+    'options.language.title': '界面语言',
+    'options.language.desc': '选择插件界面的显示语言',
+
+    // ========== Popup ==========
+    'popup.subtitle': 'Markdown 阅读增强插件',
+    'popup.detecting': '检测中...',
+    'popup.isMarkdown': '当前页面为 Markdown 文件 ✓',
+    'popup.notMarkdown': '当前页面非 Markdown 文件',
+    'popup.detectFailed': '检测失败',
+    'popup.cannotDetect': '无法检测当前页面',
+    'popup.renderBtn': '▶ 渲染 Markdown',
+    'popup.renderHint': '点击按钮将当前页面渲染为 Markdown 格式',
+    'popup.rendering': '⏳ 渲染中...',
+    'popup.renderDone': '✅ 渲染完成',
+    'popup.renderFailed': '❌ 渲染失败，请重试',
+    'popup.renderError': '❌ 渲染失败',
+    'popup.themeSection': '🎨 主题',
+    'popup.theme.light': '浅色',
+    'popup.theme.dark': '深色',
+    'popup.theme.auto': '跟随系统',
+    'popup.codeTheme': '代码主题',
+    'popup.codeTheme.groupLight': '🔆 亮色',
+    'popup.codeTheme.groupDark': '🌙 暗色',
+    'popup.codeTheme.groupAuto': '🔄 自动',
+    'popup.codeTheme.followPage': '跟随页面主题',
+    'popup.typographySection': '📐 排版',
+    'popup.font': '正文字体',
+    'popup.font.default': '默认',
+    'popup.font.serif': '衬线',
+    'popup.font.mono': '等宽',
+    'popup.fontSize': '字体大小',
+    'popup.lineHeight': '行高',
+    'popup.lineHeight.compact': '紧凑',
+    'popup.lineHeight.loose': '宽松',
+    'popup.contentWidth': '内容宽度',
+    'popup.contentWidth.narrow': '窄',
+    'popup.contentWidth.wide': '宽',
+    'popup.featuresSection': '⚙️ 功能',
+    'popup.showToc': '显示目录',
+    'popup.tocPosition': '目录位置',
+    'popup.tocPosition.left': '左侧',
+    'popup.tocPosition.right': '右侧',
+    'popup.mermaid': 'Mermaid 图表',
+    'popup.mathJax': '数学公式渲染',
+    'popup.lineNumbers': '显示代码行号',
+    'popup.autoDetect': '自动检测 Markdown',
+    'popup.resetBtn': '🔄 重置',
+    'popup.refreshBtn': '🔃 刷新页面',
+    'popup.language': '语言',
+  };
+
+  // 导出
+  if (typeof window !== 'undefined') {
+    window.__I18N_ZH_CN__ = zh_CN;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = zh_CN;
+  }
+})();

@@ -412,48 +412,48 @@
     <div class="header-icon">M↓</div>
     <div class="header-info">
       <h1>Markdown Viewer Enhanced</h1>
-      <p>Markdown 阅读增强插件</p>
+      <p data-i18n="popup.subtitle">Markdown 阅读增强插件</p>
     </div>
   </div>
 
   <!-- 状态栏 -->
   <div class="status-bar">
     <span class="status-dot" id="statusDot"></span>
-    <span id="statusText">检测中...</span>
+    <span id="statusText" data-i18n="popup.detecting">检测中...</span>
   </div>
 
   <!-- 渲染按钮（仅在 http/https Markdown 页面未渲染时显示） -->
   <div class="render-bar" id="renderBar" style="display:none;">
-    <button class="render-btn" id="btnRender">▶ 渲染 Markdown</button>
-    <p class="render-hint">点击按钮将当前页面渲染为 Markdown 格式</p>
+    <button class="render-btn" id="btnRender" data-i18n="popup.renderBtn">▶ 渲染 Markdown</button>
+    <p class="render-hint" data-i18n="popup.renderHint">点击按钮将当前页面渲染为 Markdown 格式</p>
   </div>
 
   <!-- 主题设置 -->
   <div class="settings-section">
-    <div class="section-title">🎨 主题</div>
+    <div class="section-title" data-i18n="popup.themeSection">🎨 主题</div>
     <div class="theme-selector">
       <button class="theme-btn" data-theme="light">
-        <span class="theme-icon">☀️</span>浅色
+        <span class="theme-icon">☀️</span><span data-i18n="popup.theme.light">浅色</span>
       </button>
       <button class="theme-btn" data-theme="dark">
-        <span class="theme-icon">🌙</span>深色
+        <span class="theme-icon">🌙</span><span data-i18n="popup.theme.dark">深色</span>
       </button>
       <button class="theme-btn" data-theme="auto">
-        <span class="theme-icon">💻</span>跟随系统
+        <span class="theme-icon">💻</span><span data-i18n="popup.theme.auto">跟随系统</span>
       </button>
     </div>
 
     <!-- 代码高亮主题 -->
     <div class="setting-item" style="margin-top: 8px;">
-      <span class="setting-label"><span class="icon">🖌️</span>代码主题</span>
+      <span class="setting-label"><span class="icon">🖌️</span><span data-i18n="popup.codeTheme">代码主题</span></span>
       <select class="select-control" id="codeThemeSelect">
-        <optgroup label="🔆 亮色">
+        <optgroup label="🔆 亮色" data-i18n-label="popup.codeTheme.groupLight">
           <option value="default-light-modern">Default Light Modern</option>
           <option value="github">GitHub</option>
           <option value="atom-one-light">Atom One Light</option>
           <option value="solarized-light">Solarized Light</option>
         </optgroup>
-        <optgroup label="🌙 暗色">
+        <optgroup label="🌙 暗色" data-i18n-label="popup.codeTheme.groupDark">
           <option value="default-dark-modern">Default Dark Modern</option>
           <option value="github-dark">GitHub Dark</option>
           <option value="monokai">Monokai</option>
@@ -465,8 +465,8 @@
           <option value="solarized-dark">Solarized Dark</option>
           <option value="tokyo-night">Tokyo Night</option>
         </optgroup>
-        <optgroup label="🔄 自动">
-          <option value="auto">跟随页面主题</option>
+        <optgroup label="🔄 自动" data-i18n-label="popup.codeTheme.groupAuto">
+          <option value="auto" data-i18n="popup.codeTheme.followPage">跟随页面主题</option>
         </optgroup>
       </select>
     </div>
@@ -474,21 +474,21 @@
 
   <!-- 排版设置 -->
   <div class="settings-section">
-    <div class="section-title">📐 排版</div>
+    <div class="section-title" data-i18n="popup.typographySection">📐 排版</div>
 
     <!-- 正文字体 -->
     <div class="setting-item">
-      <span class="setting-label"><span class="icon">🔤</span>正文字体</span>
+      <span class="setting-label"><span class="icon">🔤</span><span data-i18n="popup.font">正文字体</span></span>
       <div class="btn-group">
-        <button class="btn-option" data-font="system">默认</button>
-        <button class="btn-option" data-font="serif">衬线</button>
-        <button class="btn-option" data-font="mono">等宽</button>
+        <button class="btn-option" data-font="system" data-i18n="popup.font.default">默认</button>
+        <button class="btn-option" data-font="serif" data-i18n="popup.font.serif">衬线</button>
+        <button class="btn-option" data-font="mono" data-i18n="popup.font.mono">等宽</button>
       </div>
     </div>
 
     <!-- 字体大小 -->
     <div class="setting-item">
-      <span class="setting-label"><span class="icon">🔠</span>字体大小</span>
+      <span class="setting-label"><span class="icon">🔠</span><span data-i18n="popup.fontSize">字体大小</span></span>
     </div>
     <div class="slider-control">
       <span class="slider-label">A</span>
@@ -499,33 +499,33 @@
 
     <!-- 行高 -->
     <div class="setting-item" style="margin-top: 4px;">
-      <span class="setting-label"><span class="icon">↕️</span>行高</span>
+      <span class="setting-label"><span class="icon">↕️</span><span data-i18n="popup.lineHeight">行高</span></span>
     </div>
     <div class="slider-control">
-      <span class="slider-label">紧凑</span>
+      <span class="slider-label" data-i18n="popup.lineHeight.compact">紧凑</span>
       <input type="range" id="lineHeightSlider" min="1.2" max="2.0" step="0.1" value="1.6">
-      <span class="slider-label">宽松</span>
+      <span class="slider-label" data-i18n="popup.lineHeight.loose">宽松</span>
       <span class="slider-value" id="lineHeightValue">1.6</span>
     </div>
 
     <!-- 内容宽度 -->
     <div class="setting-item" style="margin-top: 4px;">
-      <span class="setting-label"><span class="icon">↔️</span>内容宽度</span>
+      <span class="setting-label"><span class="icon">↔️</span><span data-i18n="popup.contentWidth">内容宽度</span></span>
     </div>
     <div class="slider-control">
-      <span class="slider-label">窄</span>
+      <span class="slider-label" data-i18n="popup.contentWidth.narrow">窄</span>
       <input type="range" id="maxWidthSlider" min="600" max="1400" step="50" value="1200">
-      <span class="slider-label">宽</span>
+      <span class="slider-label" data-i18n="popup.contentWidth.wide">宽</span>
       <span class="slider-value" id="maxWidthValue">1200px</span>
     </div>
   </div>
 
   <!-- 功能开关 -->
   <div class="settings-section">
-    <div class="section-title">⚙️ 功能</div>
+    <div class="section-title" data-i18n="popup.featuresSection">⚙️ 功能</div>
 
     <div class="setting-item">
-      <span class="setting-label"><span class="icon">📑</span>显示目录</span>
+      <span class="setting-label"><span class="icon">📑</span><span data-i18n="popup.showToc">显示目录</span></span>
       <label class="toggle-switch">
         <input type="checkbox" id="toggleToc" checked>
         <span class="toggle-slider"></span>
@@ -533,15 +533,15 @@
     </div>
 
     <div class="setting-item" id="tocPositionRow">
-      <span class="setting-label"><span class="icon">📌</span>目录位置</span>
+      <span class="setting-label"><span class="icon">📌</span><span data-i18n="popup.tocPosition">目录位置</span></span>
       <div class="toc-position-selector">
-        <button class="toc-pos-btn" data-pos="left">左侧</button>
-        <button class="toc-pos-btn" data-pos="right">右侧</button>
+        <button class="toc-pos-btn" data-pos="left" data-i18n="popup.tocPosition.left">左侧</button>
+        <button class="toc-pos-btn" data-pos="right" data-i18n="popup.tocPosition.right">右侧</button>
       </div>
     </div>
 
     <div class="setting-item">
-      <span class="setting-label"><span class="icon">📊</span>Mermaid 图表</span>
+      <span class="setting-label"><span class="icon">📊</span><span data-i18n="popup.mermaid">Mermaid 图表</span></span>
       <label class="toggle-switch">
         <input type="checkbox" id="toggleMermaid" checked>
         <span class="toggle-slider"></span>
@@ -549,7 +549,7 @@
     </div>
 
     <div class="setting-item">
-      <span class="setting-label"><span class="icon">🔢</span>数学公式渲染</span>
+      <span class="setting-label"><span class="icon">🔢</span><span data-i18n="popup.mathJax">数学公式渲染</span></span>
       <label class="toggle-switch">
         <input type="checkbox" id="toggleMathJax">
         <span class="toggle-slider"></span>
@@ -557,7 +557,7 @@
     </div>
 
     <div class="setting-item">
-      <span class="setting-label"><span class="icon">#️⃣</span>显示代码行号</span>
+      <span class="setting-label"><span class="icon">#️⃣</span><span data-i18n="popup.lineNumbers">显示代码行号</span></span>
       <label class="toggle-switch">
         <input type="checkbox" id="toggleLineNumbers">
         <span class="toggle-slider"></span>
@@ -565,20 +565,31 @@
     </div>
 
     <div class="setting-item">
-      <span class="setting-label"><span class="icon">🔍</span>自动检测 Markdown</span>
+      <span class="setting-label"><span class="icon">🔍</span><span data-i18n="popup.autoDetect">自动检测 Markdown</span></span>
       <label class="toggle-switch">
         <input type="checkbox" id="toggleAutoDetect" checked>
         <span class="toggle-slider"></span>
       </label>
     </div>
+
+    <div class="setting-item">
+      <span class="setting-label"><span class="icon">🌐</span><span data-i18n="popup.language">语言</span></span>
+      <div class="btn-group">
+        <button class="btn-option lang-btn" data-lang="zh-CN">中文</button>
+        <button class="btn-option lang-btn" data-lang="en">English</button>
+      </div>
+    </div>
   </div>
 
   <!-- 底部操作 -->
   <div class="footer">
-    <button class="footer-btn" id="btnReset">🔄 重置</button>
-    <button class="footer-btn primary" id="btnRefresh">🔃 刷新页面</button>
+    <button class="footer-btn" id="btnReset" data-i18n="popup.resetBtn">🔄 重置</button>
+    <button class="footer-btn primary" id="btnRefresh" data-i18n="popup.refreshBtn">🔃 刷新页面</button>
   </div>
 
+  <script src="../i18n/zh-CN.js"></script>
+  <script src="../i18n/en.js"></script>
+  <script src="../i18n/i18n.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
