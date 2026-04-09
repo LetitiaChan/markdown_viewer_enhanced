@@ -1222,7 +1222,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
           __cachedDirItems = items;
           console.log('[MD Viewer] 目录预获取成功，文件数:', items.length);
         } else {
-          console.warn('[MD Viewer] 目录预获取返回空列表');
+          console.log('[MD Viewer] 目录预获取返回空列表');
         }
         resolve(items);
       }).catch(err => {
@@ -1250,7 +1250,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
             console.log('[MD Viewer] background 返回目录文件数:', response.items.length);
             resolve(response.items);
           } else {
-            console.warn('[MD Viewer] background 返回空结果');
+            console.log('[MD Viewer] background 返回空结果');
             resolve([]);
           }
         });
