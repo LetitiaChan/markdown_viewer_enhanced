@@ -17,7 +17,6 @@ AGENT-PROGRESS.md
 # ===========================
 icons/generate_icons.html
 icons/generate_icons.ps1
-icon.png
 
 # ===========================
 # Cursor/AI 规则文件
@@ -59,3 +58,4 @@ package-lock.json
 *.log
 *.tmp
 *.bak
+todo.md

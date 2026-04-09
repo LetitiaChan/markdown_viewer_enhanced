@@ -95,6 +95,24 @@ To render local Markdown files, enable file access for the extension:
 - All settings stored locally in the browser (`storage.sync`)
 - Required permissions: `activeTab`, `storage`, `tabs`, `scripting` (for local file browser feature)
 
+### 🧪 Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run all tests
+npm test
+
+# Run specific test layer
+npm run test:unit      # Unit tests
+npm run test:module    # Module tests
+npm run test:ui        # UI tests
+
+# Run with coverage
+npm run test:coverage
+```
+
 ---
 
 <a id="中文"></a>
@@ -181,6 +199,24 @@ To render local Markdown files, enable file access for the extension:
 - **不会**向外部服务器发送信息（KaTeX 字体 CDN 加载除外）
 - 所有设置仅存储在浏览器本地（`storage.sync`）
 - 所需权限：`activeTab`、`storage`、`tabs`、`scripting`（用于本地文件浏览器功能）
+
+### 🧪 开发
+
+```bash
+# 安装依赖
+npm install
+
+# 运行所有测试
+npm test
+
+# 运行特定测试层
+npm run test:unit      # 单元测试
+npm run test:module    # 模块测试
+npm run test:ui        # UI 测试
+
+# 运行并生成覆盖率报告
+npm run test:coverage
+```
 
 ---
 

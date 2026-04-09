@@ -418,3 +418,14 @@ function extractDirectoryItems(baseUrl) {
 }
 
 console.log('[MD Viewer Enhanced] Background service worker 已启动');
+
+// ==================== 测试导出 ====================
+// 仅在 Node.js 环境下导出（用于 Jest 测试），浏览器环境中不生效
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    DEFAULT_SETTINGS,
+    isMarkdownUrl,
+    isTextContentType,
+    extractDirectoryItems,
+  };
+}

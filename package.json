@@ -1,0 +1,17 @@
+{
+  "name": "markdown-viewer-enhanced",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Chrome extension for enhanced Markdown rendering",
+  "scripts": {
+    "test": "jest --verbose",
+    "test:unit": "jest --verbose tests/unit/",
+    "test:module": "jest --verbose tests/module/",
+    "test:ui": "jest --verbose tests/ui/",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}

@@ -341,4 +341,16 @@
 
   // ========== 启动 ==========
   document.addEventListener('DOMContentLoaded', init);
+
+  // ==================== 测试导出 ====================
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      init,
+      loadSettings,
+      applySettingsToUI,
+      saveSettings,
+      updatePreview,
+      scheduleAutoSave,
+    };
+  }
 })();

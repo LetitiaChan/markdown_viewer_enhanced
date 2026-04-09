@@ -3189,4 +3189,23 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     console.error('[MD Viewer] 初始化失败:', err);
   });
 
+  // ==================== 测试导出 ====================
+  // 仅在 Node.js 环境下导出（用于 Jest 测试），浏览器环境中不生效
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      // 工具函数
+      generateId,
+      escapeHtml,
+      debounce,
+      isMarkdownFile,
+      isFileProtocol,
+      parseSizeToBytes,
+      getFileIcon,
+      // 常量
+      DEFAULT_SETTINGS,
+      MD_EXTENSIONS,
+      SUPPORTED_FILE_EXTENSIONS,
+    };
+  }
+
 })();
