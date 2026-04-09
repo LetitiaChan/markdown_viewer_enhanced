@@ -141,6 +141,8 @@
     'options.theme.light': 'Light Theme',
     'options.theme.dark': 'Dark Theme',
     'options.theme.auto': 'System',
+    'options.theme.modeLabel': 'Theme Mode',
+    'options.theme.modeDesc': 'Switch between light and dark styles',
     'options.codeTheme.title': 'Code Highlight Theme',
     'options.codeTheme.desc': 'Choose the highlight color scheme for code blocks',
     'options.font.title': 'Body Font',

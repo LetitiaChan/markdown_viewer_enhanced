@@ -141,6 +141,8 @@
     'options.theme.light': '浅色主题',
     'options.theme.dark': '深色主题',
     'options.theme.auto': '跟随系统',
+    'options.theme.modeLabel': '主题模式',
+    'options.theme.modeDesc': '切换亮色或暗色风格',
     'options.codeTheme.title': '代码高亮主题',
     'options.codeTheme.desc': '选择代码块的高亮配色方案',
     'options.font.title': '正文字体',

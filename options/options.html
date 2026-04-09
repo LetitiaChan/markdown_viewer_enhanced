@@ -652,28 +652,6 @@
       <span data-i18n="options.tip">修改设置后将<strong>自动实时保存</strong>，并立即应用到已打开的 Markdown 页面。</span>
     </div>
 
-    <!-- 语言设置 -->
-    <div class="settings-card">
-      <div class="card-header">
-        <span class="card-icon">🌐</span>
-        <span data-i18n="options.language.title">界面语言</span>
-      </div>
-      <div class="card-body">
-        <div class="setting-row">
-          <div class="setting-info">
-            <div class="setting-label"><span class="icon">🌐</span><span data-i18n="options.language.title">界面语言</span></div>
-            <div class="setting-desc" data-i18n="options.language.desc">选择插件界面的显示语言</div>
-          </div>
-          <div class="setting-control">
-            <div class="btn-group">
-              <button class="btn-option lang-btn" data-lang="zh-CN">中文</button>
-              <button class="btn-option lang-btn" data-lang="en">English</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- 主题设置 -->
     <div class="settings-card">
       <div class="card-header">
@@ -681,6 +659,13 @@
         <span data-i18n="settings.appearance.title">外观主题</span>
       </div>
       <div class="card-body">
+        <!-- 主题模式 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🎨</span><span data-i18n="options.theme.modeLabel">主题模式</span></div>
+            <div class="setting-desc" data-i18n="options.theme.modeDesc">切换亮色或暗色风格</div>
+          </div>
+        </div>
         <div class="theme-selector">
           <button class="theme-btn" data-theme="light">
             <span class="theme-icon">☀️</span><span data-i18n="options.theme.light">浅色主题</span>
@@ -693,48 +678,17 @@
           </button>
         </div>
 
+        <!-- 语言 -->
         <div class="setting-row" style="margin-top: 8px;">
           <div class="setting-info">
-            <div class="setting-label"><span class="icon">🖌️</span><span data-i18n="options.codeTheme.title">代码高亮主题</span></div>
-            <div class="setting-desc" data-i18n="options.codeTheme.desc">选择代码块的高亮配色方案</div>
+            <div class="setting-label"><span class="icon">🌐</span><span data-i18n="options.language.title">界面语言</span></div>
+            <div class="setting-desc" data-i18n="options.language.desc">选择插件界面的显示语言</div>
           </div>
           <div class="setting-control">
-            <select class="select-control" id="codeThemeSelect">
-              <optgroup label="🔆 亮色主题" data-i18n-label="settings.codeTheme.groupLight">
-                <option value="default-light-modern">Default Light Modern</option>
-                <option value="github">GitHub</option>
-                <option value="atom-one-light">Atom One Light</option>
-                <option value="solarized-light">Solarized Light</option>
-              </optgroup>
-              <optgroup label="🌙 暗色主题" data-i18n-label="settings.codeTheme.groupDark">
-                <option value="default-dark-modern">Default Dark Modern</option>
-                <option value="github-dark">GitHub Dark</option>
-                <option value="monokai">Monokai</option>
-                <option value="vs2015">VS 2015</option>
-                <option value="atom-one-dark">Atom One Dark</option>
-                <option value="one-dark-pro">One Dark Pro</option>
-                <option value="dracula">Dracula</option>
-                <option value="nord">Nord</option>
-                <option value="solarized-dark">Solarized Dark</option>
-                <option value="tokyo-night">Tokyo Night</option>
-              </optgroup>
-              <optgroup label="🔄 自动" data-i18n-label="settings.codeTheme.groupAuto">
-                <option value="auto" data-i18n="settings.codeTheme.followPage">跟随页面主题</option>
-              </optgroup>
+            <select class="select-control" id="langSelect">
+              <option value="zh-CN">CN 中文</option>
+              <option value="en">US English</option>
             </select>
-          </div>
-        </div>
-
-        <!-- 代码主题预览 -->
-        <div class="setting-row" style="margin-top: 4px;">
-          <div id="codeThemePreview" class="code-theme-preview" data-code-theme="github">
-            <pre class="preview-code-block"><div class="preview-code-header"><span class="preview-code-lang">javascript</span></div><code class="hljs"><span class="hljs-keyword">function</span> <span class="hljs-title function_">fibonacci</span>(<span class="hljs-params">n</span>) {
-  <span class="hljs-comment">// 递归实现斐波那契数列</span>
-  <span class="hljs-keyword">if</span> (n <= <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> n;
-  <span class="hljs-keyword">return</span> <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">1</span>) + <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">2</span>);
-}
-<span class="hljs-keyword">const</span> result = <span class="hljs-title function_">fibonacci</span>(<span class="hljs-number">10</span>);
-<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Result: <span class="hljs-subst">${result}</span>`</span>);</code></pre>
           </div>
         </div>
       </div>
@@ -814,6 +768,60 @@
           <h3>Markdown Viewer Enhanced</h3>
           <p data-i18n="options.preview.text1">这是一段预览文本，用于展示当前排版设置的效果。The quick brown fox jumps over the lazy dog.</p>
           <p data-i18n="options.preview.text2">支持渲染 <code>Mermaid</code> 图表和代码高亮，让 Markdown 阅读体验更加出色。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 代码高亮主题 -->
+    <div class="settings-card">
+      <div class="card-header">
+        <span class="card-icon">🖌️</span>
+        <span data-i18n="options.codeTheme.title">代码高亮主题</span>
+      </div>
+      <div class="card-body">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🖌️</span><span data-i18n="options.codeTheme.title">代码高亮主题</span></div>
+            <div class="setting-desc" data-i18n="options.codeTheme.desc">选择代码块的高亮配色方案</div>
+          </div>
+          <div class="setting-control">
+            <select class="select-control" id="codeThemeSelect">
+              <optgroup label="🔆 亮色主题" data-i18n-label="settings.codeTheme.groupLight">
+                <option value="default-light-modern">Default Light Modern</option>
+                <option value="github">GitHub</option>
+                <option value="atom-one-light">Atom One Light</option>
+                <option value="solarized-light">Solarized Light</option>
+              </optgroup>
+              <optgroup label="🌙 暗色主题" data-i18n-label="settings.codeTheme.groupDark">
+                <option value="default-dark-modern">Default Dark Modern</option>
+                <option value="github-dark">GitHub Dark</option>
+                <option value="monokai">Monokai</option>
+                <option value="vs2015">VS 2015</option>
+                <option value="atom-one-dark">Atom One Dark</option>
+                <option value="one-dark-pro">One Dark Pro</option>
+                <option value="dracula">Dracula</option>
+                <option value="nord">Nord</option>
+                <option value="solarized-dark">Solarized Dark</option>
+                <option value="tokyo-night">Tokyo Night</option>
+              </optgroup>
+              <optgroup label="🔄 自动" data-i18n-label="settings.codeTheme.groupAuto">
+                <option value="auto" data-i18n="settings.codeTheme.followPage">跟随页面主题</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <!-- 代码主题预览 -->
+        <div class="setting-row" style="margin-top: 4px;">
+          <div id="codeThemePreview" class="code-theme-preview" data-code-theme="github">
+            <pre class="preview-code-block"><div class="preview-code-header"><span class="preview-code-lang">javascript</span></div><code class="hljs"><span class="hljs-keyword">function</span> <span class="hljs-title function_">fibonacci</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-comment">// 递归实现斐波那契数列</span>
+  <span class="hljs-keyword">if</span> (n <= <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> n;
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">1</span>) + <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">2</span>);
+}
+<span class="hljs-keyword">const</span> result = <span class="hljs-title function_">fibonacci</span>(<span class="hljs-number">10</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Result: <span class="hljs-subst">${result}</span>`</span>);</code></pre>
+          </div>
         </div>
       </div>
     </div>

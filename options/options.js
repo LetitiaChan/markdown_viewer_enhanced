@@ -41,10 +41,11 @@
       window.__I18N__.setLanguage(currentSettings.language);
       window.__I18N__.applyLanguage();
     }
-    // 同步语言按钮状态
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.lang === (currentSettings.language || 'zh-CN'));
-    });
+    // 同步语言下拉框状态
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) {
+      langSelect.value = currentSettings.language || 'zh-CN';
+    }
     bindEvents();
   }
 
@@ -321,13 +322,12 @@
       scheduleAutoSave(0);
     });
 
-    // 语言切换
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const newLang = btn.dataset.lang;
+    // 语言切换（下拉框）
+    const langSelectEl = document.getElementById('langSelect');
+    if (langSelectEl) {
+      langSelectEl.addEventListener('change', () => {
+        const newLang = langSelectEl.value;
         if (newLang && newLang !== currentSettings.language) {
-          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
           currentSettings.language = newLang;
           scheduleAutoSave(0);
           // 应用新语言
@@ -337,7 +337,7 @@
           }
         }
       });
-    });
+    }
 
     // 恢复默认设置
     btnReset.addEventListener('click', () => {
