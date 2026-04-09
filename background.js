@@ -11,6 +11,8 @@ const DEFAULT_SETTINGS = {
   lineHeight: 1.6,          // 行高
   showToc: true,            // 显示目录
   tocPosition: 'right',     // 目录位置：left / right
+  panelMode: 'float',       // 面板模式：float / embed
+  contentAlign: 'center',   // 文档对齐：left / center / right
   enableMermaid: true,      // 启用 Mermaid 图表渲染
   enableMathJax: true,      // 启用数学公式渲染
   enablePlantUML: true,     // 启用 PlantUML 图表渲染

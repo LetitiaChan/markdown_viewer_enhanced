@@ -2681,6 +2681,48 @@ ul:has(> .task-list-item) {
   color: #9ca3af;
 }
 
+.md-settings-footer-links {
+  font-size: 12px;
+}
+
+.md-settings-footer-link {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.md-settings-footer-link:hover {
+  color: #667eea;
+  text-decoration: underline;
+}
+
+.md-settings-footer-sep {
+  margin: 0 6px;
+  color: #d1d5db;
+}
+
+.md-settings-item-desc {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.theme-dark .md-settings-item-desc {
+  color: #6b7280;
+}
+
+.theme-dark .md-settings-footer-link {
+  color: #6b7280;
+}
+
+.theme-dark .md-settings-footer-link:hover {
+  color: #a5b4fc;
+}
+
+.theme-dark .md-settings-footer-sep {
+  color: #374151;
+}
+
 .theme-dark .md-settings-footer-hint {
   color: #6b7280;
 }

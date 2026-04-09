@@ -39,6 +39,8 @@
     lineHeight: 1.6,
     showToc: true,
     tocPosition: 'right',
+    panelMode: 'float',
+    contentAlign: 'center',
     enableMermaid: true,
     enableMathJax: true,
     enablePlantUML: true,
@@ -1112,10 +1114,30 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
-                      <span class="md-settings-item-icon">📊</span>
-                      <span class="md-settings-label">${t('settings.mermaid')}</span>
+                      <span class="md-settings-item-icon">🪟</span>
+                      <div>
+                        <span class="md-settings-label">${t('settings.panelMode')}</span>
+                        <div class="md-settings-item-desc">${t('settings.panelMode.desc')}</div>
+                      </div>
                     </div>
-                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMermaid" checked><span class="md-stg-toggle-slider"></span></label>
+                    <div class="md-stg-btn-group">
+                      <button class="md-stg-panel-mode-btn" data-mode="float">${t('settings.panelMode.float')}</button>
+                      <button class="md-stg-panel-mode-btn" data-mode="embed">${t('settings.panelMode.embed')}</button>
+                    </div>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">↔️</span>
+                      <div>
+                        <span class="md-settings-label">${t('settings.contentAlign')}</span>
+                        <div class="md-settings-item-desc">${t('settings.contentAlign.desc')}</div>
+                      </div>
+                    </div>
+                    <div class="md-stg-btn-group">
+                      <button class="md-stg-align-btn" data-align="left">${t('settings.contentAlign.left')}</button>
+                      <button class="md-stg-align-btn" data-align="center">${t('settings.contentAlign.center')}</button>
+                      <button class="md-stg-align-btn" data-align="right">${t('settings.contentAlign.right')}</button>
+                    </div>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
@@ -1123,6 +1145,13 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                       <span class="md-settings-label">${t('settings.mathJax')}</span>
                     </div>
                     <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMathJax"><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">📊</span>
+                      <span class="md-settings-label">${t('settings.mermaid')}</span>
+                    </div>
+                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMermaid" checked><span class="md-stg-toggle-slider"></span></label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
@@ -1159,6 +1188,11 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
             <!-- 底部固定栏 -->
             <div class="md-settings-footer">
               <span class="md-settings-footer-hint">${t('settings.autoSave')}</span>
+              <span class="md-settings-footer-links">
+                <a href="https://github.com/LetitiaChan/markdown_viewer_enhanced" target="_blank" rel="noopener noreferrer" class="md-settings-footer-link">🔗 GitHub</a>
+                <span class="md-settings-footer-sep">·</span>
+                <a href="https://github.com/LetitiaChan/markdown_viewer_enhanced/issues" target="_blank" rel="noopener noreferrer" class="md-settings-footer-link">💬 ${t('settings.feedback')}</a>
+              </span>
               <button id="btn-settings-reset" class="md-stg-footer-btn">${t('settings.resetDefault')}</button>
             </div>
           </div>
@@ -2987,6 +3021,16 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     const tocPosRow = document.getElementById('stg-tocPosRow');
     if (tocPosRow) tocPosRow.style.display = (currentSettings.showToc !== false) ? 'flex' : 'none';
 
+    // 面板模式
+    document.querySelectorAll('.md-stg-panel-mode-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === (currentSettings.panelMode || 'float'));
+    });
+
+    // 文档对齐
+    document.querySelectorAll('.md-stg-align-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.align === (currentSettings.contentAlign || 'center'));
+    });
+
     const stgMermaid = document.getElementById('stg-enableMermaid');
     if (stgMermaid) stgMermaid.checked = currentSettings.enableMermaid !== false;
 
@@ -3121,6 +3165,28 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       });
     });
 
+    // 面板模式
+    document.querySelectorAll('.md-stg-panel-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.md-stg-panel-mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSettings.panelMode = btn.dataset.mode;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    });
+
+    // 文档对齐
+    document.querySelectorAll('.md-stg-align-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.md-stg-align-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSettings.contentAlign = btn.dataset.align;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    });
+
     // Mermaid 开关
     const stgMermaid = document.getElementById('stg-enableMermaid');
     if (stgMermaid) {
@@ -3215,6 +3281,9 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     const app = document.getElementById('md-viewer-app');
     if (app) {
       app.className = `md-viewer-app theme-${currentSettings.theme}`;
+      if (currentSettings.panelMode === 'embed') {
+        app.classList.add('panel-embed');
+      }
     }
 
     const content = document.getElementById('md-content');
@@ -3223,6 +3292,10 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       content.style.fontSize = currentSettings.fontSize + 'px';
       content.style.lineHeight = currentSettings.lineHeight;
       content.style.setProperty('--code-font-size', (currentSettings.codeFontSize || 14) + 'px');
+      // 文档对齐
+      const align = currentSettings.contentAlign || 'center';
+      content.style.marginLeft = align === 'left' ? '0' : 'auto';
+      content.style.marginRight = align === 'right' ? '0' : 'auto';
     }
 
     const tocSidebar = document.getElementById('md-toc-sidebar');
