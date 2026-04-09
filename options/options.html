@@ -320,6 +320,25 @@
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
 
+    /* 确保面板模式/文档对齐/目录位置按钮不受其他样式干扰 */
+    .capsule-group .panel-mode-btn,
+    .capsule-group .content-align-btn,
+    .capsule-group .toc-pos-btn {
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #8b949e;
+      font-weight: 500;
+    }
+    .capsule-group .panel-mode-btn.active,
+    .capsule-group .content-align-btn.active,
+    .capsule-group .toc-pos-btn.active {
+      background: #fff;
+      color: #059669;
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
     /* 滑块控制 */
     .slider-control {
       display: flex;
