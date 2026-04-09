@@ -197,16 +197,16 @@ describe('Options 设置页增强', () => {
       expect(rows.length).toBe(10);
     });
 
-    test('BT-OPTIONS.16 面板模式和文档对齐使用 btn-group + btn-option', () => {
+    test('BT-OPTIONS.16 面板模式和文档对齐使用胶囊按钮组样式', () => {
       const panelBtns = doc.querySelectorAll('.panel-mode-btn');
       const alignBtns = doc.querySelectorAll('.content-align-btn');
       panelBtns.forEach(btn => {
-        expect(btn.classList.contains('btn-option')).toBe(true);
-        expect(btn.parentElement.classList.contains('btn-group')).toBe(true);
+        expect(btn.classList.contains('capsule-btn')).toBe(true);
+        expect(btn.parentElement.classList.contains('capsule-group')).toBe(true);
       });
       alignBtns.forEach(btn => {
-        expect(btn.classList.contains('btn-option')).toBe(true);
-        expect(btn.parentElement.classList.contains('btn-group')).toBe(true);
+        expect(btn.classList.contains('capsule-btn')).toBe(true);
+        expect(btn.parentElement.classList.contains('capsule-group')).toBe(true);
       });
     });
 
@@ -227,6 +227,24 @@ describe('Options 设置页增强', () => {
       expect(plantumlLabel).not.toBeNull();
       const graphvizLabel = doc.querySelector('[data-i18n="settings.graphviz"]');
       expect(graphvizLabel).not.toBeNull();
+    });
+
+    test('BT-OPTIONS.19 主题选择器使用胶囊风格', () => {
+      const themeSelector = doc.querySelector('.theme-selector');
+      expect(themeSelector).not.toBeNull();
+      const btns = themeSelector.querySelectorAll('.theme-btn');
+      expect(btns.length).toBe(3);
+      // theme-selector 容器无边框（胶囊风格特征）
+      expect(themeSelector).toBeTruthy();
+    });
+
+    test('BT-OPTIONS.20 目录位置使用胶囊按钮组', () => {
+      const tocBtns = doc.querySelectorAll('.toc-pos-btn');
+      expect(tocBtns.length).toBe(2);
+      tocBtns.forEach(btn => {
+        expect(btn.classList.contains('capsule-btn')).toBe(true);
+        expect(btn.parentElement.classList.contains('capsule-group')).toBe(true);
+      });
     });
   });
 });

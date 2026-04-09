@@ -208,37 +208,39 @@
       transform: translateX(20px);
     }
 
-    /* 主题选择器 */
+    /* 主题选择器（复用胶囊风格） */
     .theme-selector {
       display: flex;
-      gap: 10px;
+      gap: 4px;
+      background: #f0f2f5;
+      border-radius: 10px;
+      padding: 4px;
     }
 
     .theme-btn {
       flex: 1;
-      padding: 12px 8px;
-      border: 2px solid #e1e4e8;
-      border-radius: 10px;
-      background: #fff;
+      padding: 10px 8px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
       cursor: pointer;
       text-align: center;
       transition: all 0.2s;
       font-size: 13px;
-      color: #57606a;
+      font-weight: 500;
+      color: #8b949e;
     }
 
     .theme-btn:hover {
-      border-color: #667eea;
-      color: #667eea;
-      background: #f8f8ff;
+      color: #57606a;
+      background: rgba(255, 255, 255, 0.5);
     }
 
     .theme-btn.active {
-      border-color: #667eea;
-      background: #f0f0ff;
-      color: #667eea;
+      background: #fff;
+      color: #059669;
       font-weight: 600;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
 
     .theme-btn .theme-icon {
@@ -247,7 +249,7 @@
       margin-bottom: 6px;
     }
 
-    /* 选项按钮组 */
+    /* 选项按钮组（传统带边框风格，用于字体选择等） */
     .btn-group {
       display: flex;
       gap: 6px;
@@ -274,6 +276,40 @@
       background: #f0f0ff;
       color: #667eea;
       font-weight: 600;
+    }
+
+    /* 胶囊按钮组（灰底圆角容器 + 白底高亮选中项） */
+    .capsule-group {
+      display: flex;
+      gap: 4px;
+      background: #f0f2f5;
+      border-radius: 10px;
+      padding: 4px;
+    }
+
+    .capsule-btn {
+      padding: 7px 18px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: #8b949e;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .capsule-btn:hover {
+      color: #57606a;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .capsule-btn.active {
+      background: #fff;
+      color: #059669;
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
 
     /* 滑块控制 */
@@ -852,9 +888,9 @@
             <div class="setting-desc" data-i18n="options.tocPosition.desc">选择目录侧边栏的显示位置</div>
           </div>
           <div class="setting-control">
-            <div class="btn-group">
-              <button class="btn-option toc-pos-btn" data-pos="left" data-i18n="options.tocPosition.left">📍 左侧</button>
-              <button class="btn-option toc-pos-btn" data-pos="right" data-i18n="options.tocPosition.right">📍 右侧</button>
+            <div class="capsule-group">
+              <button class="capsule-btn toc-pos-btn" data-pos="left" data-i18n="options.tocPosition.left">📍 左侧</button>
+              <button class="capsule-btn toc-pos-btn" data-pos="right" data-i18n="options.tocPosition.right">📍 右侧</button>
             </div>
           </div>
         </div>
@@ -866,9 +902,9 @@
             <div class="setting-desc" data-i18n="settings.panelMode.desc">选择侧边面板的显示模式</div>
           </div>
           <div class="setting-control">
-            <div class="btn-group">
-              <button class="btn-option panel-mode-btn" data-mode="float" data-i18n="settings.panelMode.float">悬浮</button>
-              <button class="btn-option panel-mode-btn" data-mode="embed" data-i18n="settings.panelMode.embed">嵌入</button>
+            <div class="capsule-group">
+              <button class="capsule-btn panel-mode-btn" data-mode="float" data-i18n="settings.panelMode.float">悬浮</button>
+              <button class="capsule-btn panel-mode-btn" data-mode="embed" data-i18n="settings.panelMode.embed">嵌入</button>
             </div>
           </div>
         </div>
@@ -880,10 +916,10 @@
             <div class="setting-desc" data-i18n="settings.contentAlign.desc">设置主文档的对齐方式</div>
           </div>
           <div class="setting-control">
-            <div class="btn-group">
-              <button class="btn-option content-align-btn" data-align="left" data-i18n="settings.contentAlign.left">靠左</button>
-              <button class="btn-option content-align-btn" data-align="center" data-i18n="settings.contentAlign.center">居中</button>
-              <button class="btn-option content-align-btn" data-align="right" data-i18n="settings.contentAlign.right">靠右</button>
+            <div class="capsule-group">
+              <button class="capsule-btn content-align-btn" data-align="left" data-i18n="settings.contentAlign.left">靠左</button>
+              <button class="capsule-btn content-align-btn" data-align="center" data-i18n="settings.contentAlign.center">居中</button>
+              <button class="capsule-btn content-align-btn" data-align="right" data-i18n="settings.contentAlign.right">靠右</button>
             </div>
           </div>
         </div>
