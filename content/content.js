@@ -774,8 +774,6 @@
 
             <!-- 可滚动内容区 -->
             <div class="md-settings-body">
-              <!-- 提示条 -->
-              <div class="md-settings-tip">${t('settings.tip')}</div>
 
               <!-- 外观主题卡片 -->
               <div class="md-settings-card">
@@ -791,58 +789,6 @@
                     <button class="md-stg-theme-btn" data-theme="light"><span>🌞</span> ${t('settings.theme.light')}</button>
                     <button class="md-stg-theme-btn" data-theme="dark"><span>🌙</span> ${t('settings.theme.dark')}</button>
                     <button class="md-stg-theme-btn" data-theme="auto"><span>💻</span> ${t('settings.theme.auto')}</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 代码高亮主题卡片 -->
-              <div class="md-settings-card">
-                <div class="md-settings-card-header">
-                  <span class="md-settings-card-icon">🖌️</span>
-                  <div>
-                    <div class="md-settings-card-title">${t('settings.codeTheme.title')}</div>
-                    <div class="md-settings-card-desc">${t('settings.codeTheme.desc')}</div>
-                  </div>
-                </div>
-                <div class="md-settings-card-body">
-                  <div class="md-settings-code-theme-row">
-                    <div class="md-settings-code-theme-label">
-                      <span class="md-settings-label">${t('settings.codeTheme.title')}</span>
-                      <span class="md-settings-label-desc">${t('settings.codeTheme.desc')}</span>
-                    </div>
-                    <select id="stg-codeTheme" class="md-settings-select">
-                    <optgroup label="${t('settings.codeTheme.groupLight')}">
-                      <option value="default-light-modern">Default Light Modern</option>
-                      <option value="github">GitHub</option>
-                      <option value="atom-one-light">Atom One Light</option>
-                      <option value="solarized-light">Solarized Light</option>
-                    </optgroup>
-                    <optgroup label="${t('settings.codeTheme.groupDark')}">
-                      <option value="default-dark-modern">Default Dark Modern</option>
-                      <option value="github-dark">GitHub Dark</option>
-                      <option value="monokai">Monokai</option>
-                      <option value="vs2015">VS 2015</option>
-                      <option value="atom-one-dark">Atom One Dark</option>
-                      <option value="one-dark-pro">One Dark Pro</option>
-                      <option value="dracula">Dracula</option>
-                      <option value="nord">Nord</option>
-                      <option value="solarized-dark">Solarized Dark</option>
-                      <option value="tokyo-night">Tokyo Night</option>
-                    </optgroup>
-                    <optgroup label="${t('settings.codeTheme.groupAuto')}">
-                      <option value="auto">${t('settings.codeTheme.followPage')}</option>
-                    </optgroup>
-                  </select>
-                  </div>
-                  <!-- 代码预览 -->
-                  <div class="md-settings-code-preview" id="stg-code-preview">
-                    <pre><code><span class="cp">function</span> <span class="cf">fibonacci</span>(n) {
-  <span class="cm">// 递归实现斐波那契数列</span>
-  <span class="cp">if</span> (n <= 1) <span class="cp">return</span> n;
-  <span class="cp">return</span> <span class="cf">fibonacci</span>(n - 1) + <span class="cf">fibonacci</span>(n - 2);
-}
-<span class="cp">const</span> result = <span class="cf">fibonacci</span>(10);
-console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</span>);</code></pre>
                   </div>
                 </div>
               </div>
@@ -919,6 +865,58 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                     <input type="range" id="stg-maxWidth" min="600" max="1400" step="50" value="1200">
                     <span class="md-stg-slider-label">${t('settings.maxWidth.wide')}</span>
                     <span class="md-stg-slider-value" id="stg-maxWidthVal">1200px</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 代码高亮主题卡片 -->
+              <div class="md-settings-card">
+                <div class="md-settings-card-header">
+                  <span class="md-settings-card-icon">🖌️</span>
+                  <div>
+                    <div class="md-settings-card-title">${t('settings.codeTheme.title')}</div>
+                    <div class="md-settings-card-desc">${t('settings.codeTheme.desc')}</div>
+                  </div>
+                </div>
+                <div class="md-settings-card-body">
+                  <div class="md-settings-code-theme-row">
+                    <div class="md-settings-code-theme-label">
+                      <span class="md-settings-label">${t('settings.codeTheme.title')}</span>
+                      <span class="md-settings-label-desc">${t('settings.codeTheme.desc')}</span>
+                    </div>
+                    <select id="stg-codeTheme" class="md-settings-select">
+                    <optgroup label="${t('settings.codeTheme.groupLight')}">
+                      <option value="default-light-modern">Default Light Modern</option>
+                      <option value="github">GitHub</option>
+                      <option value="atom-one-light">Atom One Light</option>
+                      <option value="solarized-light">Solarized Light</option>
+                    </optgroup>
+                    <optgroup label="${t('settings.codeTheme.groupDark')}">
+                      <option value="default-dark-modern">Default Dark Modern</option>
+                      <option value="github-dark">GitHub Dark</option>
+                      <option value="monokai">Monokai</option>
+                      <option value="vs2015">VS 2015</option>
+                      <option value="atom-one-dark">Atom One Dark</option>
+                      <option value="one-dark-pro">One Dark Pro</option>
+                      <option value="dracula">Dracula</option>
+                      <option value="nord">Nord</option>
+                      <option value="solarized-dark">Solarized Dark</option>
+                      <option value="tokyo-night">Tokyo Night</option>
+                    </optgroup>
+                    <optgroup label="${t('settings.codeTheme.groupAuto')}">
+                      <option value="auto">${t('settings.codeTheme.followPage')}</option>
+                    </optgroup>
+                  </select>
+                  </div>
+                  <!-- 代码预览 -->
+                  <div class="md-settings-code-preview" id="stg-code-preview">
+                    <pre><code><span class="cp">function</span> <span class="cf">fibonacci</span>(n) {
+  <span class="cm">// 递归实现斐波那契数列</span>
+  <span class="cp">if</span> (n <= 1) <span class="cp">return</span> n;
+  <span class="cp">return</span> <span class="cf">fibonacci</span>(n - 1) + <span class="cf">fibonacci</span>(n - 2);
+}
+<span class="cp">const</span> result = <span class="cf">fibonacci</span>(10);
+console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</span>);</code></pre>
                   </div>
                 </div>
               </div>
