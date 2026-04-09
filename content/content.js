@@ -983,10 +983,10 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                       <span class="md-settings-item-icon">🌐</span>
                       <span class="md-settings-label">${t('settings.language.title')}</span>
                     </div>
-                    <div class="md-stg-btn-group">
-                      <button class="md-stg-lang-btn" data-lang="zh-CN">中文</button>
-                      <button class="md-stg-lang-btn" data-lang="en">English</button>
-                    </div>
+                    <select id="stg-language" class="md-settings-select">
+                      <option value="zh-CN">CN 中文</option>
+                      <option value="en">US English</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -2671,10 +2671,9 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     const stgAutoDetect = document.getElementById('stg-autoDetect');
     if (stgAutoDetect) stgAutoDetect.checked = currentSettings.autoDetect !== false;
 
-    // 语言按钮
-    document.querySelectorAll('.md-stg-lang-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.lang === (currentSettings.language || 'zh-CN'));
-    });
+    // 语言下拉框
+    const stgLang = document.getElementById('stg-language');
+    if (stgLang) stgLang.value = currentSettings.language || 'zh-CN';
   }
 
   /**
@@ -2839,18 +2838,18 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       });
     }
 
-    // 语言切换
-    document.querySelectorAll('.md-stg-lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const newLang = btn.dataset.lang;
+    // 语言切换（下拉框）
+    const stgLangSelect = document.getElementById('stg-language');
+    if (stgLangSelect) {
+      stgLangSelect.addEventListener('change', () => {
+        const newLang = stgLangSelect.value;
         if (newLang && newLang !== currentSettings.language) {
           currentSettings.language = newLang;
           saveSettings();
-          // 语言切换需要 reload 以重新渲染所有模板字符串
           location.reload();
         }
       });
-    });
+    }
   }
 
   /**
