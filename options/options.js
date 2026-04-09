@@ -20,8 +20,12 @@
   const toggleToc = document.getElementById('toggleToc');
   const tocPositionRow = document.getElementById('tocPositionRow');
   const tocPosBtns = document.querySelectorAll('.toc-pos-btn');
+  const panelModeBtns = document.querySelectorAll('.panel-mode-btn');
+  const contentAlignBtns = document.querySelectorAll('.content-align-btn');
   const toggleMermaid = document.getElementById('toggleMermaid');
   const toggleMathJax = document.getElementById('toggleMathJax');
+  const togglePlantUML = document.getElementById('togglePlantUML');
+  const toggleGraphviz = document.getElementById('toggleGraphviz');
   const toggleLineNumbers = document.getElementById('toggleLineNumbers');
   const toggleAutoDetect = document.getElementById('toggleAutoDetect');
   const typographyPreview = document.getElementById('typographyPreview');
@@ -111,6 +115,25 @@
 
     // MathJax
     toggleMathJax.checked = settings.enableMathJax === true;
+
+    // PlantUML
+    if (togglePlantUML) togglePlantUML.checked = settings.enablePlantUML !== false;
+
+    // Graphviz
+    if (toggleGraphviz) toggleGraphviz.checked = settings.enableGraphviz !== false;
+
+    // 面板模式
+    panelModeBtns.forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.mode === (settings.panelMode || 'float'));
+    });
+
+    // 文档对齐
+    contentAlignBtns.forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.align === (settings.contentAlign || 'center'));
+    });
+
+    // 行号
+    if (toggleLineNumbers) toggleLineNumbers.checked = settings.showLineNumbers === true;
 
     // 自动检测
     toggleAutoDetect.checked = settings.autoDetect !== false;
@@ -308,6 +331,42 @@
     toggleMathJax.addEventListener('change', () => {
       currentSettings.enableMathJax = toggleMathJax.checked;
       scheduleAutoSave(0);
+    });
+
+    // PlantUML 开关
+    if (togglePlantUML) {
+      togglePlantUML.addEventListener('change', () => {
+        currentSettings.enablePlantUML = togglePlantUML.checked;
+        scheduleAutoSave(0);
+      });
+    }
+
+    // Graphviz 开关
+    if (toggleGraphviz) {
+      toggleGraphviz.addEventListener('change', () => {
+        currentSettings.enableGraphviz = toggleGraphviz.checked;
+        scheduleAutoSave(0);
+      });
+    }
+
+    // 面板模式按钮组
+    panelModeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        panelModeBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSettings.panelMode = btn.dataset.mode;
+        scheduleAutoSave(0);
+      });
+    });
+
+    // 文档对齐按钮组
+    contentAlignBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        contentAlignBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSettings.contentAlign = btn.dataset.align;
+        scheduleAutoSave(0);
+      });
     });
 
     // 自动检测开关

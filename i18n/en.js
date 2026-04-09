@@ -192,6 +192,8 @@
     'options.tocPosition.right': '📍 Right',
     'options.mermaid.title': 'Mermaid Diagrams',
     'options.mermaid.desc': 'Enable Mermaid syntax rendering for flowcharts, sequence diagrams, Gantt charts, etc.',
+    'options.plantuml.desc': 'Enable PlantUML online rendering for UML diagrams',
+    'options.graphviz.desc': 'Enable Graphviz/DOT local rendering for diagrams',
     'options.mathJax.title': 'Math Rendering',
     'options.mathJax.desc': 'Enable KaTeX to render LaTeX math formulas (experimental)',
     'options.lineNumbers.title': 'Show Line Numbers',

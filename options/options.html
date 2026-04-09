@@ -734,12 +734,12 @@
         <div class="setting-row">
           <div class="setting-info">
             <div class="setting-label"><span class="icon">↕️</span><span data-i18n="options.lineHeight.title">行高</span></div>
-            <div class="setting-desc" data-i18n="options.lineHeight.desc">调整段落行高（1.2 - 2.0）</div>
+            <div class="setting-desc" data-i18n="options.lineHeight.desc">调整段落行高（1.2 - 2.4）</div>
           </div>
         </div>
         <div class="slider-control">
           <span class="slider-label" data-i18n="options.lineHeight.compact">紧凑</span>
-          <input type="range" id="lineHeightSlider" min="1.2" max="2.0" step="0.1" value="1.6">
+          <input type="range" id="lineHeightSlider" min="1.2" max="2.4" step="0.1" value="1.6">
           <span class="slider-label" data-i18n="options.lineHeight.loose">宽松</span>
           <span class="slider-value" id="lineHeightValue">1.6</span>
         </div>
@@ -748,12 +748,12 @@
         <div class="setting-row">
           <div class="setting-info">
             <div class="setting-label"><span class="icon">↔️</span><span data-i18n="options.maxWidth.title">内容最大宽度</span></div>
-            <div class="setting-desc" data-i18n="options.maxWidth.desc">调整正文区域最大宽度（600px - 1400px）</div>
+            <div class="setting-desc" data-i18n="options.maxWidth.desc">调整正文区域最大宽度（600px - 1800px）</div>
           </div>
         </div>
         <div class="slider-control">
           <span class="slider-label" data-i18n="options.maxWidth.narrow">窄</span>
-          <input type="range" id="maxWidthSlider" min="600" max="1400" step="50" value="1200">
+          <input type="range" id="maxWidthSlider" min="600" max="1800" step="50" value="1200">
           <span class="slider-label" data-i18n="options.maxWidth.wide">宽</span>
           <span class="slider-value" id="maxWidthValue">1200px</span>
         </div>
@@ -859,20 +859,36 @@
           </div>
         </div>
 
+        <!-- 面板模式 -->
         <div class="setting-row">
           <div class="setting-info">
-            <div class="setting-label"><span class="icon">📊</span><span data-i18n="options.mermaid.title">Mermaid 图表渲染</span></div>
-            <div class="setting-desc" data-i18n="options.mermaid.desc">启用 Mermaid 语法渲染流程图、时序图、甘特图等</div>
+            <div class="setting-label"><span class="icon">🪟</span><span data-i18n="settings.panelMode">面板模式</span></div>
+            <div class="setting-desc" data-i18n="settings.panelMode.desc">选择侧边面板的显示模式</div>
           </div>
           <div class="setting-control">
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleMermaid" checked>
-              <span class="toggle-slider"></span>
-            </label>
+            <div class="btn-group">
+              <button class="btn-option panel-mode-btn" data-mode="float" data-i18n="settings.panelMode.float">悬浮</button>
+              <button class="btn-option panel-mode-btn" data-mode="embed" data-i18n="settings.panelMode.embed">嵌入</button>
+            </div>
           </div>
         </div>
 
-        <!-- MathJax -->
+        <!-- 文档对齐 -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">↔️</span><span data-i18n="settings.contentAlign">文档对齐</span></div>
+            <div class="setting-desc" data-i18n="settings.contentAlign.desc">设置主文档的对齐方式</div>
+          </div>
+          <div class="setting-control">
+            <div class="btn-group">
+              <button class="btn-option content-align-btn" data-align="left" data-i18n="settings.contentAlign.left">靠左</button>
+              <button class="btn-option content-align-btn" data-align="center" data-i18n="settings.contentAlign.center">居中</button>
+              <button class="btn-option content-align-btn" data-align="right" data-i18n="settings.contentAlign.right">靠右</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 数学公式（在 Mermaid 之上） -->
         <div class="setting-row">
           <div class="setting-info">
             <div class="setting-label"><span class="icon">🔢</span><span data-i18n="options.mathJax.title">数学公式渲染</span></div>
@@ -886,10 +902,52 @@
           </div>
         </div>
 
+        <!-- Mermaid -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">📊</span><span data-i18n="options.mermaid.title">Mermaid 图表渲染</span></div>
+            <div class="setting-desc" data-i18n="options.mermaid.desc">启用 Mermaid 语法渲染流程图、时序图、甘特图等</div>
+          </div>
+          <div class="setting-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleMermaid" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- PlantUML -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🌱</span><span data-i18n="settings.plantuml">PlantUML 图表</span></div>
+            <div class="setting-desc" data-i18n="options.plantuml.desc">启用 PlantUML 在线渲染 UML 图表</div>
+          </div>
+          <div class="setting-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="togglePlantUML" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Graphviz -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label"><span class="icon">🔗</span><span data-i18n="settings.graphviz">Graphviz 图表</span></div>
+            <div class="setting-desc" data-i18n="options.graphviz.desc">启用 Graphviz/DOT 本地渲染图表</div>
+          </div>
+          <div class="setting-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleGraphviz" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
         <!-- 代码行号 -->
         <div class="setting-row">
           <div class="setting-info">
-            <div class="setting-label"><span class="icon">🔢</span><span data-i18n="options.lineNumbers.title">显示代码行号</span></div>
+            <div class="setting-label"><span class="icon">#️⃣</span><span data-i18n="options.lineNumbers.title">显示代码行号</span></div>
             <div class="setting-desc" data-i18n="options.lineNumbers.desc">在代码块左侧显示行号，方便代码引用和阅读</div>
           </div>
           <div class="setting-control">
@@ -957,7 +1015,9 @@
     <div class="version-info">
       <p>Markdown Viewer Enhanced v1.2.0 · 基于 <a href="https://github.com/markedjs/marked" target="_blank">Marked.js</a> + <a href="https://github.com/mermaid-js/mermaid" target="_blank">Mermaid</a> + <a href="https://github.com/highlightjs/highlight.js" target="_blank">highlight.js</a></p>
       <p style="margin-top: 6px;">
-        <a href="https://github.com/LetitiaChan/markdown_viewer_enhanced" target="_blank">⭐ GitHub</a> · <span data-i18n="options.github">欢迎 Star & 反馈</span>
+        <a href="https://github.com/LetitiaChan/markdown_viewer_enhanced" target="_blank">⭐ GitHub</a> ·
+        <a href="https://github.com/LetitiaChan/markdown_viewer_enhanced/issues" target="_blank">💬 <span data-i18n="settings.feedback">Bug 反馈 & 优化建议</span></a> ·
+        <span data-i18n="options.github">欢迎 Star & 反馈</span>
       </p>
     </div>
   </div>
