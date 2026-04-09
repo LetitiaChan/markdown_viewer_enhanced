@@ -209,3 +209,34 @@ describe('Tier 3: GFM 扩展语法特定场景', () => {
     expect(contentCss).toContain('.theme-dark .md-content ins');
   });
 });
+
+// ==================== Tier 3: 颜色文本 ====================
+
+describe('Tier 3: 颜色文本 {color:xxx}text{/color}', () => {
+  test('BT-color.1 content.js 包含 preprocessColorText 函数', () => {
+    expect(contentJs).toContain('function preprocessColorText');
+  });
+
+  test('BT-color.2 正则匹配命名颜色', () => {
+    const regex = /\{color:([\w#]+(?:\([\d,.\s%]+\))?)\}([\s\S]*?)\{\/color\}/g;
+    const result = '{color:red}红色文本{/color}'.replace(regex, '<span style="color:$1">$2</span>');
+    expect(result).toBe('<span style="color:red">红色文本</span>');
+  });
+
+  test('BT-color.3 正则匹配 hex 颜色', () => {
+    const regex = /\{color:([\w#]+(?:\([\d,.\s%]+\))?)\}([\s\S]*?)\{\/color\}/g;
+    const result = '{color:#4CAF50}绿色{/color}'.replace(regex, '<span style="color:$1">$2</span>');
+    expect(result).toBe('<span style="color:#4CAF50">绿色</span>');
+  });
+
+  test('BT-color.4 多个颜色标记同时替换', () => {
+    const regex = /\{color:([\w#]+(?:\([\d,.\s%]+\))?)\}([\s\S]*?)\{\/color\}/g;
+    const input = '{color:red}红{/color} 和 {color:blue}蓝{/color}';
+    const result = input.replace(regex, '<span style="color:$1">$2</span>');
+    expect(result).toBe('<span style="color:red">红</span> 和 <span style="color:blue">蓝</span>');
+  });
+
+  test('BT-color.5 preprocessColorText 在 marked.parse 前被调用', () => {
+    expect(contentJs).toContain('preprocessColorText(rawMarkdown)');
+  });
+});
