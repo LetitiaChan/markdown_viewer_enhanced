@@ -192,11 +192,9 @@
   min-width: 0;
 }
 
-/* 已完成的任务 - 删除线 + 淡化 */
+/* 已完成的任务 - 淡化 */
 .markdown-viewer-enhanced .task-list-item.checked .task-text {
-  text-decoration: line-through;
   color: #57606a;
-  text-decoration-color: #57606a;
 }
 
 /* ========= 引用块 ========= */

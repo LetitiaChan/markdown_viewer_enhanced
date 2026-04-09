@@ -1944,7 +1944,6 @@ ul:has(> .task-list-item) {
 
 /* 已完成任务 */
 .task-list-item.checked .task-text {
-  text-decoration: line-through;
   opacity: 0.65;
 }
 

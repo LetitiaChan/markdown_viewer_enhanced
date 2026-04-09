@@ -682,11 +682,9 @@ body.markdown-viewer-enhanced ::selection {
   min-width: 0;
 }
 
-/* 已完成的任务文本 - 删除线 + 淡化 */
+/* 已完成的任务文本 - 淡化 */
 .md-viewer-content .task-list-item.checked .task-text {
-  text-decoration: line-through;
   color: var(--task-checked-text);
-  text-decoration-color: var(--task-checked-text);
 }
 
 /* 勾选弹出动画 */
