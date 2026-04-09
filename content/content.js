@@ -848,7 +848,7 @@
             <button id="btn-toggle-theme" class="md-toolbar-btn" title="${t('toolbar.theme.title')}">${t('toolbar.theme')}</button>
             <button id="btn-toggle-raw" class="md-toolbar-btn" title="${t('toolbar.source.title')}">${t('toolbar.source')}</button>
             <button id="btn-settings" class="md-toolbar-btn" title="${t('toolbar.settings.title')}">${t('toolbar.settings')}</button>
-            <button id="btn-refresh" class="md-toolbar-btn" title="${t('toolbar.refresh.title')}">${t('toolbar.refresh')}</button>
+            <button id="btn-refresh" class="md-toolbar-btn md-refresh-wrapper" title="${t('toolbar.refresh.title')}">${t('toolbar.refresh')}<span id="md-file-changed-badge" class="md-file-changed-badge" style="display:none;" title="${t('toolbar.fileChanged')}">${t('toolbar.fileChanged')}</span></button>
           </div>
         </div>
 
@@ -3715,10 +3715,59 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     isRendered = true;
     console.log('[MD Viewer] Markdown 渲染完成 ✅');
 
+    // 启动文件变更检测（仅 file:// 协议）
+    if (isFileProtocol()) {
+      startFileWatcher();
+    }
+
     // 通知 background 设置 MD badge（因为没有 tabs 权限，background 无法自动检测）
     try {
       chrome.runtime.sendMessage({ type: 'SET_BADGE', tabId: undefined, isMarkdown: true });
     } catch (_) { /* 忽略 */ }
+  }
+
+  // ==================== 文件变更检测 ====================
+
+  let fileWatcherTimer = null;
+
+  /**
+   * 启动文件变更检测（轮询方式）
+   * 每 2 秒 fetch 当前文件，对比内容是否变化
+   */
+  function startFileWatcher() {
+    const initialContent = window.__MD_RAW_SOURCE__;
+    if (!initialContent) return;
+
+    const POLL_INTERVAL = 2000;
+    let lastContent = initialContent;
+
+    fileWatcherTimer = setInterval(async () => {
+      try {
+        const resp = await fetch(location.href);
+        if (!resp.ok) return;
+        const text = await resp.text();
+        // 提取纯文本内容（浏览器可能将文件包裹在 <pre> 中）
+        let content = text;
+        const preMatch = text.match(/<pre[^>]*>([\s\S]*?)<\/pre>/i);
+        if (preMatch) {
+          const tmp = document.createElement('div');
+          tmp.innerHTML = preMatch[1];
+          content = tmp.textContent || '';
+        }
+        if (content !== lastContent) {
+          lastContent = content;
+          // 显示「文件已更新」徽章
+          const badge = document.getElementById('md-file-changed-badge');
+          if (badge) badge.style.display = '';
+          // 停止轮询（等待用户点击刷新）
+          clearInterval(fileWatcherTimer);
+          fileWatcherTimer = null;
+          console.log('[MD Viewer] 检测到文件变更，显示更新提示');
+        }
+      } catch {
+        // fetch 失败时静默忽略
+      }
+    }, POLL_INTERVAL);
   }
 
   // 启动

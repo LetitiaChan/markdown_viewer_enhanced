@@ -17,6 +17,7 @@
     'toolbar.settings.title': '设置',
     'toolbar.refresh': '🔃 刷新',
     'toolbar.refresh.title': '刷新',
+    'toolbar.fileChanged': '文件已更新',
 
     // ========== 侧边栏 ==========
     'sidebar.files.title': '文件浏览器',

@@ -17,6 +17,7 @@
     'toolbar.settings.title': 'Settings',
     'toolbar.refresh': '🔃 Refresh',
     'toolbar.refresh.title': 'Refresh',
+    'toolbar.fileChanged': 'File updated',
 
     // ========== Sidebar ==========
     'sidebar.files.title': 'File Browser',
