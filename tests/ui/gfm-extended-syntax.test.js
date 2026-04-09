@@ -213,8 +213,8 @@ describe('Tier 3: GFM 扩展语法特定场景', () => {
 // ==================== Tier 3: 颜色文本 ====================
 
 describe('Tier 3: 颜色文本 {color:xxx}text{/color}', () => {
-  test('BT-color.1 content.js 包含 preprocessColorText 函数', () => {
-    expect(contentJs).toContain('function preprocessColorText');
+  test('BT-color.1 content.js 包含 postprocessColorText 函数', () => {
+    expect(contentJs).toContain('function postprocessColorText');
   });
 
   test('BT-color.2 正则匹配命名颜色', () => {
@@ -236,7 +236,7 @@ describe('Tier 3: 颜色文本 {color:xxx}text{/color}', () => {
     expect(result).toBe('<span style="color:red">红</span> 和 <span style="color:blue">蓝</span>');
   });
 
-  test('BT-color.5 preprocessColorText 在 marked.parse 前被调用', () => {
-    expect(contentJs).toContain('preprocessColorText(rawMarkdown)');
+  test('BT-color.5 postprocessColorText 在 DOMPurify 之后被调用', () => {
+    expect(contentJs).toContain('postprocessColorText(htmlContent)');
   });
 });

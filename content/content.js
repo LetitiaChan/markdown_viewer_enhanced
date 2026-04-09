@@ -118,10 +118,11 @@
   // ==================== 颜色文本预处理 ====================
 
   /**
-   * 预处理 {color:xxx}text{/color} → <span style="color:xxx">text</span>
+   * 后处理颜色文本：在 DOMPurify 之后对 HTML 做 {color:xxx}text{/color} 替换
+   * 放在 sanitize 之后，避免 DOMPurify 剥离 style 属性
    */
-  function preprocessColorText(markdown) {
-    return markdown.replace(
+  function postprocessColorText(html) {
+    return html.replace(
       /\{color:([\w#]+(?:\([\d,.\s%]+\))?)\}([\s\S]*?)\{\/color\}/g,
       '<span style="color:$1">$2</span>'
     );
@@ -3264,12 +3265,10 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     tocItems = [];
     configureMarked();
 
-    // 预处理颜色文本
-    let processedMarkdown = preprocessColorText(rawMarkdown);
-
     // 预处理数学公式
+    let processedMarkdown = rawMarkdown;
     if (currentSettings.enableMathJax) {
-      processedMarkdown = preprocessMath(processedMarkdown);
+      processedMarkdown = preprocessMath(rawMarkdown);
     } else {
       mathExpressions = [];
     }
@@ -3302,6 +3301,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       } else {
         htmlContent = rawHtml;
       }
+      // 后处理颜色文本（在 DOMPurify 之后）
+      htmlContent = postprocessColorText(htmlContent);
     } catch (err) {
       console.error('[MD Viewer] Markdown 重新解析失败:', err);
       return;
@@ -3599,10 +3600,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     tocItems = [];
     configureMarked();
 
-    // 预处理颜色文本
-    let processedMarkdown = preprocessColorText(rawMarkdown);
-
     // 预处理数学公式（在 marked 解析前保护公式）
+    let processedMarkdown = rawMarkdown;
     if (currentSettings.enableMathJax) {
       processedMarkdown = preprocessMath(rawMarkdown);
       console.log(`[MD Viewer] 检测到 ${mathExpressions.length} 个数学公式`);
@@ -3640,6 +3639,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       } else {
         htmlContent = rawHtml;
       }
+      // 后处理颜色文本（在 DOMPurify 之后）
+      htmlContent = postprocessColorText(htmlContent);
     } catch (err) {
       console.error('[MD Viewer] Markdown 解析失败:', err);
       htmlContent = `<div class="md-error"><p>${t('error.parseFailed')}</p><pre>${escapeHtml(rawMarkdown)}</pre></div>`;
