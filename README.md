@@ -28,7 +28,7 @@ A browser extension that elegantly renders Markdown files with a file browser si
 - 📑 **TOC Navigation** — Auto-generated heading tree with fold/expand, left/right sidebar, scroll tracking, URL hash navigation
 - 📐 **Typography** — Font size, line height, content width, font family customization, sidebar drag-to-resize
 - 🖼️ **Image Lightbox** — Click to zoom, scroll-wheel zoom (0.1x–20x), drag to pan, double-click reset, keyboard shortcuts (`+`/`-`/`0`/`R`/`Esc`), zoom percentage indicator
-- 📝 **Extended Syntax** — GitHub alerts (including `[!BLANK]`), task lists, footnotes, definition lists, enhanced tables
+- 📝 **Extended Syntax** — GitHub alerts (including `[!BLANK]`), task lists, footnotes, definition lists, enhanced tables, `==highlight==`, `^superscript^`, `~subscript~`, `++underline++`, `:emoji:` GitHub-style emoji
 - ⚙️ **Settings System** — Popup quick panel + Options advanced page, real-time push to all tabs
 - 🌐 **Multi-language** — Chinese and English interface, switchable in settings
 
@@ -138,7 +138,7 @@ npm run test:coverage
 - 📑 **目录导航** — 自动生成目录树，支持折叠/展开子项，左/右侧边栏，滚动高亮追踪，URL hash 定位
 - 📐 **排版设置** — 字体大小、行高、内容宽度、字体族自由调节，侧边栏拖拽调整宽度
 - 🖼️ **图片灯箱** — 点击放大预览、滚轮缩放（0.1x–20x）、拖拽平移、双击还原、键盘快捷键（`+`/`-`/`0`/`R`/`Esc`）、缩放百分比提示
-- 📝 **扩展语法** — GitHub 告警块（含 `[!BLANK]`）、任务列表、脚注、定义列表、增强表格
+- 📝 **扩展语法** — GitHub 告警块（含 `[!BLANK]`）、任务列表、脚注、定义列表、增强表格、`==高亮==`、`^上标^`、`~下标~`、`++下划线++`、`:emoji:` GitHub 风格表情
 - ⚙️ **设置系统** — Popup 快捷面板 + Options 高级设置，实时推送到所有标签页
 - 🌐 **多语言支持** — 中文和英文界面，可在设置中切换
 

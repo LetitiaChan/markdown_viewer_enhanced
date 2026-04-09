@@ -126,6 +126,7 @@ async function injectContentScripts(tabId) {
         'libs/mermaid.min.js',
         'libs/katex.min.js',
         'libs/viz-global.js',
+        'libs/emoji-map.js',
         'i18n/zh-CN.js',
         'i18n/en.js',
         'i18n/i18n.js',

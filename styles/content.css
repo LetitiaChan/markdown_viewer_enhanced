@@ -796,6 +796,24 @@ html:has(.theme-dark) {
   color: #c9d1d9;
 }
 
+/* 下划线 ++text++ */
+.md-content ins {
+  text-decoration: underline;
+  text-decoration-color: #0969da;
+  text-underline-offset: 2px;
+}
+
+.theme-dark .md-content ins {
+  text-decoration-color: #58a6ff;
+}
+
+/* Emoji :name: */
+.md-content .emoji {
+  font-style: normal;
+  font-size: 1.1em;
+  vertical-align: -0.05em;
+}
+
 .theme-dark .md-content .markdown-alert-note {
   background-color: rgba(56, 139, 253, 0.1);
 }

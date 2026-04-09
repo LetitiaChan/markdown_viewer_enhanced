@@ -595,66 +595,188 @@
         console.warn('[MD Viewer] marked-footnote 未加载，脚注功能不可用');
       }
 
-      // 注册定义列表扩展
-      // 语法：Term\n:   Definition（PHP Markdown Extra 风格）
+      // 注册自定义扩展（高亮、上标、下标、下划线、定义列表增强、emoji）
       marked.use({
-        extensions: [{
-          name: 'deflist',
-          level: 'block',
-          start(src) {
-            // 查找可能的定义列表起始位置：非空行后跟 ": " 定义行
-            const match = src.match(/^[^\n]+\n(?=:[  \t])/m);
-            return match ? match.index : undefined;
-          },
-          tokenizer(src) {
-            // 匹配完整的定义列表块：
-            // Term1\n:   Definition1\n\nTerm2\n:   Definition2\n...
-            const rule = /^(?:[^\n]+\n(?::[  \t]+[^\n]+(?:\n|$))+(?:\n|$)?)+/;
-            const match = rule.exec(src);
-            if (match) {
-              const raw = match[0];
-              const items = [];
-              // 按定义项分组：每个 term 后面跟一个或多个 ": definition" 行
-              const parts = raw.split(/\n(?=[^\n:])/).filter(Boolean);
-              for (const part of parts) {
-                const lines = part.split('\n').filter(Boolean);
-                if (lines.length >= 1) {
-                  const dt = lines[0].trim();
-                  const dds = [];
-                  for (let i = 1; i < lines.length; i++) {
-                    const ddMatch = lines[i].match(/^:[  \t]+(.*)/);
-                    if (ddMatch) {
-                      dds.push(ddMatch[1].trim());
-                    }
-                  }
-                  if (dds.length > 0) {
-                    items.push({ dt, dds });
-                  }
-                }
-              }
-              if (items.length > 0) {
+        extensions: [
+          // ==高亮文本== → <mark>高亮文本</mark>
+          {
+            name: 'highlight',
+            level: 'inline',
+            start(src) {
+              return src.indexOf('==');
+            },
+            tokenizer(src) {
+              const rule = /^==((?:[^=]|=[^=])+)==/;
+              const match = rule.exec(src);
+              if (match) {
                 return {
-                  type: 'deflist',
-                  raw: raw,
-                  items: items,
+                  type: 'highlight',
+                  raw: match[0],
+                  text: match[1],
+                  tokens: this.lexer.inlineTokens(match[1])
                 };
               }
+            },
+            renderer(token) {
+              return `<mark>${this.parser.parseInline(token.tokens)}</mark>`;
             }
           },
-          renderer(token) {
-            let html = '<dl>\n';
-            for (const item of token.items) {
-              html += `<dt>${item.dt}</dt>\n`;
-              for (const dd of item.dds) {
-                html += `<dd>${dd}</dd>\n`;
+          // ^上标^ → <sup>上标</sup>
+          {
+            name: 'superscript',
+            level: 'inline',
+            start(src) {
+              // 排除脚注引用 [^id] 中的 ^ — 只在非 [ 后面的 ^ 上触发
+              const idx = src.indexOf('^');
+              if (idx === -1) return -1;
+              if (idx > 0 && src[idx - 1] === '[') {
+                const nextIdx = src.indexOf('^', idx + 1);
+                return nextIdx === -1 ? -1 : nextIdx;
               }
+              return idx;
+            },
+            tokenizer(src) {
+              const rule = /^\^([^\s\^\[\]\n]{1,100})\^/;
+              const match = rule.exec(src);
+              if (match) {
+                return {
+                  type: 'superscript',
+                  raw: match[0],
+                  text: match[1],
+                  tokens: this.lexer.inlineTokens(match[1])
+                };
+              }
+            },
+            renderer(token) {
+              return `<sup>${this.parser.parseInline(token.tokens)}</sup>`;
             }
-            html += '</dl>\n';
-            return html;
           },
-        }],
+          // ~下标~ → <sub>下标</sub>
+          {
+            name: 'subscript',
+            level: 'inline',
+            start(src) {
+              const match = src.match(/(?<![~])~(?!~)/);
+              return match ? match.index : -1;
+            },
+            tokenizer(src) {
+              const rule = /^~(?!~)([^\s~][^~]*?)~(?!~)/;
+              const match = rule.exec(src);
+              if (match) {
+                return {
+                  type: 'subscript',
+                  raw: match[0],
+                  text: match[1],
+                  tokens: this.lexer.inlineTokens(match[1])
+                };
+              }
+            },
+            renderer(token) {
+              return `<sub>${this.parser.parseInline(token.tokens)}</sub>`;
+            }
+          },
+          // ++下划线++ → <ins>下划线</ins>
+          {
+            name: 'underline',
+            level: 'inline',
+            start(src) {
+              return src.indexOf('++');
+            },
+            tokenizer(src) {
+              const rule = /^\+\+((?:[^+]|\+[^+])+)\+\+/;
+              const match = rule.exec(src);
+              if (match) {
+                return {
+                  type: 'underline',
+                  raw: match[0],
+                  text: match[1],
+                  tokens: this.lexer.inlineTokens(match[1])
+                };
+              }
+            },
+            renderer(token) {
+              return `<ins>${this.parser.parseInline(token.tokens)}</ins>`;
+            }
+          },
+          // 定义列表（增强版：支持行内格式渲染）
+          {
+            name: 'deflist',
+            level: 'block',
+            start(src) {
+              const match = src.match(/^[^\n]+\n(?=:[  \t])/m);
+              return match ? match.index : undefined;
+            },
+            tokenizer(src) {
+              const rule = /^(?:[^\n]+\n(?::[  \t]+[^\n]+(?:\n|$))+(?:\n|$)?)+/;
+              const match = rule.exec(src);
+              if (match) {
+                const raw = match[0];
+                const items = [];
+                const parts = raw.split(/\n(?=[^\n:])/).filter(Boolean);
+                for (const part of parts) {
+                  const lines = part.split('\n').filter(Boolean);
+                  if (lines.length >= 1) {
+                    const dt = lines[0].trim();
+                    const dds = [];
+                    for (let i = 1; i < lines.length; i++) {
+                      const ddMatch = lines[i].match(/^:[  \t]+(.*)/);
+                      if (ddMatch) dds.push(ddMatch[1].trim());
+                    }
+                    if (dds.length > 0) {
+                      items.push({
+                        dt,
+                        dtTokens: this.lexer.inlineTokens(dt),
+                        dds: dds.map(dd => ({
+                          text: dd,
+                          tokens: this.lexer.inlineTokens(dd)
+                        }))
+                      });
+                    }
+                  }
+                }
+                if (items.length > 0) {
+                  return { type: 'deflist', raw, items };
+                }
+              }
+            },
+            renderer(token) {
+              let html = '<dl>\n';
+              for (const item of token.items) {
+                html += `<dt>${this.parser.parseInline(item.dtTokens)}</dt>\n`;
+                for (const dd of item.dds) {
+                  html += `<dd>${this.parser.parseInline(dd.tokens)}</dd>\n`;
+                }
+              }
+              html += '</dl>\n';
+              return html;
+            }
+          },
+          // :emoji_name: → GitHub 风格 Emoji（Unicode）
+          {
+            name: 'emoji',
+            level: 'inline',
+            start(src) {
+              return src.indexOf(':');
+            },
+            tokenizer(src) {
+              const rule = /^:([a-zA-Z0-9_+\-]+):/;
+              const match = rule.exec(src);
+              if (match && typeof EMOJI_MAP !== 'undefined' && EMOJI_MAP[match[1]]) {
+                return {
+                  type: 'emoji',
+                  raw: match[0],
+                  name: match[1],
+                  emoji: EMOJI_MAP[match[1]]
+                };
+              }
+            },
+            renderer(token) {
+              return `<span class="emoji" title=":${token.name}:">${token.emoji}</span>`;
+            }
+          }
+        ]
       });
-      console.log('[MD Viewer] 定义列表扩展已注册');
+      console.log('[MD Viewer] GFM 扩展语法已注册（高亮/上标/下标/下划线/定义列表/emoji）');
       markedExtensionsRegistered = true;
     }
   }
