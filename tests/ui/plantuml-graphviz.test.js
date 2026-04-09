@@ -242,7 +242,7 @@ describe('Tier 3: PlantUML + Graphviz 特定场景', () => {
 
   test('BT-graphviz.2 Graphviz 使用 Viz.js 实例渲染', () => {
     expect(contentJs).toContain('Viz.instance');
-    expect(contentJs).toContain('vizInstance.render');
+    expect(contentJs).toContain('vizInstance.renderSVGElement');
   });
 
   test('BT-graphviz.3 Graphviz SVG 自适应处理', () => {

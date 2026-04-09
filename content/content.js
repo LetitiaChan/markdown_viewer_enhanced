@@ -3372,13 +3372,11 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       }
 
       try {
-        const svgString = vizInstance.render(source, { format: 'svg', engine: 'dot' });
+        const svgEl = vizInstance.renderSVGElement(source);
         const wrapper = document.createElement('div');
         wrapper.className = 'graphviz-rendered';
-        wrapper.innerHTML = svgString;
 
         // SVG 自适应
-        const svgEl = wrapper.querySelector('svg');
         if (svgEl) {
           // 确保有 viewBox
           if (!svgEl.getAttribute('viewBox')) {
@@ -3393,6 +3391,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
           svgEl.style.width = '100%';
           svgEl.style.height = 'auto';
           svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          wrapper.appendChild(svgEl);
         }
 
         const sourceEl = container.querySelector('.graphviz-source');
