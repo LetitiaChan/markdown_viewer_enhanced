@@ -149,7 +149,7 @@ To render local Markdown files, make sure file access is enabled for the extensi
 ## 📬 Feedback & Support
 
 If you encounter any issues or have feature suggestions, feel free to reach out:
-- 🐛 [GitHub Issues](https://github.com/nichuanfang/markdown_viewer_enhanced/issues)
+- 🐛 [GitHub Issues](https://github.com/LetitiaChan/markdown_viewer_enhanced/issues)
 
 ---
 

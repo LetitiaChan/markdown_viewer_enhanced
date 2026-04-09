@@ -148,7 +148,7 @@
 ## 📬 反馈与支持
 
 如果您遇到问题或有功能建议，欢迎通过以下方式联系：
-- 🐛 [GitHub Issues](https://github.com/nichuanfang/markdown_viewer_enhanced/issues)
+- 🐛 [GitHub Issues](https://github.com/LetitiaChan/markdown_viewer_enhanced/issues)
 
 ---
 
