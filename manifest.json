@@ -48,6 +48,7 @@
         "libs/hljs-protobuf.min.js",
         "libs/mermaid.min.js",
         "libs/katex.min.js",
+        "libs/viz-global.js",
         "i18n/zh-CN.js",
         "i18n/en.js",
         "i18n/i18n.js",

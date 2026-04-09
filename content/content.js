@@ -41,6 +41,8 @@
     tocPosition: 'right',
     enableMermaid: true,
     enableMathJax: true,
+    enablePlantUML: true,
+    enableGraphviz: true,
     autoDetect: true,
     maxWidth: 1200,
     fontFamily: 'system',
@@ -351,6 +353,22 @@
           <div class="mermaid" data-source="${base64Code}"></div>
           <button class="mermaid-copy-btn" title="${t('code.mermaidCopy.title')}">📋</button>
           <pre class="mermaid-source" style="display:none"><code>${escapeHtml(code)}</code></pre>
+        </div>`;
+      }
+
+      // PlantUML 代码块处理
+      if ((lang === 'plantuml' || lang === 'puml') && currentSettings.enablePlantUML) {
+        const base64Code = btoa(unescape(encodeURIComponent(code)));
+        return `<div class="plantuml-container" data-source="${base64Code}">
+          <pre class="plantuml-source" style="display:none"><code>${escapeHtml(code)}</code></pre>
+        </div>`;
+      }
+
+      // Graphviz/DOT 代码块处理
+      if ((lang === 'dot' || lang === 'graphviz') && currentSettings.enableGraphviz) {
+        const base64Code = btoa(unescape(encodeURIComponent(code)));
+        return `<div class="graphviz-container" data-source="${base64Code}">
+          <pre class="graphviz-source" style="display:none"><code>${escapeHtml(code)}</code></pre>
         </div>`;
       }
 
@@ -970,6 +988,20 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                       <span class="md-settings-label">${t('settings.mathJax')}</span>
                     </div>
                     <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMathJax"><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">🌱</span>
+                      <span class="md-settings-label">${t('settings.plantuml')}</span>
+                    </div>
+                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enablePlantUML" checked><span class="md-stg-toggle-slider"></span></label>
+                  </div>
+                  <div class="md-settings-item">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">🔗</span>
+                      <span class="md-settings-label">${t('settings.graphviz')}</span>
+                    </div>
+                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enableGraphviz" checked><span class="md-stg-toggle-slider"></span></label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
@@ -2525,6 +2557,37 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       }
     });
 
+    // Graphviz 图表点击放大预览（复用 Mermaid 灯箱）
+    document.addEventListener('click', (e) => {
+      const graphvizRendered = e.target.closest('.graphviz-rendered');
+      if (graphvizRendered) {
+        const overlay = document.getElementById('md-mermaid-overlay');
+        const canvas = document.getElementById('md-mermaid-canvas');
+        if (overlay && canvas) {
+          const svgEl = graphvizRendered.querySelector('svg');
+          if (svgEl) {
+            canvas.innerHTML = '';
+            const clonedSvg = svgEl.cloneNode(true);
+            const viewBox = clonedSvg.getAttribute('viewBox');
+            if (viewBox) {
+              const parts = viewBox.split(/[\s,]+/);
+              const vbW = parseFloat(parts[2]);
+              const vbH = parseFloat(parts[3]);
+              if (vbW && vbH) {
+                clonedSvg.setAttribute('width', vbW);
+                clonedSvg.setAttribute('height', vbH);
+              }
+            }
+            clonedSvg.style.cssText = 'width: auto; height: auto;';
+            canvas.appendChild(clonedSvg);
+            resetMermaidZoom();
+            overlay.style.display = 'flex';
+            requestAnimationFrame(() => fitMermaidToWindow());
+          }
+        }
+      }
+    });
+
     // 关闭 Mermaid 预览
     const mermaidOverlay = document.getElementById('md-mermaid-overlay');
     if (mermaidOverlay) {
@@ -2795,6 +2858,12 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     const stgMathJax = document.getElementById('stg-enableMathJax');
     if (stgMathJax) stgMathJax.checked = currentSettings.enableMathJax === true;
 
+    const stgPlantUML = document.getElementById('stg-enablePlantUML');
+    if (stgPlantUML) stgPlantUML.checked = currentSettings.enablePlantUML !== false;
+
+    const stgGraphviz = document.getElementById('stg-enableGraphviz');
+    if (stgGraphviz) stgGraphviz.checked = currentSettings.enableGraphviz !== false;
+
     const stgLineNumbers = document.getElementById('stg-showLineNumbers');
     if (stgLineNumbers) stgLineNumbers.checked = currentSettings.showLineNumbers === true;
 
@@ -2932,6 +3001,26 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     if (stgMathJax) {
       stgMathJax.addEventListener('change', () => {
         currentSettings.enableMathJax = stgMathJax.checked;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    }
+
+    // PlantUML 开关
+    const stgPlantUML = document.getElementById('stg-enablePlantUML');
+    if (stgPlantUML) {
+      stgPlantUML.addEventListener('change', () => {
+        currentSettings.enablePlantUML = stgPlantUML.checked;
+        applySettings(currentSettings);
+        saveSettings();
+      });
+    }
+
+    // Graphviz 开关
+    const stgGraphviz = document.getElementById('stg-enableGraphviz');
+    if (stgGraphviz) {
+      stgGraphviz.addEventListener('change', () => {
+        currentSettings.enableGraphviz = stgGraphviz.checked;
         applySettings(currentSettings);
         saveSettings();
       });
@@ -3105,6 +3194,12 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     // 重新渲染 Mermaid
     await renderMermaidDiagrams();
 
+    // 重新渲染 PlantUML
+    renderPlantUML();
+
+    // 重新渲染 Graphviz
+    await renderGraphviz();
+
     // 重新渲染数学公式
     await renderMathFormulas();
 
@@ -3176,6 +3271,141 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     });
 
     await renderMermaidDiagrams();
+  }
+
+  // ==================== PlantUML 渲染 ====================
+
+  /**
+   * PlantUML hex 编码：UTF-8 bytes → hex string
+   */
+  function plantumlHexEncode(text) {
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(text);
+    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  /**
+   * 渲染所有 PlantUML 容器
+   */
+  function renderPlantUML() {
+    if (!currentSettings.enablePlantUML) return;
+
+    const containers = document.querySelectorAll('.plantuml-container:not(.plantuml-processed)');
+    containers.forEach(container => {
+      const base64 = container.getAttribute('data-source');
+      if (!base64) return;
+
+      let source;
+      try {
+        source = decodeURIComponent(escape(atob(base64)));
+      } catch {
+        return;
+      }
+
+      // 源码长度限制
+      if (source.length > 4000) {
+        container.innerHTML = `<div class="plantuml-error">${t('plantuml.error.tooLong')}</div>
+          <pre class="plantuml-source"><code>${escapeHtml(source)}</code></pre>`;
+        container.classList.add('plantuml-processed');
+        return;
+      }
+
+      const hex = plantumlHexEncode(source);
+      const url = `https://www.plantuml.com/plantuml/svg/~h${hex}`;
+
+      const img = document.createElement('img');
+      img.className = 'plantuml-rendered';
+      img.src = url;
+      img.alt = 'PlantUML Diagram';
+      img.loading = 'lazy';
+
+      img.onerror = () => {
+        container.innerHTML = `<div class="plantuml-error">${t('plantuml.error.network')}</div>
+          <pre class="plantuml-source"><code>${escapeHtml(source)}</code></pre>`;
+      };
+
+      // 清空占位，插入图片
+      const sourceEl = container.querySelector('.plantuml-source');
+      container.innerHTML = '';
+      container.appendChild(img);
+      if (sourceEl) container.appendChild(sourceEl);
+      container.classList.add('plantuml-processed');
+    });
+  }
+
+  // ==================== Graphviz 渲染 ====================
+
+  let vizInstance = null;
+
+  /**
+   * 渲染所有 Graphviz 容器
+   */
+  async function renderGraphviz() {
+    if (!currentSettings.enableGraphviz) return;
+    if (typeof Viz === 'undefined') {
+      console.log('[MD Viewer] Viz.js 未加载，跳过 Graphviz 渲染');
+      return;
+    }
+
+    const containers = document.querySelectorAll('.graphviz-container:not(.graphviz-processed)');
+    if (containers.length === 0) return;
+
+    // 初始化 Viz 实例
+    if (!vizInstance) {
+      try {
+        vizInstance = await Viz.instance();
+      } catch (err) {
+        console.error('[MD Viewer] Viz.js 初始化失败:', err);
+        return;
+      }
+    }
+
+    containers.forEach(container => {
+      const base64 = container.getAttribute('data-source');
+      if (!base64) return;
+
+      let source;
+      try {
+        source = decodeURIComponent(escape(atob(base64)));
+      } catch {
+        return;
+      }
+
+      try {
+        const svgString = vizInstance.render(source, { format: 'svg', engine: 'dot' });
+        const wrapper = document.createElement('div');
+        wrapper.className = 'graphviz-rendered';
+        wrapper.innerHTML = svgString;
+
+        // SVG 自适应
+        const svgEl = wrapper.querySelector('svg');
+        if (svgEl) {
+          // 确保有 viewBox
+          if (!svgEl.getAttribute('viewBox')) {
+            const w = svgEl.getAttribute('width');
+            const h = svgEl.getAttribute('height');
+            if (w && h) {
+              svgEl.setAttribute('viewBox', `0 0 ${parseFloat(w)} ${parseFloat(h)}`);
+            }
+          }
+          svgEl.removeAttribute('width');
+          svgEl.removeAttribute('height');
+          svgEl.style.width = '100%';
+          svgEl.style.height = 'auto';
+          svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        }
+
+        const sourceEl = container.querySelector('.graphviz-source');
+        container.innerHTML = '';
+        container.appendChild(wrapper);
+        if (sourceEl) container.appendChild(sourceEl);
+        container.classList.add('graphviz-processed');
+      } catch (err) {
+        container.innerHTML = `<div class="graphviz-error">${t('graphviz.error.syntax')}<br><small>${escapeHtml(String(err.message || err))}</small></div>
+          <pre class="graphviz-source"><code>${escapeHtml(source)}</code></pre>`;
+        container.classList.add('graphviz-processed');
+      }
+    });
   }
 
   // ==================== 自动检测主题 ====================
@@ -3295,6 +3525,12 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
 
     // 渲染 Mermaid 图表
     await renderMermaidDiagrams();
+
+    // 渲染 PlantUML 图表
+    renderPlantUML();
+
+    // 渲染 Graphviz 图表
+    await renderGraphviz();
 
     // 渲染数学公式
     await renderMathFormulas();

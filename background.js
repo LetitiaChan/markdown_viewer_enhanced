@@ -13,6 +13,8 @@ const DEFAULT_SETTINGS = {
   tocPosition: 'right',     // 目录位置：left / right
   enableMermaid: true,      // 启用 Mermaid 图表渲染
   enableMathJax: true,      // 启用数学公式渲染
+  enablePlantUML: true,     // 启用 PlantUML 图表渲染
+  enableGraphviz: true,     // 启用 Graphviz 图表渲染
   autoDetect: true,         // 自动检测 Markdown 文件
   maxWidth: 1200,           // 内容最大宽度(px)
   fontFamily: 'system',     // 字体：system / serif / mono
@@ -123,6 +125,7 @@ async function injectContentScripts(tabId) {
         'libs/hljs-protobuf.min.js',
         'libs/mermaid.min.js',
         'libs/katex.min.js',
+        'libs/viz-global.js',
         'i18n/zh-CN.js',
         'i18n/en.js',
         'i18n/i18n.js',

@@ -21,6 +21,8 @@ A browser extension that elegantly renders Markdown files with a file browser si
 - 📁 **File Browser** — Local file directory tree, folder expand/collapse, open files in new tab, breadcrumb navigation
 - 🎨 **Multiple Themes** — Light / Dark / Auto (follows system), 15 code highlight themes (including auto)
 - 📊 **Mermaid Diagrams** — Flowcharts, sequence diagrams, Gantt charts with click-to-zoom, drag & pan, keyboard shortcuts
+- 🌱 **PlantUML Diagrams** — UML class, sequence, activity diagrams via online PlantUML server, click to zoom in lightbox
+- 🔗 **Graphviz Diagrams** — DOT language graph rendering via local Viz.js engine, click to zoom with scale control bar
 - 💻 **Syntax Highlighting** — Powered by highlight.js, 180+ languages, line numbers, one-click copy, diff syntax highlighting
 - 🔢 **KaTeX Math** — Inline `$...$` and block `$$...$$` LaTeX formula rendering with placeholder protection
 - 📑 **TOC Navigation** — Auto-generated heading tree with fold/expand, left/right sidebar, scroll tracking, URL hash navigation
@@ -83,6 +85,8 @@ To render local Markdown files, enable file access for the extension:
 |--------|-----------|
 | Markdown Parsing | [Marked.js](https://github.com/markedjs/marked) |
 | Diagram Rendering | [Mermaid](https://github.com/mermaid-js/mermaid) |
+| PlantUML Rendering | [PlantUML Server](https://www.plantuml.com) (online) |
+| Graphviz Rendering | [Viz.js](https://github.com/nicknisi/viz.js) (local WASM) |
 | Syntax Highlighting | [highlight.js](https://github.com/highlightjs/highlight.js) |
 | Math Formulas | [KaTeX](https://github.com/KaTeX/KaTeX) |
 | Footnotes | [marked-footnote](https://github.com/bent10/marked-extensions) |
@@ -127,6 +131,8 @@ npm run test:coverage
 - 📁 **文件浏览器** — 本地文件目录树，文件夹展开/折叠，文件在新标签页打开，面包屑导航
 - 🎨 **多主题切换** — 浅色 / 深色 / 跟随系统，15 种代码高亮主题（含 auto）
 - 📊 **Mermaid 图表** — 流程图、时序图、甘特图等，支持点击放大、缩放、拖拽、键盘快捷键
+- 🌱 **PlantUML 图表** — UML 类图、时序图、活动图等，通过在线 PlantUML 服务器渲染，点击可放大查看
+- 🔗 **Graphviz 图表** — DOT 语言图形渲染，基于本地 Viz.js 引擎，点击可放大查看（支持缩放控制条）
 - 💻 **代码高亮** — 基于 highlight.js，180+ 语言，行号显示，一键复制，diff 语法高亮
 - 🔢 **KaTeX 数学公式** — 行内 `$...$` 和块级 `$$...$$` LaTeX 公式渲染，占位符保护机制
 - 📑 **目录导航** — 自动生成目录树，支持折叠/展开子项，左/右侧边栏，滚动高亮追踪，URL hash 定位
@@ -189,6 +195,8 @@ npm run test:coverage
 |------|------|
 | Markdown 解析 | [Marked.js](https://github.com/markedjs/marked) |
 | 图表渲染 | [Mermaid](https://github.com/mermaid-js/mermaid) |
+| PlantUML 渲染 | [PlantUML Server](https://www.plantuml.com)（在线） |
+| Graphviz 渲染 | [Viz.js](https://github.com/nicknisi/viz.js)（本地 WASM） |
 | 代码高亮 | [highlight.js](https://github.com/highlightjs/highlight.js) |
 | 数学公式 | [KaTeX](https://github.com/KaTeX/KaTeX) |
 | 脚注扩展 | [marked-footnote](https://github.com/bent10/marked-extensions) |

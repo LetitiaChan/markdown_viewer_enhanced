@@ -66,6 +66,13 @@
     'mermaid.zoomFit': '⊡ Fit',
     'mermaid.zoomFit.title': 'Fit to window',
 
+    // ========== PlantUML ==========
+    'plantuml.error.tooLong': '⚠️ PlantUML source too long (exceeds 4000 characters)',
+    'plantuml.error.network': '⚠️ PlantUML rendering failed (network error or service unavailable)',
+
+    // ========== Graphviz ==========
+    'graphviz.error.syntax': '⚠️ Graphviz rendering failed:',
+
     // ========== GitHub Alert ==========
     'alert.note': 'Note',
     'alert.tip': 'Tip',
@@ -128,6 +135,8 @@
     'settings.tocPosition.right': 'Right',
     'settings.mermaid': 'Mermaid Diagrams',
     'settings.mathJax': 'Math Rendering',
+    'settings.plantuml': 'PlantUML Diagrams',
+    'settings.graphviz': 'Graphviz Diagrams',
     'settings.lineNumbers': 'Show Line Numbers',
     'settings.autoDetect': 'Auto-detect Markdown',
 

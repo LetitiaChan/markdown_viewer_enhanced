@@ -1519,6 +1519,116 @@ html:has(.theme-dark) {
   background: #1f1212;
 }
 
+/* ==================== PlantUML ==================== */
+.plantuml-container {
+  position: relative;
+  margin: 16px 0;
+  padding: 16px;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  text-align: center;
+  overflow: auto;
+}
+
+.plantuml-rendered {
+  max-width: 100%;
+  height: auto;
+  cursor: zoom-in;
+  border-radius: 4px;
+}
+
+.plantuml-source {
+  text-align: left;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.plantuml-error {
+  padding: 12px;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 6px;
+  color: #c53030;
+  font-size: 14px;
+  text-align: left;
+}
+
+.plantuml-error + .plantuml-source {
+  display: block !important;
+}
+
+.theme-dark .plantuml-container {
+  background: #161b22;
+  border-color: #30363d;
+}
+
+.theme-dark .plantuml-rendered {
+  filter: invert(0.88) hue-rotate(180deg);
+}
+
+.theme-dark .plantuml-error {
+  background: #2d1b1b;
+  border-color: #7f1d1d;
+  color: #f87171;
+}
+
+/* ==================== Graphviz ==================== */
+.graphviz-container {
+  position: relative;
+  margin: 16px 0;
+  padding: 16px;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  text-align: center;
+  overflow: auto;
+}
+
+.graphviz-rendered {
+  cursor: zoom-in;
+}
+
+.graphviz-rendered svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.graphviz-source {
+  text-align: left;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.graphviz-error {
+  padding: 12px;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 6px;
+  color: #c53030;
+  font-size: 14px;
+  text-align: left;
+}
+
+.graphviz-error + .graphviz-source {
+  display: block !important;
+}
+
+.theme-dark .graphviz-container {
+  background: #161b22;
+  border-color: #30363d;
+}
+
+.theme-dark .graphviz-rendered svg {
+  filter: invert(0.88) hue-rotate(180deg);
+}
+
+.theme-dark .graphviz-error {
+  background: #2d1b1b;
+  border-color: #7f1d1d;
+  color: #f87171;
+}
+
 /* ==================== 标题锚点 ==================== */
 .md-heading {
   position: relative;

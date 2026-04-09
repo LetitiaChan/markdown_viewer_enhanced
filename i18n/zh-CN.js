@@ -66,6 +66,13 @@
     'mermaid.zoomFit': '⊡ 适应',
     'mermaid.zoomFit.title': '适应窗口',
 
+    // ========== PlantUML ==========
+    'plantuml.error.tooLong': '⚠️ PlantUML 源码过长（超过 4000 字符），无法渲染',
+    'plantuml.error.network': '⚠️ PlantUML 渲染失败（网络错误或服务不可用）',
+
+    // ========== Graphviz ==========
+    'graphviz.error.syntax': '⚠️ Graphviz 渲染失败：',
+
     // ========== GitHub Alert ==========
     'alert.note': '注意',
     'alert.tip': '提示',
@@ -128,6 +135,8 @@
     'settings.tocPosition.right': '右侧',
     'settings.mermaid': 'Mermaid 图表',
     'settings.mathJax': '数学公式渲染',
+    'settings.plantuml': 'PlantUML 图表',
+    'settings.graphviz': 'Graphviz 图表',
     'settings.lineNumbers': '显示代码行号',
     'settings.autoDetect': '自动检测 Markdown',
 
