@@ -790,6 +790,20 @@
                     <button class="md-stg-theme-btn" data-theme="dark"><span>🌙</span> ${t('settings.theme.dark')}</button>
                     <button class="md-stg-theme-btn" data-theme="auto"><span>💻</span> ${t('settings.theme.auto')}</button>
                   </div>
+                  <!-- 语言 -->
+                  <div class="md-settings-item" style="margin-top:8px;">
+                    <div class="md-settings-item-left">
+                      <span class="md-settings-item-icon">🌐</span>
+                      <div>
+                        <span class="md-settings-label">${t('settings.language.title')}</span>
+                        <span class="md-settings-label-desc">${t('settings.language.desc')}</span>
+                      </div>
+                    </div>
+                    <select id="stg-language" class="md-settings-select">
+                      <option value="zh-CN">CN 中文</option>
+                      <option value="en">US English</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -975,16 +989,6 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
                       <span class="md-settings-label">${t('settings.autoDetect')}</span>
                     </div>
                     <label class="md-stg-toggle"><input type="checkbox" id="stg-autoDetect" checked><span class="md-stg-toggle-slider"></span></label>
-                  </div>
-                  <div class="md-settings-item">
-                    <div class="md-settings-item-left">
-                      <span class="md-settings-item-icon">🌐</span>
-                      <span class="md-settings-label">${t('settings.language.title')}</span>
-                    </div>
-                    <select id="stg-language" class="md-settings-select">
-                      <option value="zh-CN">CN 中文</option>
-                      <option value="en">US English</option>
-                    </select>
                   </div>
                 </div>
               </div>
