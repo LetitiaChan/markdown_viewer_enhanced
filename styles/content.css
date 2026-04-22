@@ -1215,6 +1215,10 @@ html:has(.theme-dark) {
 .code-block.show-line-numbers pre code {
   counter-reset: line;
   padding-left: 0;
+  /* font-size: 0 消除 display: block 的 .code-line 之间 \n 文本节点在 white-space: pre 下产生的额外空行，
+     .code-line 上恢复正常 font-size。textContent 不受 CSS 影响，代码复制功能正常 */
+  font-size: 0;
+  line-height: 0;
 }
 
 .code-block.show-line-numbers pre code .code-line {
@@ -1222,6 +1226,8 @@ html:has(.theme-dark) {
   display: block;
   width: 100%;
   padding-left: 16px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .code-block.show-line-numbers pre code .code-line::before {
@@ -1238,14 +1244,14 @@ html:has(.theme-dark) {
 
 /* ==================== Diff 代码块整行背景色 ==================== */
 .code-block pre code .code-line.diff-addition {
-  display: inline-block;
+  display: block;
   width: 100%;
   color: #22863a;
   background-color: rgba(46, 160, 67, 0.15);
 }
 
 .code-block pre code .code-line.diff-deletion {
-  display: inline-block;
+  display: block;
   width: 100%;
   color: #b31d28;
   background-color: rgba(248, 81, 73, 0.15);

@@ -142,3 +142,92 @@ describe('BT-line-number-align.1 代码行号对齐回归测试', () => {
     expect(beforeRuleMatch[1]).toMatch(/margin-right:\s*\d+px/);
   });
 });
+
+// =====================================================
+//  Tier 3 补充 — BT-line-number-extra-line 行号多一行回归测试
+// =====================================================
+describe('BT-line-number-extra-line.1 display:block + join(\\n) 双倍换行回归测试', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  let contentCss;
+  let contentJs;
+  beforeAll(() => {
+    contentCss = fs.readFileSync(
+      path.join(__dirname, '../../styles/content.css'),
+      'utf-8'
+    );
+    contentJs = fs.readFileSync(
+      path.join(__dirname, '../../content/content.js'),
+      'utf-8'
+    );
+  });
+
+  test('4.1 show-line-numbers 模式下 <code> 设置了 font-size: 0 消除 \\n 文本节点的视觉空间', () => {
+    const codeRuleMatch = contentCss.match(
+      /\.code-block\.show-line-numbers\s+pre\s+code\s*\{([^}]+)\}/
+    );
+    expect(codeRuleMatch).not.toBeNull();
+    expect(codeRuleMatch[1]).toMatch(/font-size:\s*0/);
+  });
+
+  test('4.2 show-line-numbers 模式下 <code> 设置了 line-height: 0', () => {
+    const codeRuleMatch = contentCss.match(
+      /\.code-block\.show-line-numbers\s+pre\s+code\s*\{([^}]+)\}/
+    );
+    expect(codeRuleMatch).not.toBeNull();
+    expect(codeRuleMatch[1]).toMatch(/line-height:\s*0/);
+  });
+
+  test('4.3 .code-line 恢复了正常的 font-size（回归防护）', () => {
+    const lineRuleMatch = contentCss.match(
+      /\.code-block\.show-line-numbers\s+pre\s+code\s+\.code-line\s*\{([^}]+)\}/
+    );
+    expect(lineRuleMatch).not.toBeNull();
+    // font-size 必须大于 0
+    expect(lineRuleMatch[1]).toMatch(/font-size:\s*\d+px/);
+    // 不能是 font-size: 0
+    expect(lineRuleMatch[1]).not.toMatch(/font-size:\s*0[^1-9]/);
+  });
+
+  test('4.4 .code-line 恢复了正常的 line-height', () => {
+    const lineRuleMatch = contentCss.match(
+      /\.code-block\.show-line-numbers\s+pre\s+code\s+\.code-line\s*\{([^}]+)\}/
+    );
+    expect(lineRuleMatch).not.toBeNull();
+    expect(lineRuleMatch[1]).toMatch(/line-height:\s*[\d.]+/);
+    // 不能是 line-height: 0
+    expect(lineRuleMatch[1]).not.toMatch(/line-height:\s*0[^.1-9]/);
+  });
+
+  test('4.5 .code-line 仍然使用 display: block（行号对齐的基础）', () => {
+    const lineRuleMatch = contentCss.match(
+      /\.code-block\.show-line-numbers\s+pre\s+code\s+\.code-line\s*\{([^}]+)\}/
+    );
+    expect(lineRuleMatch).not.toBeNull();
+    expect(lineRuleMatch[1]).toMatch(/display:\s*block/);
+  });
+
+  test('4.6 wrapLines 函数使用 join(\\n) 保持代码复制功能正常', () => {
+    // 确认 wrapLines 函数中使用 join('\n')，这是代码复制功能（textContent）所需的
+    expect(contentJs).toMatch(/\.join\s*\(\s*['"]\\n['"]\s*\)/);
+  });
+
+  test('4.7 diff-addition 使用 display: block（与 .code-line 一致，避免在行号模式下出现对齐问题）', () => {
+    const diffAddMatch = contentCss.match(
+      /\.code-block\s+pre\s+code\s+\.code-line\.diff-addition\s*\{([^}]+)\}/
+    );
+    expect(diffAddMatch).not.toBeNull();
+    expect(diffAddMatch[1]).toMatch(/display:\s*block/);
+    expect(diffAddMatch[1]).not.toMatch(/display:\s*inline-block/);
+  });
+
+  test('4.8 diff-deletion 使用 display: block（与 .code-line 一致）', () => {
+    const diffDelMatch = contentCss.match(
+      /\.code-block\s+pre\s+code\s+\.code-line\.diff-deletion\s*\{([^}]+)\}/
+    );
+    expect(diffDelMatch).not.toBeNull();
+    expect(diffDelMatch[1]).toMatch(/display:\s*block/);
+    expect(diffDelMatch[1]).not.toMatch(/display:\s*inline-block/);
+  });
+});
