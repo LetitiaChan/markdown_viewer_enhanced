@@ -58,4 +58,5 @@ package-lock.json
 *.log
 *.tmp
 *.bak
+.analysis-archive/
 todo.md
