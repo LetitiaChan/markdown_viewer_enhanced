@@ -66,12 +66,30 @@ Local `file://` supports all extensions above; remote `http://` / `https://` cur
 
 > 💡 **Tip**: After modifying the code, go back to the extensions page and click the 🔄 refresh button on the extension card to apply updates.
 
+#### Install from GitHub Release (Latest Version)
+
+> 💡 Web Store review cycles are long, so the store version may lag behind. For the **latest features and fixes**, install directly from GitHub Release.
+
+1. **Download**: Go to the [GitHub Releases](https://github.com/LetitiaChan/markdown_viewer_enhanced/releases) page and download the latest `.zip` file
+2. **Extract**: Unzip the downloaded file to a local folder
+3. **Open the extensions page**:
+   - Chrome: Navigate to `chrome://extensions/`
+   - Edge: Navigate to `edge://extensions/`
+4. **Enable Developer Mode**: Toggle the "Developer mode" switch in the top-right corner
+5. **Load the extension**: Click "Load unpacked" and select the extracted folder (the directory containing `manifest.json`)
+6. **Enable file access**: Click "Details" on the extension card → Enable "Allow access to file URLs"
+7. **Start using**: Open any `.md` file in your browser, and the extension renders it automatically
+
+> ⚠️ Extensions installed via Developer Mode will show a "Remove developer mode extensions" prompt each time the browser starts. This is normal browser behavior and does not affect functionality — simply dismiss the prompt.
+
 #### Install from Web Store
 
 1. **Install** the extension from the Web Store
 2. **Open** any `.md` / `.mdc` file in your browser
 3. **Auto Render** — the extension detects and renders Markdown automatically
 4. **Customize** — click the extension icon to adjust themes, fonts, and more
+
+> ⚠️ **Note**: Due to Web Store review cycles, the store version may not include the latest features. For the newest version, consider [installing from GitHub Release](#install-from-github-release-latest-version).
 
 #### Accessing Local Files
 
@@ -178,12 +196,30 @@ npm run test:coverage
 
 > 💡 **提示**：每次修改代码后，回到扩展管理页面点击扩展卡片上的 🔄 刷新按钮即可更新。
 
+#### 从 GitHub Release 安装（获取最新版本）
+
+> 💡 插件市场审核周期较长，商店版本可能落后于最新开发进度。如需体验**最新功能和修复**，建议直接从 GitHub Release 安装。
+
+1. **下载**：前往 [GitHub Releases](https://github.com/LetitiaChan/markdown_viewer_enhanced/releases) 页面，下载最新的 `.zip` 文件
+2. **解压**：将下载的压缩包解压到本地文件夹
+3. **打开扩展管理页面**：
+   - Chrome：地址栏输入 `chrome://extensions/`
+   - Edge：地址栏输入 `edge://extensions/`
+4. **开启开发者模式**：打开页面右上角的「开发者模式」开关
+5. **加载扩展**：点击「加载已解压的扩展程序」按钮，选择解压后的文件夹（包含 `manifest.json` 的目录）
+6. **开启文件访问**：在扩展卡片上点击「详情」→ 开启「允许访问文件网址」
+7. **开始使用**：在浏览器中直接打开任意 `.md` 文件，插件自动渲染
+
+> ⚠️ 通过开发者模式安装的扩展，每次启动浏览器时会弹出「移除开发者模式扩展程序」的提示。这是浏览器的正常行为，不影响使用，关闭提示即可。
+
 #### 从插件市场安装
 
 1. **安装插件**：从浏览器插件市场安装
 2. **打开文件**：在浏览器中直接打开 `.md` / `.mdc` 文件
 3. **自动渲染**：插件自动检测并渲染 Markdown 内容
 4. **自定义设置**：点击扩展图标调整主题、字体等偏好
+
+> ⚠️ **注意**：由于插件市场审核周期较长，商店版本可能不包含最新功能。如需最新版本，建议[从 GitHub Release 安装](#从-github-release-安装获取最新版本)。
 
 #### 访问本地文件
 
