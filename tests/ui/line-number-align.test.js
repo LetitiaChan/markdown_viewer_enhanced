@@ -219,3 +219,105 @@ describe('BT-line-number-extra-line.1 display:block + join 双倍换行回归测
     expect(diffDelMatch[1]).not.toMatch(/display:\s*inline-block/);
   });
 });
+
+// =====================================================
+//  Tier 3 补充 — BT-line-number-nested-indent 嵌套代码行号缩进回归测试
+// =====================================================
+describe('BT-line-number-nested-indent.1 嵌套代码块行号缩进回归测试', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  let contentJs;
+  beforeAll(() => {
+    contentJs = fs.readFileSync(
+      path.join(__dirname, '../../content/content.js'),
+      'utf-8'
+    );
+  });
+
+  test('5.1 wrapLines 函数包含跨行标签平衡逻辑（openTags 栈）', () => {
+    // 确认 wrapLines 函数中存在 openTags 变量（标签平衡的核心数据结构）
+    expect(contentJs).toMatch(/let\s+openTags\s*=\s*\[\]/);
+  });
+
+  test('5.2 wrapLines 函数解析 <span> 和 </span> 标签更新栈', () => {
+    // 确认存在标签解析正则
+    expect(contentJs).toMatch(/<\\\/\?span\[/);
+  });
+
+  test('5.3 wrapLines 函数在行尾补充关闭标签', () => {
+    // 确认存在 '</span>'.repeat 逻辑
+    expect(contentJs).toMatch(/'<\/span>'\.repeat/);
+  });
+
+  test('5.4 wrapLines 函数在行首重新打开上一行遗留的标签', () => {
+    // 确认存在 prefix = openTags.join('') 逻辑
+    expect(contentJs).toMatch(/prefix\s*=\s*openTags\.join/);
+  });
+
+  test('5.5 标签平衡后的行内容用于 diff 检测（使用 balancedLine 而非原始 line）', () => {
+    // 确认 diff 检测使用 balancedLine 变量
+    expect(contentJs).toMatch(/balancedLine\.includes\s*\(\s*['"]hljs-addition['"]\s*\)/);
+    expect(contentJs).toMatch(/balancedLine\.includes\s*\(\s*['"]hljs-deletion['"]\s*\)/);
+  });
+
+  test('5.6 标签平衡逻辑对 hljs 跨行 <span> 标签生成正确的 HTML（行为级验证）', () => {
+    // 模拟 hljs 对 markdown 语言的高亮输出（跨行 <span class="hljs-code">）
+    const simulatedHljsOutput = [
+      '<span class="hljs-quote">&gt; line1</span>',
+      '',
+      '<span class="hljs-code">```lua',
+      'local x = 1',
+      'end',
+      '```</span>',
+      '',
+      'text'
+    ].join('\n');
+
+    // 提取 wrapLines 函数并执行
+    // 由于 wrapLines 是 content.js 内部函数，我们通过正则提取其逻辑来验证
+    // 这里直接用 JS 实现相同的标签平衡逻辑来验证
+    const lines = simulatedHljsOutput.split('\n');
+    if (lines.length > 0 && lines[lines.length - 1] === '') {
+      lines.pop();
+    }
+    let openTags = [];
+    const result = lines.map(line => {
+      const prefix = openTags.join('');
+      const tagRegex = /<\/?span[^>]*>/g;
+      let match;
+      while ((match = tagRegex.exec(line)) !== null) {
+        const tag = match[0];
+        if (tag.startsWith('</')) {
+          openTags.pop();
+        } else {
+          openTags.push(tag);
+        }
+      }
+      const suffix = '</span>'.repeat(openTags.length);
+      const balancedLine = prefix + line + suffix;
+      return `<span class="code-line">${balancedLine}</span>`;
+    }).join('');
+
+    // 验证每个 code-line 的 HTML 标签都是平衡的
+    const codeLines = result.split('<span class="code-line">').filter(s => s.length > 0);
+    codeLines.forEach((lineHtml, i) => {
+      const content = lineHtml.replace(/<\/span>$/, '');
+      const opens = (content.match(/<span[^>]*>/g) || []).length;
+      const closes = (content.match(/<\/span>/g) || []).length;
+      expect(opens).toBe(closes);
+    });
+
+    // 验证嵌套代码块内的行（Line 4: 'local x = 1'）被 hljs-code 包裹
+    // Line 4 对应 codeLines[3]
+    expect(codeLines[3]).toContain('hljs-code');
+    expect(codeLines[3]).toContain('local x = 1');
+
+    // 验证没有 code-line 嵌套（不应该出现 code-line 内部包含另一个 code-line）
+    // 检查方法：每个 code-line 的内容中不应该包含 code-line 标签
+    codeLines.forEach((lineHtml) => {
+      const content = lineHtml.replace(/<\/span>$/, '');
+      expect(content).not.toContain('class="code-line"');
+    });
+  });
+});

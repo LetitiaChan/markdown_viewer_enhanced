@@ -396,24 +396,49 @@
        * 对 diff 语言，自动检测 addition/deletion 行并添加辅助类名实现整行背景色
        */
       function wrapLines(highlightedCode, language) {
-        // 按换行符拆分，保留 HTML 标签完整性
+        // 按换行符拆分
         const lines = highlightedCode.split('\n');
         // 去除最后一行的空行（通常代码末尾有一个换行）
         if (lines.length > 0 && lines[lines.length - 1] === '') {
           lines.pop();
         }
         const isDiff = language === 'diff';
+
+        // 跨行标签平衡：hljs 可能生成跨多行的 <span> 标签（如 markdown 语言的 hljs-code），
+        // 按 \n 分割后会导致某些行的 HTML 标签不完整，进而破坏 .code-line 的 DOM 嵌套结构。
+        // 解决方案：追踪每行中打开但未关闭的标签，在行尾补充关闭标签，在下一行行首重新打开。
+        let openTags = []; // 上一行遗留的未关闭标签（存储完整的开始标签字符串）
+
         return lines.map(line => {
+          // 在当前行首重新打开上一行遗留的标签
+          const prefix = openTags.join('');
+          // 解析当前行中的标签，更新 openTags 栈
+          const tagRegex = /<\/?span[^>]*>/g;
+          let match;
+          while ((match = tagRegex.exec(line)) !== null) {
+            const tag = match[0];
+            if (tag.startsWith('</')) {
+              // 关闭标签：弹出栈顶
+              openTags.pop();
+            } else {
+              // 开始标签：压入栈
+              openTags.push(tag);
+            }
+          }
+          // 在当前行尾关闭所有未关闭的标签（从栈顶到栈底）
+          const suffix = '</span>'.repeat(openTags.length);
+          const balancedLine = prefix + line + suffix;
+
           let lineClass = 'code-line';
           if (isDiff) {
             // 优先检测 hljs 生成的 class（如果 hljs 支持 diff 语言）
-            if (line.includes('hljs-addition')) {
+            if (balancedLine.includes('hljs-addition')) {
               lineClass += ' diff-addition';
-            } else if (line.includes('hljs-deletion')) {
+            } else if (balancedLine.includes('hljs-deletion')) {
               lineClass += ' diff-deletion';
             } else {
               // hljs 未识别 diff 语言时，通过纯文本行首字符判断
-              const plainText = line.replace(/<[^>]*>/g, '');
+              const plainText = balancedLine.replace(/<[^>]*>/g, '');
               if (plainText.startsWith('+')) {
                 lineClass += ' diff-addition';
               } else if (plainText.startsWith('-')) {
@@ -421,7 +446,7 @@
               }
             }
           }
-          return `<span class="${lineClass}">${line}</span>`;
+          return `<span class="${lineClass}">${balancedLine}</span>`;
         }).join('');
       }
 
