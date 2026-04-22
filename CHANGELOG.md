@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ---
 
+## [1.3.1] - 2026-04-23
+
+### Fixed
+- **Math Formula Rendering**: Fixed KaTeX math formulas displaying as raw `%%MATH_BLOCK_N%%` placeholders instead of rendered equations
+- **Mermaid Diagram Rendering**: Fixed Mermaid diagrams (flowcharts, sequence diagrams, class diagrams, etc.) rendering as blank containers
+- **Graphviz & Emoji Rendering**: Fixed Graphviz diagrams and emoji shortcodes not rendering due to the same root cause
+- **Root Cause**: The v1.3.0 lazy-loading mechanism used `document.createElement('script')` to inject scripts via DOM, which executes in the browser's **main world**. However, Chrome Extension content scripts run in an **isolated world** with a separate JavaScript context, making the lazily-loaded global variables (`mermaid`, `katex`, `Viz`, `emojiMap`) invisible to the content script. All libraries are now restored to `manifest.json` `content_scripts` for reliable isolated-world injection.
+
+### Changed
+- Libraries (mermaid.min.js, katex.min.js, viz-global.js, emoji-map.js) restored to static `content_scripts` injection in manifest.json
+- Removed `loadScript()` calls from `init()` and `reRenderMermaid()` — rendering functions are now called directly
+- Content detection logic (needsMermaid, needsGraphviz) retained for skipping unnecessary render calls
+
+---
+
 ## [1.3.0] - 2026-04-23
 
 ### Added
