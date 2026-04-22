@@ -2112,7 +2112,7 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
           background: '#1e1e1e',
           primaryColor: '#4fc3f7',
           primaryTextColor: '#e0e0e0',
-          lineColor: '#666',
+          lineColor: '#a0a0a0',
         } : {},
       });
 

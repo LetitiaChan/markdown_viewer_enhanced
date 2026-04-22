@@ -373,3 +373,75 @@ describe('BT-mermaid-contrast.1 暗色主题下 mermaid 自定义填充颜色文
     expect(contentJs).toMatch(/fixMermaidTextContrast[\s\S]*?theme\s*!==\s*['"]dark['"]/);
   });
 });
+
+// =====================================================
+//  Tier 3 补充 — BT-mermaid-line-color 连线颜色对比度回归测试
+// =====================================================
+describe('BT-mermaid-line-color.1 暗色主题下 mermaid 连线颜色对比度回归测试', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  let contentJs;
+  beforeAll(() => {
+    contentJs = fs.readFileSync(
+      path.join(__dirname, '../../content/content.js'),
+      'utf-8'
+    );
+  });
+
+  test('4.1 mermaid 暗色主题 lineColor 配置存在', () => {
+    expect(contentJs).toContain('lineColor');
+  });
+
+  test('4.2 lineColor 不是 #666（原始低对比度值，回归防护）', () => {
+    // 提取 themeVariables 中的 lineColor 值
+    const lineColorMatch = contentJs.match(/lineColor:\s*['"]([^'"]+)['"]/);
+    expect(lineColorMatch).not.toBeNull();
+    expect(lineColorMatch[1]).not.toBe('#666');
+  });
+
+  test('4.3 lineColor 的亮度足够在深色背景上可见', () => {
+    const lineColorMatch = contentJs.match(/lineColor:\s*['"]([^'"]+)['"]/);
+    expect(lineColorMatch).not.toBeNull();
+    const color = parseColor(lineColorMatch[1]);
+    expect(color).not.toBeNull();
+    const luminance = getRelativeLuminance(color);
+    // lineColor 的亮度应该明显高于背景色 #1e1e1e（亮度约 0.01）
+    // 至少需要 0.15 以上才能在深色背景上清晰可见
+    expect(luminance).toBeGreaterThan(0.15);
+  });
+
+  test('4.4 lineColor 与背景色 #1e1e1e 的对比度满足 WCAG AA 标准（≥4.5:1）', () => {
+    const lineColorMatch = contentJs.match(/lineColor:\s*['"]([^'"]+)['"]/);
+    expect(lineColorMatch).not.toBeNull();
+    const lineColor = parseColor(lineColorMatch[1]);
+    const bgColor = parseColor('#1e1e1e');
+    expect(lineColor).not.toBeNull();
+    expect(bgColor).not.toBeNull();
+
+    const lineLum = getRelativeLuminance(lineColor);
+    const bgLum = getRelativeLuminance(bgColor);
+    // WCAG 对比度公式: (L1 + 0.05) / (L2 + 0.05)，L1 > L2
+    const contrastRatio = (Math.max(lineLum, bgLum) + 0.05) / (Math.min(lineLum, bgLum) + 0.05);
+    expect(contrastRatio).toBeGreaterThanOrEqual(4.5);
+  });
+
+  test('4.5 lineColor 不会过亮导致刺眼（亮度 < 0.6）', () => {
+    const lineColorMatch = contentJs.match(/lineColor:\s*['"]([^'"]+)['"]/);
+    expect(lineColorMatch).not.toBeNull();
+    const color = parseColor(lineColorMatch[1]);
+    expect(color).not.toBeNull();
+    const luminance = getRelativeLuminance(color);
+    // 不应该过亮，保持暗色主题的整体协调
+    expect(luminance).toBeLessThan(0.6);
+  });
+
+  test('4.6 暗色主题 themeVariables 包含完整的必要配置', () => {
+    // 确认暗色主题配置包含所有必要的 themeVariables
+    expect(contentJs).toContain('darkMode: true');
+    expect(contentJs).toContain("background: '#1e1e1e'");
+    expect(contentJs).toContain("primaryColor: '#4fc3f7'");
+    expect(contentJs).toContain("primaryTextColor: '#e0e0e0'");
+    expect(contentJs).toContain('lineColor');
+  });
+});
