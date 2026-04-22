@@ -1948,6 +1948,140 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
   // ==================== Mermaid 渲染 ====================
 
   /**
+   * 解析颜色字符串为 {r, g, b} 对象
+   * 支持 #hex、#shortHex、rgb()、rgba() 格式
+   * @param {string} colorStr - 颜色字符串
+   * @returns {{r: number, g: number, b: number}|null}
+   */
+  function parseColor(colorStr) {
+    if (!colorStr || typeof colorStr !== 'string') return null;
+    colorStr = colorStr.trim().toLowerCase();
+    // 跳过 url()、none、transparent、inherit 等非颜色值
+    if (colorStr === 'none' || colorStr === 'transparent' || colorStr === 'inherit' ||
+        colorStr === 'currentcolor' || colorStr.startsWith('url(')) {
+      return null;
+    }
+    // #RRGGBB 或 #RGB
+    const hexMatch = colorStr.match(/^#([0-9a-f]{3,8})$/);
+    if (hexMatch) {
+      const hex = hexMatch[1];
+      if (hex.length === 3) {
+        return { r: parseInt(hex[0] + hex[0], 16), g: parseInt(hex[1] + hex[1], 16), b: parseInt(hex[2] + hex[2], 16) };
+      }
+      if (hex.length >= 6) {
+        return { r: parseInt(hex.substring(0, 2), 16), g: parseInt(hex.substring(2, 4), 16), b: parseInt(hex.substring(4, 6), 16) };
+      }
+    }
+    // rgb(r, g, b) 或 rgba(r, g, b, a)
+    const rgbMatch = colorStr.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (rgbMatch) {
+      return { r: parseInt(rgbMatch[1]), g: parseInt(rgbMatch[2]), b: parseInt(rgbMatch[3]) };
+    }
+    // CSS 命名颜色（常见的浅色）
+    const namedColors = {
+      white: { r: 255, g: 255, b: 255 }, lightyellow: { r: 255, g: 255, b: 224 },
+      lightyellow: { r: 255, g: 255, b: 224 }, lightcyan: { r: 224, g: 255, b: 255 },
+      lightgreen: { r: 144, g: 238, b: 144 }, lightpink: { r: 255, g: 182, b: 193 },
+      lightsalmon: { r: 255, g: 160, b: 122 }, lightblue: { r: 173, g: 216, b: 230 },
+      lemonchiffon: { r: 255, g: 250, b: 205 }, lavender: { r: 230, g: 230, b: 250 },
+      beige: { r: 245, g: 245, b: 220 }, ivory: { r: 255, g: 255, b: 240 },
+      mintcream: { r: 245, g: 255, b: 250 }, honeydew: { r: 240, g: 255, b: 240 },
+      aliceblue: { r: 240, g: 248, b: 255 }, floralwhite: { r: 255, g: 250, b: 240 },
+      ghostwhite: { r: 248, g: 248, b: 255 }, seashell: { r: 255, g: 245, b: 238 },
+      snow: { r: 255, g: 250, b: 250 }, cornsilk: { r: 255, g: 248, b: 220 },
+      wheat: { r: 245, g: 222, b: 179 }, moccasin: { r: 255, g: 228, b: 181 },
+      peachpuff: { r: 255, g: 218, b: 185 }, navajowhite: { r: 255, g: 222, b: 173 },
+      bisque: { r: 255, g: 228, b: 196 }, mistyrose: { r: 255, g: 228, b: 225 },
+      blanchedalmond: { r: 255, g: 235, b: 205 }, papayawhip: { r: 255, g: 239, b: 213 },
+      antiquewhite: { r: 250, g: 235, b: 215 }, linen: { r: 250, g: 240, b: 230 },
+      oldlace: { r: 253, g: 245, b: 230 }, pink: { r: 255, g: 192, b: 203 },
+      gold: { r: 255, g: 215, b: 0 }, yellow: { r: 255, g: 255, b: 0 },
+      orange: { r: 255, g: 165, b: 0 }, coral: { r: 255, g: 127, b: 80 },
+      khaki: { r: 240, g: 230, b: 140 }, plum: { r: 221, g: 160, b: 221 },
+      thistle: { r: 216, g: 191, b: 216 }, gainsboro: { r: 220, g: 220, b: 220 },
+      lightgray: { r: 211, g: 211, b: 211 }, lightgrey: { r: 211, g: 211, b: 211 },
+      silver: { r: 192, g: 192, b: 192 },
+    };
+    if (namedColors[colorStr]) return namedColors[colorStr];
+    return null;
+  }
+
+  /**
+   * 计算颜色的相对亮度（W3C WCAG 2.0 标准）
+   * @param {{r: number, g: number, b: number}} color
+   * @returns {number} 0~1 之间的亮度值，越大越亮
+   */
+  function getRelativeLuminance(color) {
+    const sRGB = [color.r / 255, color.g / 255, color.b / 255];
+    const linear = sRGB.map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+  }
+
+  /**
+   * 修复 Mermaid SVG 中自定义浅色填充节点的文字对比度
+   * 在暗色主题下，mermaid dark 主题将文字渲染为浅色，但用户自定义的浅色填充背景
+   * 会导致浅色文字在浅色背景上不可读。此函数检测浅色填充并将文字改为深色。
+   * @param {SVGElement} svgEl - mermaid 渲染后的 SVG 元素
+   */
+  function fixMermaidTextContrast(svgEl) {
+    if (!svgEl || currentSettings.theme !== 'dark') return;
+
+    // 亮度阈值：超过此值认为是浅色背景，需要深色文字
+    const LUMINANCE_THRESHOLD = 0.4;
+    const DARK_TEXT_COLOR = '#1a1a2e';
+
+    // 遍历所有 <g> 组元素，查找包含形状和文字的节点组
+    const allGroups = svgEl.querySelectorAll('g');
+    allGroups.forEach(group => {
+      // 查找组内的直接子形状元素（rect, polygon, circle, ellipse, path）
+      // 使用 children 遍历而非 :scope 选择器，确保 SVG 命名空间兼容性
+      const shapeTagNames = ['rect', 'polygon', 'circle', 'ellipse', 'path'];
+      const shapes = Array.from(group.children).filter(child =>
+        shapeTagNames.includes(child.tagName.toLowerCase())
+      );
+      if (shapes.length === 0) return;
+
+      // 获取第一个形状的填充颜色
+      let fillColor = null;
+      for (const shape of shapes) {
+        // 优先从内联 style 获取 fill
+        const styleFill = shape.style.fill;
+        const attrFill = shape.getAttribute('fill');
+        const fill = styleFill || attrFill;
+        if (fill) {
+          fillColor = parseColor(fill);
+          if (fillColor) break;
+        }
+      }
+
+      if (!fillColor) return;
+
+      const luminance = getRelativeLuminance(fillColor);
+      if (luminance <= LUMINANCE_THRESHOLD) return;
+
+      // 浅色背景检测到，修正组内所有文字元素的颜色
+      const textElements = group.querySelectorAll('text, tspan, span');
+      textElements.forEach(textEl => {
+        textEl.setAttribute('fill', DARK_TEXT_COLOR);
+        textEl.style.fill = DARK_TEXT_COLOR;
+        // 处理 foreignObject 内的 HTML 文字
+        if (textEl.tagName === 'span') {
+          textEl.style.color = DARK_TEXT_COLOR;
+        }
+      });
+
+      // 处理 foreignObject 内的 HTML 内容（mermaid htmlLabels 模式）
+      const foreignObjects = group.querySelectorAll('foreignObject');
+      foreignObjects.forEach(fo => {
+        const htmlElements = fo.querySelectorAll('div, span, p');
+        htmlElements.forEach(el => {
+          el.style.color = DARK_TEXT_COLOR;
+        });
+      });
+    });
+  }
+
+  /**
    * 初始化并渲染所有 Mermaid 图表
    */
   async function renderMermaidDiagrams() {
@@ -2045,10 +2179,13 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
               svgEl.style.height = 'auto';
               svgEl.style.maxWidth = '100%';
               // 对于较小的图表，设置最小高度
-              if (rawH > 100) {
+            if (rawH > 100) {
                 svgEl.style.minHeight = Math.min(rawH, 600) + 'px';
               }
             }
+
+            // 修复暗色主题下自定义浅色填充节点的文字对比度
+            fixMermaidTextContrast(svgEl);
           }
         } catch (err) {
           console.warn(`[MD Viewer] Mermaid 图表 #${i} 渲染失败:`, err);
