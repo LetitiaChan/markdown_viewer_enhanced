@@ -3996,14 +3996,10 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
   async function reRenderMermaid() {
     if (!currentSettings.enableMermaid) return;
 
-    // 懒加载 mermaid（如果尚未加载）
+    // mermaid 已通过 manifest.json content_scripts 注入
     if (typeof mermaid === 'undefined') {
-      try {
-        await loadScript('libs/mermaid.min.js');
-      } catch (e) {
-        console.error('[MD Viewer] Mermaid 懒加载失败:', e);
-        return;
-      }
+      console.error('[MD Viewer] Mermaid 库未加载');
+      return;
     }
 
     const containers = document.querySelectorAll('.mermaid-container');
@@ -4209,16 +4205,6 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     // 配置 marked 解析器
     tocItems = [];
 
-    // 懒加载 emoji-map（在 configureMarked 之前，因为 emoji 扩展需要 emojiMap）
-    const needsEmoji = /:[a-zA-Z0-9_+\-]+:/.test(rawMarkdown);
-    if (needsEmoji) {
-      try {
-        await loadScript('libs/emoji-map.js');
-      } catch (e) {
-        console.warn('[MD Viewer] emoji-map 加载失败，emoji 渲染不可用:', e);
-      }
-    }
-
     configureMarked();
 
     // 预处理 YAML Front Matter（在 marked 解析前提取）
@@ -4293,32 +4279,29 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     const needsMermaid = currentSettings.enableMermaid && /^```mermaid\s*$/m.test(rawMarkdown);
     const needsGraphviz = (currentSettings.enableGraphviz) && /^```(?:dot|graphviz)\s*$/m.test(rawMarkdown);
 
-    // 并行渲染：懒加载 + 渲染任务
+    // 并行渲染任务（库已通过 manifest.json content_scripts 注入，无需懒加载）
     const renderTasks = [];
 
     if (needsMermaid) {
       renderTasks.push(
-        loadScript('libs/mermaid.min.js')
-          .then(() => renderMermaidDiagrams())
+        renderMermaidDiagrams()
           .catch(e => console.error('[MD Viewer] Mermaid 渲染失败:', e))
       );
     }
 
-    // PlantUML 不需要懒加载（使用在线服务）
+    // PlantUML 使用在线服务，无需加载本地库
     renderPlantUML();
 
     if (needsGraphviz) {
       renderTasks.push(
-        loadScript('libs/viz-global.js')
-          .then(() => renderGraphviz())
+        renderGraphviz()
           .catch(e => console.error('[MD Viewer] Graphviz 渲染失败:', e))
       );
     }
 
     if (currentSettings.enableMathJax && mathExpressions.length > 0) {
       renderTasks.push(
-        loadScript('libs/katex.min.js')
-          .then(() => renderMathFormulas())
+        renderMathFormulas()
           .catch(e => console.error('[MD Viewer] 数学公式渲染失败:', e))
       );
     }

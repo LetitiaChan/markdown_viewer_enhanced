@@ -19,13 +19,16 @@ describe('BT-perf.T1 Performance optimization API existence', () => {
     expect(typeof _loadedScripts).toBe('object');
   });
 
-  test('T1.3 manifest.json does not include lazy-loaded libs in content_scripts', () => {
+  test('T1.3 manifest.json includes all libs in content_scripts (static injection)', () => {
     const manifest = require('../../manifest.json');
     const jsFiles = manifest.content_scripts[0].js;
-    expect(jsFiles).not.toContain('libs/mermaid.min.js');
-    expect(jsFiles).not.toContain('libs/viz-global.js');
-    expect(jsFiles).not.toContain('libs/katex.min.js');
-    expect(jsFiles).not.toContain('libs/emoji-map.js');
+    // 库通过 manifest content_scripts 静态注入（而非懒加载），
+    // 因为 Chrome Extension content script 运行在 isolated world，
+    // DOM 注入的 <script> 在 main world 执行，content script 无法访问
+    expect(jsFiles).toContain('libs/mermaid.min.js');
+    expect(jsFiles).toContain('libs/viz-global.js');
+    expect(jsFiles).toContain('libs/katex.min.js');
+    expect(jsFiles).toContain('libs/emoji-map.js');
   });
 
   test('T1.4 manifest.json still includes core libs in content_scripts', () => {
@@ -55,12 +58,11 @@ describe('BT-perf.T1 Performance optimization API existence', () => {
     expect(source).toContain('Promise.all(renderTasks)');
   });
 
-  test('T1.8 content.js source contains detection regex for mermaid', () => {
+  test('T1.8 content.js source contains detection regex for mermaid and graphviz', () => {
     const fs = require('fs');
     const source = fs.readFileSync(require.resolve('../../content/content.js'), 'utf8');
     expect(source).toContain('needsMermaid');
     expect(source).toContain('needsGraphviz');
-    expect(source).toContain('needsEmoji');
   });
 });
 
@@ -269,50 +271,48 @@ describe('BT-perf.T3 Task-specific assertions', () => {
     expect(source).toContain('if (_loadedScripts[relativePath]) return _loadedScripts[relativePath]');
   });
 
-  test('BT-perf.3 Emoji lazy-load: loads before configureMarked', () => {
-    const fs = require('fs');
-    const source = fs.readFileSync(require.resolve('../../content/content.js'), 'utf8');
-    // 在 init 函数体内，emoji 加载在 configureMarked 之前
-    // 使用更具体的上下文来定位 init 函数中的调用
-    const initFnMatch = source.match(/async function init\(\)([\s\S]*?)\/\/ 启动/);
-    expect(initFnMatch).not.toBeNull();
-    const initBody = initFnMatch[1];
-    const emojiLoadIdx = initBody.indexOf("loadScript('libs/emoji-map.js')");
-    const configureIdx = initBody.indexOf('configureMarked()');
-    expect(emojiLoadIdx).toBeGreaterThan(-1);
-    expect(configureIdx).toBeGreaterThan(-1);
-    expect(emojiLoadIdx).toBeLessThan(configureIdx);
+  test('BT-perf.3 Emoji: emoji-map.js is included in manifest content_scripts', () => {
+    const manifest = require('../../manifest.json');
+    const jsFiles = manifest.content_scripts[0].js;
+    // emoji-map.js 通过 manifest 静态注入，在 content.js 之前加载
+    const emojiIdx = jsFiles.indexOf('libs/emoji-map.js');
+    const contentIdx = jsFiles.indexOf('content/content.js');
+    expect(emojiIdx).toBeGreaterThan(-1);
+    expect(contentIdx).toBeGreaterThan(-1);
+    expect(emojiIdx).toBeLessThan(contentIdx);
   });
 
-  test('BT-perf.4 reRenderMermaid lazy-loads mermaid if not available', () => {
+  test('BT-perf.4 reRenderMermaid checks mermaid availability', () => {
     const fs = require('fs');
     const source = fs.readFileSync(require.resolve('../../content/content.js'), 'utf8');
-    // reRenderMermaid 中有懒加载逻辑
+    // reRenderMermaid 中检查 mermaid 是否可用
     const fnMatch = source.match(/async function reRenderMermaid\(\)([\s\S]*?)(?=\n  \/\/ =====)/);
     expect(fnMatch).not.toBeNull();
     const fnBody = fnMatch[1];
-    expect(fnBody).toContain("loadScript('libs/mermaid.min.js')");
+    expect(fnBody).toContain("typeof mermaid === 'undefined'");
   });
 
-  test('BT-perf.5 Mermaid rendering is wrapped in lazy-load + catch', () => {
+  test('BT-perf.5 Mermaid rendering is called directly with catch', () => {
     const fs = require('fs');
     const source = fs.readFileSync(require.resolve('../../content/content.js'), 'utf8');
-    // init 中 mermaid 渲染有 loadScript + catch
-    expect(source).toContain("loadScript('libs/mermaid.min.js')");
-    expect(source).toContain('.then(() => renderMermaidDiagrams())');
+    // init 中 mermaid 渲染直接调用（库已通过 manifest 注入）
+    expect(source).toContain('renderMermaidDiagrams()');
+    expect(source).toContain("console.error('[MD Viewer] Mermaid 渲染失败:'");
   });
 
-  test('BT-perf.6 Graphviz rendering is wrapped in lazy-load + catch', () => {
+  test('BT-perf.6 Graphviz rendering is called directly with catch', () => {
     const fs = require('fs');
     const source = fs.readFileSync(require.resolve('../../content/content.js'), 'utf8');
-    expect(source).toContain("loadScript('libs/viz-global.js')");
-    expect(source).toContain('.then(() => renderGraphviz())');
+    // init 中 graphviz 渲染直接调用（库已通过 manifest 注入）
+    expect(source).toContain('renderGraphviz()');
+    expect(source).toContain("console.error('[MD Viewer] Graphviz 渲染失败:'");
   });
 
-  test('BT-perf.7 KaTeX rendering is wrapped in lazy-load + catch', () => {
+  test('BT-perf.7 KaTeX rendering is called directly with catch', () => {
     const fs = require('fs');
     const source = fs.readFileSync(require.resolve('../../content/content.js'), 'utf8');
-    expect(source).toContain("loadScript('libs/katex.min.js')");
-    expect(source).toContain('.then(() => renderMathFormulas())');
+    // init 中 KaTeX 渲染直接调用（库已通过 manifest 注入）
+    expect(source).toContain('renderMathFormulas()');
+    expect(source).toContain("console.error('[MD Viewer] 数学公式渲染失败:'");
   });
 });
