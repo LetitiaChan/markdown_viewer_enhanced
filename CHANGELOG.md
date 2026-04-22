@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Added
 - **TOC Search & Filter**: Real-time keyword search in the TOC sidebar — case-insensitive substring matching, `<mark>` text highlighting, match count display (N/M), ancestor item visibility, collapse state save/restore, debounced input (150ms), Escape key to clear, full i18n support
 - **Font Family Expansion**: Expanded body font selector from 3 buttons to a grouped dropdown with 13 font options — Sans-serif group (Microsoft YaHei, PingFang SC, Noto Sans SC, Helvetica Neue, Arial, Segoe UI), Serif group (General Serif, SimSun, Noto Serif SC, Georgia, Times New Roman), custom CSS font-family input, backward compatible with old values, consistent across all 3 settings UIs
+- **Performance Optimization — Lazy Loading**: Heavy libraries (Mermaid 2.45MB, Viz.js 1.38MB, KaTeX 269KB, emoji-map 25KB) are now loaded on-demand via `loadScript()` instead of synchronous injection — initial script payload reduced from ~4.5MB to ~370KB (86% reduction)
+- **Performance Optimization — Parallel Rendering**: Mermaid, PlantUML, Graphviz, and Math rendering tasks now execute concurrently via `Promise.all()` instead of sequential `await`
+- **Performance Optimization — Content Detection**: Smart pre-scan of raw Markdown to skip loading libraries when their syntax is not present (e.g., no `` ```mermaid `` blocks → skip Mermaid loading)
+- **Performance Optimization — highlightAuto Guard**: Code blocks exceeding 10,000 characters skip automatic language detection to prevent UI freezes
 
 ### Fixed
 - **Font Family Setting**: Body font selection (system/serif/mono) now correctly applies to rendered content — previously the setting was saved but never applied to the DOM

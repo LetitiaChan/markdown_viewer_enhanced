@@ -73,6 +73,39 @@
   let tocItems = [];
   let isRendered = false;
 
+  // ==================== 懒加载基础设施 ====================
+
+  /** 已加载脚本缓存：relativePath → Promise */
+  const _loadedScripts = {};
+
+  /**
+   * 按需加载脚本（通过 chrome.runtime.getURL 注入 <script>）
+   * 同一路径只加载一次，后续调用返回缓存的 Promise
+   * @param {string} relativePath - 相对于扩展根目录的脚本路径，如 'libs/mermaid.min.js'
+   * @returns {Promise<void>}
+   */
+  function loadScript(relativePath) {
+    if (_loadedScripts[relativePath]) return _loadedScripts[relativePath];
+
+    const promise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = chrome.runtime.getURL(relativePath);
+      script.onload = () => {
+        console.log(`[MD Viewer] 懒加载成功: ${relativePath}`);
+        resolve();
+      };
+      script.onerror = () => {
+        console.error(`[MD Viewer] 懒加载失败: ${relativePath}`);
+        delete _loadedScripts[relativePath];
+        reject(new Error(`Failed to load script: ${relativePath}`));
+      };
+      document.head.appendChild(script);
+    });
+
+    _loadedScripts[relativePath] = promise;
+    return promise;
+  }
+
   // ==================== 工具函数 ====================
 
   /**
@@ -515,8 +548,8 @@
         }
       }
 
-      // 尝试自动检测语言
-      if (typeof hljs !== 'undefined') {
+      // 尝试自动检测语言（大代码块跳过，避免性能问题）
+      if (typeof hljs !== 'undefined' && code.length <= 10000) {
         try {
           const highlighted = hljs.highlightAuto(code).value;
           return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang || 'code'}</span><button class="code-copy-btn" title="${t('code.copy.title')}">${t('code.copy')}</button></div><pre><code class="hljs">${wrapLines(highlighted, lang)}</code></pre></div>`;
@@ -3961,7 +3994,17 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
    * 重新渲染 Mermaid（主题切换时）
    */
   async function reRenderMermaid() {
-    if (!currentSettings.enableMermaid || typeof mermaid === 'undefined') return;
+    if (!currentSettings.enableMermaid) return;
+
+    // 懒加载 mermaid（如果尚未加载）
+    if (typeof mermaid === 'undefined') {
+      try {
+        await loadScript('libs/mermaid.min.js');
+      } catch (e) {
+        console.error('[MD Viewer] Mermaid 懒加载失败:', e);
+        return;
+      }
+    }
 
     const containers = document.querySelectorAll('.mermaid-container');
     containers.forEach(container => {
@@ -4165,6 +4208,17 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
 
     // 配置 marked 解析器
     tocItems = [];
+
+    // 懒加载 emoji-map（在 configureMarked 之前，因为 emoji 扩展需要 emojiMap）
+    const needsEmoji = /:[a-zA-Z0-9_+\-]+:/.test(rawMarkdown);
+    if (needsEmoji) {
+      try {
+        await loadScript('libs/emoji-map.js');
+      } catch (e) {
+        console.warn('[MD Viewer] emoji-map 加载失败，emoji 渲染不可用:', e);
+      }
+    }
+
     configureMarked();
 
     // 预处理 YAML Front Matter（在 marked 解析前提取）
@@ -4235,17 +4289,42 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     // 生成目录
     buildToc();
 
-    // 渲染 Mermaid 图表
-    await renderMermaidDiagrams();
+    // 检测内容中是否需要各类渲染（避免不必要的懒加载）
+    const needsMermaid = currentSettings.enableMermaid && /^```mermaid\s*$/m.test(rawMarkdown);
+    const needsGraphviz = (currentSettings.enableGraphviz) && /^```(?:dot|graphviz)\s*$/m.test(rawMarkdown);
 
-    // 渲染 PlantUML 图表
+    // 并行渲染：懒加载 + 渲染任务
+    const renderTasks = [];
+
+    if (needsMermaid) {
+      renderTasks.push(
+        loadScript('libs/mermaid.min.js')
+          .then(() => renderMermaidDiagrams())
+          .catch(e => console.error('[MD Viewer] Mermaid 渲染失败:', e))
+      );
+    }
+
+    // PlantUML 不需要懒加载（使用在线服务）
     renderPlantUML();
 
-    // 渲染 Graphviz 图表
-    await renderGraphviz();
+    if (needsGraphviz) {
+      renderTasks.push(
+        loadScript('libs/viz-global.js')
+          .then(() => renderGraphviz())
+          .catch(e => console.error('[MD Viewer] Graphviz 渲染失败:', e))
+      );
+    }
 
-    // 渲染数学公式
-    await renderMathFormulas();
+    if (currentSettings.enableMathJax && mathExpressions.length > 0) {
+      renderTasks.push(
+        loadScript('libs/katex.min.js')
+          .then(() => renderMathFormulas())
+          .catch(e => console.error('[MD Viewer] 数学公式渲染失败:', e))
+      );
+    }
+
+    // 等待所有并行渲染任务完成
+    await Promise.all(renderTasks);
 
     // 非 file:// 协议时隐藏文件浏览器页签
     if (!isFileProtocol()) {
@@ -4361,6 +4440,9 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       isFileProtocol,
       parseSizeToBytes,
       getFileIcon,
+      // 懒加载
+      loadScript,
+      _loadedScripts,
       // 常量
       DEFAULT_SETTINGS,
       MD_EXTENSIONS,
