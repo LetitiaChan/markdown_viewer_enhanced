@@ -33,17 +33,15 @@ describe('Tier 1: applySettings 中 fontFamily 应用逻辑存在性', () => {
   });
 
   test('1.2 applySettings 中包含 serif 字体映射', () => {
-    expect(contentJs).toMatch(/case\s+['"]serif['"]\s*:/);
-    expect(contentJs).toMatch(/Georgia/);
+    expect(contentJs).toContain('Georgia, "Times New Roman", "SimSun", serif');
   });
 
   test('1.3 applySettings 中包含 mono 字体映射', () => {
-    expect(contentJs).toMatch(/case\s+['"]mono['"]\s*:/);
-    expect(contentJs).toMatch(/Consolas/);
+    expect(contentJs).toContain('"Consolas", "Monaco", "Courier New", monospace');
   });
 
   test('1.4 applySettings 中包含 system 默认字体映射', () => {
-    expect(contentJs).toMatch(/default\s*:/);
+    expect(contentJs).toContain('FONT_FAMILY_MAP');
     expect(contentJs).toMatch(/apple-system/);
   });
 
@@ -157,8 +155,8 @@ describe('Tier 3: BT-fontFamily 正文字体渲染回归', () => {
     expect(contentJs).toContain('-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif');
   });
 
-  test('BT-fontFamily.3 大设置面板中字体按钮点击事件正确更新 fontFamily', () => {
-    // 验证 bindSettingsPanelEvents 中字体按钮的事件处理逻辑存在
-    expect(contentJs).toMatch(/md-stg-btn-option\[data-font\][\s\S]*?fontFamily\s*=\s*btn\.dataset\.font/);
+  test('BT-fontFamily.3 大设置面板中字体下拉选择器 change 事件正确更新 fontFamily', () => {
+    // 验证 bindSettingsPanelEvents 中字体下拉选择器的事件处理逻辑存在
+    expect(contentJs).toMatch(/md-stg-font-select[\s\S]*?fontFamily\s*=\s*fontSelectEl\.value/);
   });
 });
