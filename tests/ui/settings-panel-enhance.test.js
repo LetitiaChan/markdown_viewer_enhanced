@@ -103,3 +103,73 @@ describe('Tier 3: 场景特定', () => {
     expect(contentJs).toContain("currentSettings.contentAlign = btn.dataset.align");
   });
 });
+
+describe('Tier 1: 设置弹窗按钮组 segment 样式存在性', () => {
+  test('BT-stg-segment.1 md-stg-btn-group 有外层边框容器样式', () => {
+    // 验证 .md-stg-btn-group 使用了 segment 风格（外层边框）
+    expect(contentCss).toMatch(/\.md-stg-btn-group\s*\{[^}]*border:\s*1\.5px\s+solid/);
+    expect(contentCss).toMatch(/\.md-stg-btn-group\s*\{[^}]*border-radius:\s*10px/);
+    expect(contentCss).toMatch(/\.md-stg-btn-group\s*\{[^}]*display:\s*inline-flex/);
+  });
+
+  test('BT-stg-segment.2 md-stg-btn-option 有 segment 按钮样式', () => {
+    // 验证按钮有 transparent 边框（用于 active 态切换）
+    expect(contentCss).toMatch(/\.md-stg-btn-option[^{]*\{[^}]*border:\s*1\.5px\s+solid\s+transparent/);
+  });
+
+  test('BT-stg-segment.3 md-stg-btn-option.active 有绿色边框', () => {
+    expect(contentCss).toMatch(/\.md-stg-btn-option\.active[^{]*\{[^}]*border-color:\s*#059669/);
+  });
+
+  test('BT-stg-segment.4 md-stg-panel-mode-btn 有 CSS 样式定义', () => {
+    expect(contentCss).toContain('.md-stg-panel-mode-btn');
+    expect(contentCss).toMatch(/\.md-stg-panel-mode-btn\.active[^{]*\{[^}]*border-color:\s*#059669/);
+  });
+
+  test('BT-stg-segment.5 md-stg-align-btn 有 CSS 样式定义', () => {
+    expect(contentCss).toContain('.md-stg-align-btn');
+    expect(contentCss).toMatch(/\.md-stg-align-btn\.active[^{]*\{[^}]*border-color:\s*#059669/);
+  });
+
+  test('BT-stg-segment.6 md-stg-toc-pos-btn 有 segment 按钮样式', () => {
+    expect(contentCss).toMatch(/\.md-stg-toc-pos-btn\s*\{[^}]*border:\s*1\.5px\s+solid\s+transparent/);
+    expect(contentCss).toMatch(/\.md-stg-toc-pos-btn\.active[^{]*\{[^}]*border-color:\s*#059669/);
+  });
+});
+
+describe('Tier 2: 设置弹窗按钮组暗色主题适配', () => {
+  test('BT-stg-segment-dark.1 暗色主题下 btn-group 有暗色边框', () => {
+    expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-btn-group\s*\{[^}]*border-color:\s*#2a2a4a/);
+  });
+
+  test('BT-stg-segment-dark.2 暗色主题下 active 按钮有绿色边框', () => {
+    expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-btn-option\.active[^{]*\{[^}]*border-color:\s*#34d399/);
+  });
+
+  test('BT-stg-segment-dark.3 暗色主题下 toc-pos-btn active 有绿色边框', () => {
+    expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-toc-pos-btn\.active[^{]*\{[^}]*border-color:\s*#34d399/);
+  });
+});
+
+describe('Tier 3: i18n 按钮文本包含 emoji 图标', () => {
+  test('BT-stg-i18n.1 中文翻译面板模式按钮包含 emoji', () => {
+    expect(zhCN).toContain("'settings.panelMode.float': '✨");
+    expect(zhCN).toContain("'settings.panelMode.embed': '📌");
+  });
+
+  test('BT-stg-i18n.2 中文翻译文档对齐按钮包含 emoji', () => {
+    expect(zhCN).toContain("'settings.contentAlign.left': '◀");
+    expect(zhCN).toContain("'settings.contentAlign.center': '⬤");
+    expect(zhCN).toContain("'settings.contentAlign.right': '▶");
+  });
+
+  test('BT-stg-i18n.3 中文翻译目录位置按钮包含 emoji', () => {
+    expect(zhCN).toContain("'settings.tocPosition.left': '📍");
+    expect(zhCN).toContain("'settings.tocPosition.right': '📍");
+  });
+
+  test('BT-stg-i18n.4 英文翻译面板模式按钮包含 emoji', () => {
+    expect(enJs).toContain("'settings.panelMode.float': '✨");
+    expect(enJs).toContain("'settings.panelMode.embed': '📌");
+  });
+});

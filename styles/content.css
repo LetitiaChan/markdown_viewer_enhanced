@@ -2530,15 +2530,24 @@ ul:has(> .task-list-item) {
   border-color: #2a2a4a;
 }
 
-/* 按钮组 */
+/* 按钮组（segment 按钮组风格） */
 .md-stg-btn-group {
-  display: flex;
-  gap: 6px;
+  display: inline-flex;
+  border: 1.5px solid #e1e4e8;
+  border-radius: 10px;
+  padding: 3px;
+  background: #fff;
+  gap: 2px;
 }
 
-.md-stg-btn-option {
+.md-stg-btn-option,
+.md-stg-panel-mode-btn,
+.md-stg-align-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 6px 14px;
-  border: none;
+  border: 1.5px solid transparent;
   border-radius: 8px;
   background: transparent;
   cursor: pointer;
@@ -2546,26 +2555,50 @@ ul:has(> .task-list-item) {
   font-weight: 500;
   color: #6b7280;
   transition: all 0.15s;
+  white-space: nowrap;
+  font-family: inherit;
 }
 
-.md-stg-btn-option:hover {
-  color: #059669;
+.md-stg-btn-option:hover,
+.md-stg-panel-mode-btn:hover,
+.md-stg-align-btn:hover {
+  color: #57606a;
+  background: #f6f8fa;
 }
 
-.md-stg-btn-option.active {
-  background: transparent;
+.md-stg-btn-option.active,
+.md-stg-panel-mode-btn.active,
+.md-stg-align-btn.active {
+  background: #fff;
   color: #059669;
   font-weight: 600;
+  border-color: #059669;
 }
 
-.theme-dark .md-stg-btn-option {
-  background: transparent;
+.theme-dark .md-stg-btn-group {
+  background: #1a1a2e;
+  border-color: #2a2a4a;
+}
+
+.theme-dark .md-stg-btn-option,
+.theme-dark .md-stg-panel-mode-btn,
+.theme-dark .md-stg-align-btn {
   color: #9ca3af;
 }
 
-.theme-dark .md-stg-btn-option.active {
-  background: transparent;
+.theme-dark .md-stg-btn-option:hover,
+.theme-dark .md-stg-panel-mode-btn:hover,
+.theme-dark .md-stg-align-btn:hover {
+  color: #d1d5db;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.theme-dark .md-stg-btn-option.active,
+.theme-dark .md-stg-panel-mode-btn.active,
+.theme-dark .md-stg-align-btn.active {
+  background: rgba(52, 211, 153, 0.1);
   color: #34d399;
+  border-color: #34d399;
 }
 
 /* 滑块行 */
@@ -2691,11 +2724,13 @@ ul:has(> .task-list-item) {
   background: #d1d5db;
 }
 
-/* 目录位置按钮 */
+/* 目录位置按钮（segment 按钮组风格） */
 .md-stg-toc-pos-btn {
-  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 6px 14px;
-  border: none;
+  border: 1.5px solid transparent;
   border-radius: 8px;
   background: transparent;
   cursor: pointer;
@@ -2704,26 +2739,35 @@ ul:has(> .task-list-item) {
   color: #6b7280;
   text-align: center;
   transition: all 0.15s;
+  white-space: nowrap;
+  font-family: inherit;
 }
 
 .md-stg-toc-pos-btn:hover {
-  color: #059669;
+  color: #57606a;
+  background: #f6f8fa;
 }
 
 .md-stg-toc-pos-btn.active {
-  background: transparent;
+  background: #fff;
   color: #059669;
   font-weight: 600;
+  border-color: #059669;
 }
 
 .theme-dark .md-stg-toc-pos-btn {
-  background: transparent;
   color: #9ca3af;
 }
 
+.theme-dark .md-stg-toc-pos-btn:hover {
+  color: #d1d5db;
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .theme-dark .md-stg-toc-pos-btn.active {
-  background: transparent;
+  background: rgba(52, 211, 153, 0.1);
   color: #34d399;
+  border-color: #34d399;
 }
 
 /* 底部固定栏 */
