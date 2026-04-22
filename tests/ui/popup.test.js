@@ -157,3 +157,103 @@ describe('BT-popup.2 设置修改触发保存', () => {
     );
   });
 });
+
+// =====================================================
+//  BT-popup.3 按钮组 segment 样式统一性
+// =====================================================
+describe('BT-popup.3 按钮组 segment 样式统一性', () => {
+  let popupHtml;
+
+  beforeAll(() => {
+    const fs = require('fs');
+    const path = require('path');
+    popupHtml = fs.readFileSync(
+      path.resolve(__dirname, '../../popup/popup.html'), 'utf-8'
+    );
+  });
+
+  // Tier 1 — 存在性断言
+  test('3.1 [Tier1] popup.html 包含 theme-selector 样式定义', () => {
+    expect(popupHtml).toContain('.theme-selector');
+  });
+
+  test('3.2 [Tier1] popup.html 包含 btn-group 样式定义', () => {
+    expect(popupHtml).toContain('.btn-group');
+  });
+
+  test('3.3 [Tier1] popup.html 包含 toc-position-selector 样式定义', () => {
+    expect(popupHtml).toContain('.toc-position-selector');
+  });
+
+  // Tier 2 — 行为级断言：验证按钮组容器具有外层边框
+  test('3.4 [Tier2] theme-selector 具有外层边框容器样式', () => {
+    // 提取 .theme-selector 的 CSS 块
+    const selectorMatch = popupHtml.match(/\.theme-selector\s*\{([^}]+)\}/);
+    expect(selectorMatch).not.toBeNull();
+    const css = selectorMatch[1];
+    expect(css).toMatch(/border.*#e1e4e8/);
+    expect(css).toMatch(/border-radius/);
+    expect(css).toMatch(/inline-flex/);
+  });
+
+  test('3.5 [Tier2] btn-group 具有外层边框容器样式', () => {
+    const groupMatch = popupHtml.match(/\.btn-group\s*\{([^}]+)\}/);
+    expect(groupMatch).not.toBeNull();
+    const css = groupMatch[1];
+    expect(css).toMatch(/border.*#e1e4e8/);
+    expect(css).toMatch(/border-radius/);
+    expect(css).toMatch(/inline-flex/);
+  });
+
+  test('3.6 [Tier2] toc-position-selector 具有外层边框容器样式', () => {
+    const tocMatch = popupHtml.match(/\.toc-position-selector\s*\{([^}]+)\}/);
+    expect(tocMatch).not.toBeNull();
+    const css = tocMatch[1];
+    expect(css).toMatch(/border.*#e1e4e8/);
+    expect(css).toMatch(/border-radius/);
+    expect(css).toMatch(/inline-flex/);
+  });
+
+  // Tier 2 — 行为级断言：验证选中态使用绿色
+  test('3.7 [Tier2] theme-btn 选中态使用绿色 #059669', () => {
+    const activeMatch = popupHtml.match(/\.theme-btn\.active\s*\{([^}]+)\}/);
+    expect(activeMatch).not.toBeNull();
+    expect(activeMatch[1]).toContain('#059669');
+  });
+
+  test('3.8 [Tier2] btn-option 选中态使用绿色 #059669', () => {
+    const activeMatch = popupHtml.match(/\.btn-option\.active\s*\{([^}]+)\}/);
+    expect(activeMatch).not.toBeNull();
+    expect(activeMatch[1]).toContain('#059669');
+  });
+
+  test('3.9 [Tier2] toc-pos-btn 选中态使用绿色 #059669', () => {
+    const activeMatch = popupHtml.match(/\.toc-pos-btn\.active\s*\{([^}]+)\}/);
+    expect(activeMatch).not.toBeNull();
+    expect(activeMatch[1]).toContain('#059669');
+  });
+
+  // Tier 3 — 任务特定断言：popup 与 options 按钮组风格一致
+  test('3.10 [Tier3] popup 所有按钮组不再使用旧紫色 #667eea 选中态', () => {
+    // 提取所有 .active 规则块
+    const activeBlocks = popupHtml.match(/\.(theme-btn|btn-option|toc-pos-btn)\.active\s*\{[^}]+\}/g);
+    expect(activeBlocks).not.toBeNull();
+    activeBlocks.forEach(block => {
+      expect(block).not.toMatch(/#667eea/);
+      expect(block).not.toMatch(/#f0f0ff/);
+    });
+  });
+
+  test('3.11 [Tier3] popup 所有按钮组容器均使用 inline-flex 而非 flex', () => {
+    // 确保容器使用 inline-flex（segment 风格）而非 flex（旧风格）
+    const containers = [
+      popupHtml.match(/\.theme-selector\s*\{([^}]+)\}/),
+      popupHtml.match(/\.btn-group\s*\{([^}]+)\}/),
+      popupHtml.match(/\.toc-position-selector\s*\{([^}]+)\}/)
+    ];
+    containers.forEach(match => {
+      expect(match).not.toBeNull();
+      expect(match[1]).toMatch(/inline-flex/);
+    });
+  });
+});
