@@ -2785,12 +2785,12 @@ ul:has(> .task-list-item) {
 .md-stg-font-select {
   width: 100%;
   padding: 6px 10px;
-  border: 1px solid #374151;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
-  background: #1f2937;
-  color: #e5e7eb;
+  background: #fff;
+  color: #1f2937;
   cursor: pointer;
   outline: none;
   font-family: inherit;
@@ -2803,12 +2803,27 @@ ul:has(> .task-list-item) {
 }
 
 .md-stg-font-select option {
-  background: #1f2937;
-  color: #e5e7eb;
+  background: #fff;
+  color: #1f2937;
 }
 
 .md-stg-font-select optgroup {
   font-weight: 600;
+  color: #6b7280;
+}
+
+.theme-dark .md-stg-font-select {
+  border-color: #374151;
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+.theme-dark .md-stg-font-select option {
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+.theme-dark .md-stg-font-select optgroup {
   color: #9ca3af;
 }
 
@@ -2816,11 +2831,11 @@ ul:has(> .task-list-item) {
   width: 100%;
   margin-top: 6px;
   padding: 6px 10px;
-  border: 1px solid #374151;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 12px;
-  background: #111827;
-  color: #e5e7eb;
+  background: #fff;
+  color: #1f2937;
   outline: none;
   font-family: inherit;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -2832,6 +2847,16 @@ ul:has(> .task-list-item) {
 }
 
 .md-stg-font-custom::placeholder {
+  color: #9ca3af;
+}
+
+.theme-dark .md-stg-font-custom {
+  border-color: #374151;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.theme-dark .md-stg-font-custom::placeholder {
   color: #6b7280;
 }
 
