@@ -199,19 +199,22 @@
       box-shadow: 0 1px 3px rgba(5, 150, 105, 0.3);
     }
 
-    /* 主题选择器（复用胶囊风格） */
+    /* 主题选择器（segment 按钮组风格） */
     .theme-selector {
-      display: flex;
-      gap: 4px;
-      background: #f0f2f5;
+      display: inline-flex;
+      border: 1.5px solid #e1e4e8;
       border-radius: 10px;
-      padding: 4px;
+      padding: 3px;
+      background: #fff;
+      gap: 2px;
     }
 
     .theme-btn {
-      flex: 1;
-      padding: 10px 8px;
-      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border: 1.5px solid transparent;
       outline: none;
       -webkit-appearance: none;
       appearance: none;
@@ -224,24 +227,26 @@
       font-weight: 500;
       color: #8b949e;
       font-family: inherit;
+      white-space: nowrap;
     }
 
     .theme-btn:hover {
       color: #57606a;
-      background: rgba(255, 255, 255, 0.5);
+      background: #f6f8fa;
     }
 
     .theme-btn.active {
       background: #fff;
       color: #059669;
       font-weight: 600;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      border-color: #059669;
+      box-shadow: none;
     }
 
     .theme-btn .theme-icon {
-      display: block;
-      font-size: 24px;
-      margin-bottom: 6px;
+      display: inline;
+      font-size: 14px;
+      margin-bottom: 0;
     }
 
     /* 选项按钮组（传统带边框风格，用于字体选择等） */
@@ -273,18 +278,22 @@
       font-weight: 600;
     }
 
-    /* 胶囊按钮组（纯文字高亮风格） */
+    /* 胶囊按钮组（segment 按钮组风格） */
     .capsule-group {
-      display: flex;
-      gap: 4px;
-      background: transparent;
-      border-radius: 0;
-      padding: 0;
+      display: inline-flex;
+      border: 1.5px solid #e1e4e8;
+      border-radius: 10px;
+      padding: 3px;
+      background: #fff;
+      gap: 2px;
     }
 
     .capsule-btn {
-      padding: 7px 18px;
-      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border: 1.5px solid transparent;
       outline: none;
       -webkit-appearance: none;
       appearance: none;
@@ -301,32 +310,14 @@
 
     .capsule-btn:hover {
       color: #57606a;
-      background: transparent;
+      background: #f6f8fa;
     }
 
     .capsule-btn.active {
-      background: transparent;
+      background: #fff;
       color: #059669;
       font-weight: 600;
-      box-shadow: none;
-    }
-
-    /* 确保面板模式/文档对齐/目录位置按钮不受其他样式干扰 */
-    .capsule-group .panel-mode-btn,
-    .capsule-group .content-align-btn,
-    .capsule-group .toc-pos-btn {
-      border: none;
-      outline: none;
-      background: transparent;
-      color: #8b949e;
-      font-weight: 500;
-    }
-    .capsule-group .panel-mode-btn.active,
-    .capsule-group .content-align-btn.active,
-    .capsule-group .toc-pos-btn.active {
-      background: transparent;
-      color: #059669;
-      font-weight: 600;
+      border-color: #059669;
       box-shadow: none;
     }
 
@@ -722,10 +713,10 @@
         </div>
         <div class="theme-selector">
           <button class="theme-btn" data-theme="light">
-            <span class="theme-icon">☀️</span><span data-i18n="options.theme.light">浅色主题</span>
+            <span class="theme-icon">☀️</span><span data-i18n="options.theme.light">亮色</span>
           </button>
           <button class="theme-btn" data-theme="dark">
-            <span class="theme-icon">🌙</span><span data-i18n="options.theme.dark">深色主题</span>
+            <span class="theme-icon">🌙</span><span data-i18n="options.theme.dark">暗色</span>
           </button>
           <button class="theme-btn" data-theme="auto">
             <span class="theme-icon">💻</span><span data-i18n="options.theme.auto">跟随系统</span>
@@ -922,8 +913,8 @@
           </div>
           <div class="setting-control">
             <div class="capsule-group">
-              <button class="capsule-btn panel-mode-btn" data-mode="float" data-i18n="settings.panelMode.float">悬浮</button>
-              <button class="capsule-btn panel-mode-btn" data-mode="embed" data-i18n="settings.panelMode.embed">嵌入</button>
+              <button class="capsule-btn panel-mode-btn" data-mode="float" data-i18n="settings.panelMode.float">✨ 悬浮</button>
+              <button class="capsule-btn panel-mode-btn" data-mode="embed" data-i18n="settings.panelMode.embed">📌 嵌入</button>
             </div>
           </div>
         </div>
@@ -936,9 +927,9 @@
           </div>
           <div class="setting-control">
             <div class="capsule-group">
-              <button class="capsule-btn content-align-btn" data-align="left" data-i18n="settings.contentAlign.left">靠左</button>
-              <button class="capsule-btn content-align-btn" data-align="center" data-i18n="settings.contentAlign.center">居中</button>
-              <button class="capsule-btn content-align-btn" data-align="right" data-i18n="settings.contentAlign.right">靠右</button>
+              <button class="capsule-btn content-align-btn" data-align="left" data-i18n="settings.contentAlign.left">◀ 靠左</button>
+              <button class="capsule-btn content-align-btn" data-align="center" data-i18n="settings.contentAlign.center">⬤ 居中</button>
+              <button class="capsule-btn content-align-btn" data-align="right" data-i18n="settings.contentAlign.right">▶ 靠右</button>
             </div>
           </div>
         </div>
