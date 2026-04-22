@@ -249,33 +249,43 @@
       margin-bottom: 0;
     }
 
-    /* 选项按钮组（传统带边框风格，用于字体选择等） */
+    /* 选项按钮组（segment 按钮组风格，用于字体选择等） */
     .btn-group {
-      display: flex;
-      gap: 6px;
+      display: inline-flex;
+      border: 1.5px solid #e1e4e8;
+      border-radius: 10px;
+      padding: 3px;
+      background: #fff;
+      gap: 2px;
     }
 
     .btn-option {
-      padding: 7px 16px;
-      border: 1.5px solid #d0d7de;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border: 1.5px solid transparent;
       border-radius: 8px;
-      background: #fff;
+      background: transparent;
       cursor: pointer;
       font-size: 13px;
-      color: #57606a;
-      transition: all 0.15s;
+      font-weight: 500;
+      color: #8b949e;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: inherit;
     }
 
     .btn-option:hover {
-      border-color: #667eea;
-      color: #667eea;
+      color: #57606a;
+      background: #f6f8fa;
     }
 
     .btn-option.active {
-      border-color: #667eea;
-      background: #f0f0ff;
-      color: #667eea;
+      background: #fff;
+      color: #059669;
       font-weight: 600;
+      border-color: #059669;
     }
 
     /* 胶囊按钮组（segment 按钮组风格） */
