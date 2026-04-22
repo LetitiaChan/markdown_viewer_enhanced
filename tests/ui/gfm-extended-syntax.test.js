@@ -46,10 +46,11 @@ describe('Tier 1: GFM 扩展语法存在性', () => {
     expect(fs.existsSync(emojiPath)).toBe(true);
   });
 
-  test('1.9 manifest.json 包含 emoji-map.js', () => {
+  test('1.9 manifest.json web_accessible_resources 包含 emoji-map.js（懒加载）', () => {
     const manifest = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../manifest.json'), 'utf-8'));
-    const jsFiles = manifest.content_scripts[0].js;
-    expect(jsFiles).toContain('libs/emoji-map.js');
+    // emoji-map.js 已改为懒加载，不再在 content_scripts 中，而是通过 web_accessible_resources 的 libs/* 通配符覆盖
+    const resources = manifest.web_accessible_resources[0].resources;
+    expect(resources).toContain('libs/*');
   });
 
   test('1.10 background.js 包含 emoji-map.js', () => {

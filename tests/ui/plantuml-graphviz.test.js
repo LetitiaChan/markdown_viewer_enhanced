@@ -80,10 +80,11 @@ describe('Tier 1: PlantUML/Graphviz 存在性', () => {
     expect(enJs).toContain("'graphviz.error.syntax'");
   });
 
-  test('1.13 manifest.json 包含 viz-global.js', () => {
+  test('1.13 manifest.json web_accessible_resources 包含 viz-global.js（懒加载）', () => {
     const manifest = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../manifest.json'), 'utf-8'));
-    const jsFiles = manifest.content_scripts[0].js;
-    expect(jsFiles).toContain('libs/viz-global.js');
+    // viz-global.js 已改为懒加载，不再在 content_scripts 中，而是通过 web_accessible_resources 的 libs/* 通配符覆盖
+    const resources = manifest.web_accessible_resources[0].resources;
+    expect(resources).toContain('libs/*');
   });
 
   test('1.14 viz-global.js 文件存在', () => {
