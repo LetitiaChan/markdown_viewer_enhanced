@@ -31,6 +31,34 @@
   const MATH_PLACEHOLDER_SUFFIX = '%%';
   let mathExpressions = []; // 存储提取出的数学公式
 
+  // ==================== 脚本懒加载 ====================
+
+  /** 已加载脚本缓存（relativePath → Promise） */
+  const _loadedScripts = {};
+
+  /**
+   * 动态加载扩展内的 JS 文件（懒加载）
+   * @param {string} relativePath - 相对于扩展根目录的路径，如 'libs/mermaid.min.js'
+   * @returns {Promise<void>} 加载完成后 resolve
+   */
+  function loadScript(relativePath) {
+    if (_loadedScripts[relativePath]) return _loadedScripts[relativePath];
+    _loadedScripts[relativePath] = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = chrome.runtime.getURL(relativePath);
+      script.onload = () => {
+        console.log(`[MD Viewer] 懒加载脚本完成: ${relativePath}`);
+        resolve();
+      };
+      script.onerror = () => {
+        delete _loadedScripts[relativePath]; // 失败时清除缓存，允许重试
+        reject(new Error(`Failed to load script: ${relativePath}`));
+      };
+      document.head.appendChild(script);
+    });
+    return _loadedScripts[relativePath];
+  }
+
   // 默认设置（与 background.js 保持一致）
   const DEFAULT_SETTINGS = {
     theme: 'light',
@@ -515,8 +543,8 @@
         }
       }
 
-      // 尝试自动检测语言
-      if (typeof hljs !== 'undefined') {
+      // 尝试自动检测语言（跳过超大代码块以避免性能问题）
+      if (typeof hljs !== 'undefined' && code.length <= 10000) {
         try {
           const highlighted = hljs.highlightAuto(code).value;
           return `<div class="code-block${lineNumClass}"><div class="code-header"><span class="code-lang">${lang || 'code'}</span><button class="code-copy-btn" title="${t('code.copy.title')}">${t('code.copy')}</button></div><pre><code class="hljs">${wrapLines(highlighted, lang)}</code></pre></div>`;
@@ -3961,7 +3989,16 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
    * 重新渲染 Mermaid（主题切换时）
    */
   async function reRenderMermaid() {
-    if (!currentSettings.enableMermaid || typeof mermaid === 'undefined') return;
+    if (!currentSettings.enableMermaid) return;
+    // 懒加载：如果 Mermaid 尚未加载，尝试加载
+    if (typeof mermaid === 'undefined') {
+      try {
+        await loadScript('libs/mermaid.min.js');
+      } catch (err) {
+        console.warn('[MD Viewer] Mermaid 懒加载失败，跳过重新渲染:', err);
+        return;
+      }
+    }
 
     const containers = document.querySelectorAll('.mermaid-container');
     containers.forEach(container => {
@@ -4163,6 +4200,21 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       currentSettings.theme = isDark ? 'dark' : 'light';
     }
 
+    // ★ 检测可选库需求（懒加载判断）
+    const needsMermaid = currentSettings.enableMermaid && /^```mermaid\s*$/m.test(rawMarkdown);
+    const needsGraphviz = currentSettings.enableGraphviz && /^```(?:dot|graphviz)\s*$/m.test(rawMarkdown);
+    const needsEmoji = /:[a-zA-Z0-9_+\-]+:/.test(rawMarkdown);
+    // KaTeX 需求在 preprocessMath 之后判断（依赖 mathExpressions.length）
+
+    // 按需加载 emoji-map（必须在 configureMarked 之前，emoji 扩展需要 EMOJI_MAP 全局变量）
+    if (needsEmoji && typeof EMOJI_MAP === 'undefined') {
+      try {
+        await loadScript('libs/emoji-map.js');
+      } catch (err) {
+        console.warn('[MD Viewer] emoji-map.js 加载失败，emoji 功能不可用:', err);
+      }
+    }
+
     // 配置 marked 解析器
     tocItems = [];
     configureMarked();
@@ -4235,17 +4287,41 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     // 生成目录
     buildToc();
 
-    // 渲染 Mermaid 图表
-    await renderMermaidDiagrams();
+    // ★ 按需懒加载可选库 + 并行渲染（性能优化）
+    const renderTasks = [];
 
-    // 渲染 PlantUML 图表
-    renderPlantUML();
+    // Mermaid
+    if (needsMermaid) {
+      renderTasks.push(
+        (typeof mermaid === 'undefined' ? loadScript('libs/mermaid.min.js') : Promise.resolve())
+          .then(() => renderMermaidDiagrams())
+          .catch(err => console.warn('[MD Viewer] Mermaid 渲染失败:', err))
+      );
+    }
 
-    // 渲染 Graphviz 图表
-    await renderGraphviz();
+    // PlantUML（无需懒加载，使用在线服务）
+    renderTasks.push(Promise.resolve().then(() => renderPlantUML()));
 
-    // 渲染数学公式
-    await renderMathFormulas();
+    // Graphviz
+    if (needsGraphviz) {
+      renderTasks.push(
+        (typeof Viz === 'undefined' ? loadScript('libs/viz-global.js') : Promise.resolve())
+          .then(() => renderGraphviz())
+          .catch(err => console.warn('[MD Viewer] Graphviz 渲染失败:', err))
+      );
+    }
+
+    // 数学公式
+    if (currentSettings.enableMathJax && mathExpressions.length > 0) {
+      renderTasks.push(
+        (typeof katex === 'undefined' ? loadScript('libs/katex.min.js') : Promise.resolve())
+          .then(() => renderMathFormulas())
+          .catch(err => console.warn('[MD Viewer] 数学公式渲染失败:', err))
+      );
+    }
+
+    // 并行执行所有渲染任务
+    await Promise.all(renderTasks);
 
     // 非 file:// 协议时隐藏文件浏览器页签
     if (!isFileProtocol()) {
@@ -4361,10 +4437,13 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       isFileProtocol,
       parseSizeToBytes,
       getFileIcon,
+      loadScript,
       // 常量
       DEFAULT_SETTINGS,
       MD_EXTENSIONS,
       SUPPORTED_FILE_EXTENSIONS,
+      // 内部状态（测试用）
+      _loadedScripts,
     };
   }
 
