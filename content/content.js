@@ -52,6 +52,23 @@
     language: 'zh-CN',
   };
 
+  // 字体标识符 → CSS font-family 映射表
+  const FONT_FAMILY_MAP = {
+    'system': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif',
+    'msyh': '"Microsoft YaHei", "微软雅黑", sans-serif',
+    'pingfang': '"PingFang SC", sans-serif',
+    'noto-sans': '"Noto Sans SC", "Source Han Sans SC", sans-serif',
+    'helvetica': '"Helvetica Neue", Helvetica, sans-serif',
+    'arial': 'Arial, sans-serif',
+    'segoe': '"Segoe UI", sans-serif',
+    'serif': 'Georgia, "Times New Roman", "SimSun", serif',
+    'simsun': '"SimSun", "宋体", serif',
+    'noto-serif': '"Noto Serif SC", "Source Han Serif SC", serif',
+    'georgia': 'Georgia, serif',
+    'times': '"Times New Roman", Times, serif',
+    'mono': '"Consolas", "Monaco", "Courier New", monospace',
+  };
+
   let currentSettings = { ...DEFAULT_SETTINGS };
   let tocItems = [];
   let isRendered = false;
@@ -1045,9 +1062,28 @@
                       </div>
                     </div>
                     <div class="md-stg-btn-group">
-                      <button class="md-stg-btn-option" data-font="system">${t('settings.font.system')}</button>
-                      <button class="md-stg-btn-option" data-font="serif">${t('settings.font.serif')}</button>
-                      <button class="md-stg-btn-option" data-font="mono">${t('settings.font.mono')}</button>
+                      <select id="md-stg-font-select" class="md-stg-font-select">
+                        <option value="system">${t('settings.font.system')}</option>
+                        <optgroup label="${t('settings.font.group.sansSerif')}">
+                          <option value="msyh">${t('settings.font.msyh')}</option>
+                          <option value="pingfang">${t('settings.font.pingfang')}</option>
+                          <option value="noto-sans">${t('settings.font.notoSans')}</option>
+                          <option value="helvetica">${t('settings.font.helvetica')}</option>
+                          <option value="arial">${t('settings.font.arial')}</option>
+                          <option value="segoe">${t('settings.font.segoe')}</option>
+                        </optgroup>
+                        <optgroup label="${t('settings.font.group.serif')}">
+                          <option value="serif">${t('settings.font.serif')}</option>
+                          <option value="simsun">${t('settings.font.simsun')}</option>
+                          <option value="noto-serif">${t('settings.font.notoSerif')}</option>
+                          <option value="georgia">${t('settings.font.georgia')}</option>
+                          <option value="times">${t('settings.font.times')}</option>
+                        </optgroup>
+                        <optgroup label="${t('settings.font.group.other')}">
+                          <option value="custom">${t('settings.font.custom')}</option>
+                        </optgroup>
+                      </select>
+                      <input id="md-stg-font-custom" class="md-stg-font-custom" type="text" placeholder="${t('settings.font.customPlaceholder')}" style="display:none;" />
                     </div>
                   </div>
                   <!-- 字体大小 -->
@@ -3707,15 +3743,10 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       content.style.setProperty('--code-font-size', (currentSettings.codeFontSize || 14) + 'px');
       // 正文字体
       const fontFamily = currentSettings.fontFamily || 'system';
-      switch (fontFamily) {
-        case 'serif':
-          content.style.fontFamily = 'Georgia, "Times New Roman", "SimSun", serif';
-          break;
-        case 'mono':
-          content.style.fontFamily = '"Consolas", "Monaco", "Courier New", monospace';
-          break;
-        default:
-          content.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif';
+      if (fontFamily === 'custom' && currentSettings.customFontFamily) {
+        content.style.fontFamily = currentSettings.customFontFamily;
+      } else {
+        content.style.fontFamily = FONT_FAMILY_MAP[fontFamily] || FONT_FAMILY_MAP['system'];
       }
       // 文档对齐
       const align = currentSettings.contentAlign || 'center';
