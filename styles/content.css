@@ -2781,6 +2781,60 @@ ul:has(> .task-list-item) {
   border-color: #34d399;
 }
 
+/* 字体下拉选择器 */
+.md-stg-font-select {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #1f2937;
+  color: #e5e7eb;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.md-stg-font-select:focus {
+  border-color: #34d399;
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.15);
+}
+
+.md-stg-font-select option {
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+.md-stg-font-select optgroup {
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.md-stg-font-custom {
+  width: 100%;
+  margin-top: 6px;
+  padding: 6px 10px;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  font-size: 12px;
+  background: #111827;
+  color: #e5e7eb;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.md-stg-font-custom:focus {
+  border-color: #34d399;
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.15);
+}
+
+.md-stg-font-custom::placeholder {
+  color: #6b7280;
+}
+
 /* 滑块行 */
 .md-stg-slider-row {
   display: flex;

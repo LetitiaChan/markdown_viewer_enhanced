@@ -10,7 +10,8 @@
   const themeBtns = document.querySelectorAll('.theme-btn');
   const codeThemeSelect = document.getElementById('codeThemeSelect');
   const codeThemePreview = document.getElementById('codeThemePreview');
-  const fontBtns = document.querySelectorAll('.btn-option[data-font]');
+  const fontFamilySelect = document.getElementById('fontFamilySelect');
+  const fontFamilyCustom = document.getElementById('fontFamilyCustom');
   const fontSizeSlider = document.getElementById('fontSizeSlider');
   const fontSizeValue = document.getElementById('fontSizeValue');
   const lineHeightSlider = document.getElementById('lineHeightSlider');
@@ -96,9 +97,17 @@
     }
 
     // 字体
-    fontBtns.forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.font === (settings.fontFamily || 'system'));
-    });
+    if (fontFamilySelect) {
+      fontFamilySelect.value = settings.fontFamily || 'system';
+    }
+    if (fontFamilyCustom) {
+      if (settings.fontFamily === 'custom') {
+        fontFamilyCustom.style.display = '';
+        fontFamilyCustom.value = settings.customFontFamily || '';
+      } else {
+        fontFamilyCustom.style.display = 'none';
+      }
+    }
 
     // 字体大小
 fontSizeSlider.value = settings.fontSize || 18;
@@ -182,17 +191,27 @@ const lineHeight = currentSettings.lineHeight || 1.8;
     const fontFamily = currentSettings.fontFamily || 'system';
     const theme = currentSettings.theme || 'light';
 
-    // 设置字体
+    // 字体映射表
+    const FONT_FAMILY_MAP = {
+      'system': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif',
+      'msyh': '"Microsoft YaHei", "微软雅黑", sans-serif',
+      'pingfang': '"PingFang SC", sans-serif',
+      'noto-sans': '"Noto Sans SC", "Source Han Sans SC", sans-serif',
+      'helvetica': '"Helvetica Neue", Helvetica, sans-serif',
+      'arial': 'Arial, sans-serif',
+      'segoe': '"Segoe UI", sans-serif',
+      'serif': 'Georgia, "Times New Roman", "SimSun", serif',
+      'simsun': '"SimSun", "宋体", serif',
+      'noto-serif': '"Noto Serif SC", "Source Han Serif SC", serif',
+      'georgia': 'Georgia, serif',
+      'times': '"Times New Roman", Times, serif',
+      'mono': '"Consolas", "Monaco", "Courier New", monospace',
+    };
     let fontFamilyCSS;
-    switch (fontFamily) {
-      case 'serif':
-        fontFamilyCSS = 'Georgia, "Times New Roman", "SimSun", serif';
-        break;
-      case 'mono':
-        fontFamilyCSS = '"Consolas", "Monaco", "Courier New", monospace';
-        break;
-      default:
-        fontFamilyCSS = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif';
+    if (fontFamily === 'custom' && currentSettings.customFontFamily) {
+      fontFamilyCSS = currentSettings.customFontFamily;
+    } else {
+      fontFamilyCSS = FONT_FAMILY_MAP[fontFamily] || FONT_FAMILY_MAP['system'];
     }
 
     typographyPreview.style.fontSize = fontSize + 'px';
@@ -306,16 +325,24 @@ const lineHeight = currentSettings.lineHeight || 1.8;
       });
     }
 
-    // 字体选择
-    fontBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        fontBtns.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentSettings.fontFamily = btn.dataset.font;
+    // 字体选择（下拉选择器）
+    if (fontFamilySelect) {
+      fontFamilySelect.addEventListener('change', () => {
+        currentSettings.fontFamily = fontFamilySelect.value;
+        if (fontFamilyCustom) {
+          fontFamilyCustom.style.display = fontFamilySelect.value === 'custom' ? '' : 'none';
+        }
         updatePreview();
         scheduleAutoSave(0);
       });
-    });
+    }
+    if (fontFamilyCustom) {
+      fontFamilyCustom.addEventListener('input', () => {
+        currentSettings.customFontFamily = fontFamilyCustom.value;
+        updatePreview();
+        scheduleAutoSave();
+      });
+    }
 
     // 字体大小
     fontSizeSlider.addEventListener('input', () => {

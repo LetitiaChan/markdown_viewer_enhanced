@@ -28,7 +28,8 @@
   const btnRender = document.getElementById('btnRender');
 
   const themeBtns = document.querySelectorAll('.theme-btn');
-  const fontBtns = document.querySelectorAll('.btn-option[data-font]');
+  const fontFamilySelect = document.getElementById('fontFamilySelect');
+  const fontFamilyCustom = document.getElementById('fontFamilyCustom');
   const tocPosBtns = document.querySelectorAll('.toc-pos-btn');
 
   const langBtns = document.querySelectorAll('.lang-btn');
@@ -81,9 +82,17 @@
     }
 
     // 正文字体
-    fontBtns.forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.font === (settings.fontFamily || 'system'));
-    });
+    if (fontFamilySelect) {
+      fontFamilySelect.value = settings.fontFamily || 'system';
+    }
+    if (fontFamilyCustom) {
+      if (settings.fontFamily === 'custom') {
+        fontFamilyCustom.style.display = '';
+        fontFamilyCustom.value = settings.customFontFamily || '';
+      } else {
+        fontFamilyCustom.style.display = 'none';
+      }
+    }
 
     // 字体大小
 fontSizeSlider.value = settings.fontSize || 18;
@@ -225,15 +234,24 @@ lineHeightSlider.value = settings.lineHeight || 1.8;
       });
     }
 
-    // 正文字体选择
-    fontBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        fontBtns.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentSettings.fontFamily = btn.dataset.font;
+    // 正文字体选择（下拉选择器）
+    if (fontFamilySelect) {
+      fontFamilySelect.addEventListener('change', () => {
+        currentSettings.fontFamily = fontFamilySelect.value;
+        if (fontFamilyCustom) {
+          fontFamilyCustom.style.display = fontFamilySelect.value === 'custom' ? '' : 'none';
+        }
         saveSettings();
       });
-    });
+    }
+    if (fontFamilyCustom) {
+      fontFamilyCustom.addEventListener('input', () => {
+        currentSettings.customFontFamily = fontFamilyCustom.value;
+      });
+      fontFamilyCustom.addEventListener('change', () => {
+        saveSettings();
+      });
+    }
 
     // 字体大小
     fontSizeSlider.addEventListener('input', () => {

@@ -315,6 +315,41 @@
       border-color: #059669;
     }
 
+    /* 字体下拉选择器 */
+    .font-select {
+      width: 100%;
+      padding: 5px 8px;
+      border: 1.5px solid #d0d7de;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      background: #f6f8fa;
+      color: #24292f;
+      cursor: pointer;
+      outline: none;
+      font-family: inherit;
+    }
+    .font-select:focus {
+      border-color: #059669;
+      box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.12);
+    }
+    .font-custom-input {
+      width: 100%;
+      margin-top: 6px;
+      padding: 5px 8px;
+      border: 1.5px solid #d0d7de;
+      border-radius: 6px;
+      font-size: 11px;
+      background: #fff;
+      color: #24292f;
+      outline: none;
+      font-family: inherit;
+    }
+    .font-custom-input:focus {
+      border-color: #059669;
+      box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.12);
+    }
+
     /* 字体大小滑块 */
     .slider-control {
       display: flex;
@@ -507,11 +542,28 @@
     <!-- 正文字体 -->
     <div class="setting-item">
       <span class="setting-label"><span class="icon">🔤</span><span data-i18n="popup.font">正文字体</span></span>
-      <div class="btn-group">
-        <button class="btn-option" data-font="system" data-i18n="popup.font.default">默认</button>
-        <button class="btn-option" data-font="serif" data-i18n="popup.font.serif">衬线</button>
-        <button class="btn-option" data-font="mono" data-i18n="popup.font.mono">等宽</button>
-      </div>
+      <select id="fontFamilySelect" class="font-select">
+        <option value="system" data-i18n="popup.font.default">系统默认</option>
+        <optgroup label="无衬线">
+          <option value="msyh">微软雅黑</option>
+          <option value="pingfang">苹方</option>
+          <option value="noto-sans">思源黑体</option>
+          <option value="helvetica">Helvetica Neue</option>
+          <option value="arial">Arial</option>
+          <option value="segoe">Segoe UI</option>
+        </optgroup>
+        <optgroup label="衬线">
+          <option value="serif" data-i18n="popup.font.serif">衬线体（通用）</option>
+          <option value="simsun">宋体</option>
+          <option value="noto-serif">思源宋体</option>
+          <option value="georgia">Georgia</option>
+          <option value="times">Times New Roman</option>
+        </optgroup>
+        <optgroup label="其他">
+          <option value="custom">自定义...</option>
+        </optgroup>
+      </select>
+      <input id="fontFamilyCustom" class="font-custom-input" type="text" placeholder="输入 CSS font-family 值" style="display:none;" />
     </div>
 
     <!-- 字体大小 -->

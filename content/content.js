@@ -3435,9 +3435,19 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     updateCodePreviewTheme(currentSettings.codeTheme || 'default-dark-modern');
 
     // 正文字体
-    document.querySelectorAll('.md-stg-btn-option[data-font]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.font === (currentSettings.fontFamily || 'system'));
-    });
+    const fontSelect = document.getElementById('md-stg-font-select');
+    const fontCustomInput = document.getElementById('md-stg-font-custom');
+    if (fontSelect) {
+      fontSelect.value = currentSettings.fontFamily || 'system';
+    }
+    if (fontCustomInput) {
+      if (currentSettings.fontFamily === 'custom') {
+        fontCustomInput.style.display = '';
+        fontCustomInput.value = currentSettings.customFontFamily || '';
+      } else {
+        fontCustomInput.style.display = 'none';
+      }
+    }
 
     // 字体大小
     const fontSizeEl = document.getElementById('stg-fontSize');
@@ -3542,15 +3552,26 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     }
 
     // 正文字体
-    document.querySelectorAll('.md-stg-btn-option[data-font]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.md-stg-btn-option[data-font]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentSettings.fontFamily = btn.dataset.font;
+    // 正文字体下拉选择器
+    const fontSelectEl = document.getElementById('md-stg-font-select');
+    const fontCustomEl = document.getElementById('md-stg-font-custom');
+    if (fontSelectEl) {
+      fontSelectEl.addEventListener('change', () => {
+        currentSettings.fontFamily = fontSelectEl.value;
+        if (fontCustomEl) {
+          fontCustomEl.style.display = fontSelectEl.value === 'custom' ? '' : 'none';
+        }
         applySettings(currentSettings);
         saveSettings();
       });
-    });
+    }
+    if (fontCustomEl) {
+      fontCustomEl.addEventListener('input', () => {
+        currentSettings.customFontFamily = fontCustomEl.value;
+        applySettings(currentSettings);
+      });
+      fontCustomEl.addEventListener('change', () => saveSettings());
+    }
 
     // 字体大小
     const fontSizeEl = document.getElementById('stg-fontSize');
