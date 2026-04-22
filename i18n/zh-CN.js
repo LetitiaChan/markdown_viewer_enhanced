@@ -26,6 +26,9 @@
     'sidebar.close.title': '关闭侧边栏',
     'sidebar.backToTop.title': '回到顶部',
     'sidebar.toc.toggle.title': '折叠/展开',
+    'sidebar.toc.search.placeholder': '搜索目录…',
+    'sidebar.toc.search.clear': '清除搜索',
+    'sidebar.toc.search.noResult': '无匹配结果',
 
     // ========== 侧边栏菜单 ==========
     'menu.toc.collapseAll': '折叠全部',

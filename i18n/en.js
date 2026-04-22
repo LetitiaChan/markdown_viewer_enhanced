@@ -26,6 +26,9 @@
     'sidebar.close.title': 'Close sidebar',
     'sidebar.backToTop.title': 'Back to top',
     'sidebar.toc.toggle.title': 'Collapse/Expand',
+    'sidebar.toc.search.placeholder': 'Search headings…',
+    'sidebar.toc.search.clear': 'Clear search',
+    'sidebar.toc.search.noResult': 'No matching results',
 
     // ========== Sidebar Menu ==========
     'menu.toc.collapseAll': 'Collapse All',

@@ -937,7 +937,14 @@
             </div>
             <!-- 目录面板 -->
             <div id="sidebar-panel-toc" class="sidebar-panel">
+              <div class="md-toc-search-box">
+                <span class="md-toc-search-icon">🔍</span>
+                <input id="md-toc-search-input" class="md-toc-search-input" type="text" placeholder="${t('sidebar.toc.search.placeholder')}" />
+                <span id="md-toc-search-count" class="md-toc-search-count"></span>
+                <button id="md-toc-search-clear" class="md-toc-search-clear" title="${t('sidebar.toc.search.clear')}" style="display:none;">✕</button>
+              </div>
               <nav id="md-toc-nav" class="md-toc-nav"></nav>
+              <div id="md-toc-no-result" class="md-toc-no-result" style="display:none;">${t('sidebar.toc.search.noResult')}</div>
             </div>
             <!-- 侧边栏拖拽调整宽度的手柄 -->
             <div id="sidebar-resize-handle" class="sidebar-resize-handle" style="${currentSettings.showToc ? '' : 'display:none;'}"></div>
@@ -1310,6 +1317,178 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     });
     tocHtml += '</ul>';
     tocNav.innerHTML = tocHtml;
+  }
+
+  // ==================== 目录搜索过滤 ====================
+
+  // 保存搜索前的折叠状态
+  let tocCollapsedStateBeforeSearch = null;
+
+  /**
+   * 过滤目录项：根据关键词实时过滤，高亮匹配文本，显示匹配计数
+   */
+  function filterTocItems(keyword) {
+    const allItems = document.querySelectorAll('.md-toc-item');
+    const countEl = document.getElementById('md-toc-search-count');
+    const clearBtn = document.getElementById('md-toc-search-clear');
+    const noResultEl = document.getElementById('md-toc-no-result');
+    const tocNav = document.getElementById('md-toc-nav');
+
+    if (!allItems.length) return;
+
+    const trimmed = keyword.trim();
+
+    // 清空搜索 → 恢复原状
+    if (!trimmed) {
+      restoreTocFromSearch(allItems);
+      if (countEl) countEl.textContent = '';
+      if (clearBtn) clearBtn.style.display = 'none';
+      if (noResultEl) noResultEl.style.display = 'none';
+      if (tocNav) tocNav.style.display = '';
+      return;
+    }
+
+    // 进入搜索模式：首次搜索时保存折叠状态
+    if (tocCollapsedStateBeforeSearch === null) {
+      saveTocCollapseState(allItems);
+    }
+
+    if (clearBtn) clearBtn.style.display = '';
+
+    const lowerKeyword = trimmed.toLowerCase();
+    const escapedKeyword = escapeHtml(trimmed);
+    const total = allItems.length;
+    let matchCount = 0;
+
+    // 标记每个项是否匹配
+    const matchFlags = new Array(total).fill(false);
+    allItems.forEach((item, i) => {
+      const link = item.querySelector('.md-toc-link');
+      if (!link) return;
+      const originalText = tocItems[i] ? tocItems[i].text : link.textContent;
+      if (originalText.toLowerCase().includes(lowerKeyword)) {
+        matchFlags[i] = true;
+        matchCount++;
+      }
+    });
+
+    // 标记祖先项可见（即使自身不匹配）
+    const visibleFlags = [...matchFlags];
+    for (let i = total - 1; i >= 0; i--) {
+      if (!matchFlags[i]) continue;
+      const myDepth = parseInt(allItems[i].dataset.tocDepth);
+      // 向上查找所有祖先
+      for (let j = i - 1; j >= 0; j--) {
+        const ancestorDepth = parseInt(allItems[j].dataset.tocDepth);
+        if (ancestorDepth < myDepth) {
+          visibleFlags[j] = true;
+          // 继续向上查找更高层级的祖先
+        }
+      }
+    }
+
+    // 应用可见性和高亮
+    allItems.forEach((item, i) => {
+      const link = item.querySelector('.md-toc-link');
+      if (!link) return;
+
+      if (visibleFlags[i]) {
+        item.style.display = '';
+        // 展开折叠的父项
+        item.classList.remove('toc-collapsed');
+        const toggle = item.querySelector('.md-toc-toggle');
+        if (toggle) toggle.textContent = '▾';
+
+        // 高亮匹配文本
+        const originalText = tocItems[i] ? tocItems[i].text : link.textContent;
+        if (matchFlags[i]) {
+          const regex = new RegExp(`(${escapeRegExp(escapedKeyword)})`, 'gi');
+          const escapedText = escapeHtml(originalText);
+          link.innerHTML = escapedText.replace(regex, '<mark>$1</mark>');
+        } else {
+          link.innerHTML = escapeHtml(originalText);
+        }
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // 更新计数
+    if (countEl) countEl.textContent = `${matchCount}/${total}`;
+
+    // 无匹配结果提示
+    if (noResultEl) noResultEl.style.display = matchCount === 0 ? '' : 'none';
+    if (tocNav) tocNav.style.display = matchCount === 0 ? 'none' : '';
+  }
+
+  /**
+   * 保存当前目录的折叠状态
+   */
+  function saveTocCollapseState(allItems) {
+    tocCollapsedStateBeforeSearch = [];
+    allItems.forEach((item, i) => {
+      if (item.classList.contains('toc-collapsed')) {
+        tocCollapsedStateBeforeSearch.push(i);
+      }
+    });
+    // 同时保存隐藏项（被折叠隐藏的子项）
+    tocCollapsedStateBeforeSearch._hiddenItems = [];
+    allItems.forEach((item, i) => {
+      if (item.style.display === 'none') {
+        tocCollapsedStateBeforeSearch._hiddenItems.push(i);
+      }
+    });
+  }
+
+  /**
+   * 恢复搜索前的目录状态
+   */
+  function restoreTocFromSearch(allItems) {
+    if (!allItems.length) return;
+
+    // 恢复所有项的原始文本（移除 <mark> 高亮）
+    allItems.forEach((item, i) => {
+      const link = item.querySelector('.md-toc-link');
+      if (link && tocItems[i]) {
+        link.innerHTML = escapeHtml(tocItems[i].text);
+      }
+      item.style.display = '';
+    });
+
+    // 恢复折叠状态
+    if (tocCollapsedStateBeforeSearch) {
+      // 先展开全部
+      allItems.forEach(item => {
+        item.classList.remove('toc-collapsed');
+        const toggle = item.querySelector('.md-toc-toggle');
+        if (toggle) toggle.textContent = '▾';
+      });
+
+      // 恢复折叠项
+      tocCollapsedStateBeforeSearch.forEach(idx => {
+        if (allItems[idx]) {
+          allItems[idx].classList.add('toc-collapsed');
+          const toggle = allItems[idx].querySelector('.md-toc-toggle');
+          if (toggle) toggle.textContent = '▸';
+        }
+      });
+
+      // 恢复隐藏项
+      if (tocCollapsedStateBeforeSearch._hiddenItems) {
+        tocCollapsedStateBeforeSearch._hiddenItems.forEach(idx => {
+          if (allItems[idx]) allItems[idx].style.display = 'none';
+        });
+      }
+    }
+
+    tocCollapsedStateBeforeSearch = null;
+  }
+
+  /**
+   * 转义正则表达式特殊字符
+   */
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   /**
@@ -2499,6 +2678,32 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
           e.preventDefault();
           const url = link.dataset.url;
           if (url) window.open(url, '_blank');
+        }
+      });
+    }
+
+    // 目录搜索框事件绑定
+    const tocSearchInput = document.getElementById('md-toc-search-input');
+    const tocSearchClear = document.getElementById('md-toc-search-clear');
+    if (tocSearchInput) {
+      const debouncedFilter = debounce((keyword) => filterTocItems(keyword), 150);
+      tocSearchInput.addEventListener('input', () => {
+        debouncedFilter(tocSearchInput.value);
+      });
+      tocSearchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          tocSearchInput.value = '';
+          filterTocItems('');
+          tocSearchInput.blur();
+        }
+      });
+    }
+    if (tocSearchClear) {
+      tocSearchClear.addEventListener('click', () => {
+        if (tocSearchInput) {
+          tocSearchInput.value = '';
+          filterTocItems('');
+          tocSearchInput.focus();
         }
       });
     }

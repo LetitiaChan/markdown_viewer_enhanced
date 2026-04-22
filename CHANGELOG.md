@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ---
 
+## [1.3.0] - 2026-04-23
+
+### Added
+- **TOC Search & Filter**: Real-time keyword search in the TOC sidebar — case-insensitive substring matching, `<mark>` text highlighting, match count display (N/M), ancestor item visibility, collapse state save/restore, debounced input (150ms), Escape key to clear, full i18n support
+
+### Fixed
+- **Font Family Setting**: Body font selection (system/serif/mono) now correctly applies to rendered content — previously the setting was saved but never applied to the DOM
+- **Code Theme Preview**: Settings panel code highlight theme preview now updates immediately on theme switch
+
+---
+
 ## [1.2.0] - 2026-04-09
 
 ### Added
