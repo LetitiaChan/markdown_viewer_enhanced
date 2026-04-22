@@ -3500,6 +3500,18 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       content.style.fontSize = currentSettings.fontSize + 'px';
       content.style.lineHeight = currentSettings.lineHeight;
       content.style.setProperty('--code-font-size', (currentSettings.codeFontSize || 14) + 'px');
+      // 正文字体
+      const fontFamily = currentSettings.fontFamily || 'system';
+      switch (fontFamily) {
+        case 'serif':
+          content.style.fontFamily = 'Georgia, "Times New Roman", "SimSun", serif';
+          break;
+        case 'mono':
+          content.style.fontFamily = '"Consolas", "Monaco", "Courier New", monospace';
+          break;
+        default:
+          content.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif';
+      }
       // 文档对齐
       const align = currentSettings.contentAlign || 'center';
       content.style.marginLeft = align === 'left' ? '0' : 'auto';
