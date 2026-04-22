@@ -133,6 +133,42 @@
   // ==================== 数学公式处理 ====================
 
   /**
+   * 预处理 YAML Front Matter
+   * 检测文件开头的 --- ... --- 包裹的 YAML 内容，将其提取并渲染为特殊样式块
+   * 返回 { frontMatterHtml, remainingMarkdown }
+   */
+  function preprocessFrontMatter(markdown) {
+    // 匹配文件开头的 YAML Front Matter：以 --- 开始，以 --- 结束
+    // 允许开头有 BOM 或空白字符
+    const frontMatterRegex = /^\s*---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
+    const match = markdown.match(frontMatterRegex);
+
+    if (!match) {
+      return { frontMatterHtml: '', remainingMarkdown: markdown };
+    }
+
+    const yamlContent = match[1];
+    const remainingMarkdown = markdown.slice(match[0].length);
+
+    // 使用 hljs 高亮 YAML 内容（如果可用）
+    let highlightedYaml;
+    if (typeof hljs !== 'undefined' && hljs.getLanguage('yaml')) {
+      try {
+        highlightedYaml = hljs.highlight(yamlContent, { language: 'yaml' }).value;
+      } catch (e) {
+        highlightedYaml = escapeHtml(yamlContent);
+      }
+    } else {
+      highlightedYaml = escapeHtml(yamlContent);
+    }
+
+    // 生成 Front Matter HTML 块（参考代码块结构）
+    const frontMatterHtml = `<div class="front-matter-block"><div class="front-matter-header"><span class="front-matter-icon">⚙</span><span class="front-matter-title">YAML Front Matter</span></div><pre><code class="hljs language-yaml">${highlightedYaml}</code></pre></div>`;
+
+    return { frontMatterHtml, remainingMarkdown };
+  }
+
+  /**
    * 预处理 Markdown 文本中的数学公式
    * 在 marked 解析之前，将 $$ ... $$ 和 $ ... $ 替换为占位符
    * 避免 marked 将公式中的特殊字符（如 _, *, \ 等）错误解析
@@ -3506,10 +3542,13 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     tocItems = [];
     configureMarked();
 
+    // 预处理 YAML Front Matter（在 marked 解析前提取）
+    const { frontMatterHtml: reRenderFrontMatterHtml, remainingMarkdown: reRenderMarkdown } = preprocessFrontMatter(rawMarkdown);
+
     // 预处理数学公式
-    let processedMarkdown = rawMarkdown;
+    let processedMarkdown = reRenderMarkdown;
     if (currentSettings.enableMathJax) {
-      processedMarkdown = preprocessMath(rawMarkdown);
+      processedMarkdown = preprocessMath(reRenderMarkdown);
     } else {
       mathExpressions = [];
     }
@@ -3544,6 +3583,10 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       }
       // 后处理颜色文本（在 DOMPurify 之后）
       htmlContent = postprocessColorText(htmlContent);
+      // 将 YAML Front Matter 插入到最前面
+      if (reRenderFrontMatterHtml) {
+        htmlContent = reRenderFrontMatterHtml + htmlContent;
+      }
     } catch (err) {
       console.error('[MD Viewer] Markdown 重新解析失败:', err);
       return;
@@ -3841,10 +3884,13 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     tocItems = [];
     configureMarked();
 
+    // 预处理 YAML Front Matter（在 marked 解析前提取）
+    const { frontMatterHtml, remainingMarkdown: markdownWithoutFrontMatter } = preprocessFrontMatter(rawMarkdown);
+
     // 预处理数学公式（在 marked 解析前保护公式）
-    let processedMarkdown = rawMarkdown;
+    let processedMarkdown = markdownWithoutFrontMatter;
     if (currentSettings.enableMathJax) {
-      processedMarkdown = preprocessMath(rawMarkdown);
+      processedMarkdown = preprocessMath(markdownWithoutFrontMatter);
       console.log(`[MD Viewer] 检测到 ${mathExpressions.length} 个数学公式`);
     }
 
@@ -3882,6 +3928,10 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
       }
       // 后处理颜色文本（在 DOMPurify 之后）
       htmlContent = postprocessColorText(htmlContent);
+      // 将 YAML Front Matter 插入到最前面
+      if (frontMatterHtml) {
+        htmlContent = frontMatterHtml + htmlContent;
+      }
     } catch (err) {
       console.error('[MD Viewer] Markdown 解析失败:', err);
       htmlContent = `<div class="md-error"><p>${t('error.parseFailed')}</p><pre>${escapeHtml(rawMarkdown)}</pre></div>`;
