@@ -210,11 +210,11 @@ describe('Options 设置页增强', () => {
       });
     });
 
-    test('BT-OPTIONS.17 PlantUML 和 Graphviz 使用 toggle-switch', () => {
+    test('BT-OPTIONS.17 PlantUML 和 Graphviz 使用 toggle-capsule 胶囊开关', () => {
       const plantUML = doc.getElementById('togglePlantUML');
       const graphviz = doc.getElementById('toggleGraphviz');
-      expect(plantUML.closest('.toggle-switch')).not.toBeNull();
-      expect(graphviz.closest('.toggle-switch')).not.toBeNull();
+      expect(plantUML.closest('.setting-control').querySelector('.toggle-capsule')).not.toBeNull();
+      expect(graphviz.closest('.setting-control').querySelector('.toggle-capsule')).not.toBeNull();
     });
 
     test('BT-OPTIONS.18 i18n data-i18n 属性存在于新增控件', () => {

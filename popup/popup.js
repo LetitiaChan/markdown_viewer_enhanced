@@ -86,13 +86,13 @@
     });
 
     // 字体大小
-    fontSizeSlider.value = settings.fontSize || 16;
-    fontSizeValue.textContent = (settings.fontSize || 16) + 'px';
+fontSizeSlider.value = settings.fontSize || 18;
+    fontSizeValue.textContent = (settings.fontSize || 18) + 'px';
 
     // 行高
     if (lineHeightSlider) {
-      lineHeightSlider.value = settings.lineHeight || 1.6;
-      lineHeightValue.textContent = (settings.lineHeight || 1.6).toFixed(1);
+lineHeightSlider.value = settings.lineHeight || 1.8;
+    lineHeightValue.textContent = (settings.lineHeight || 1.8).toFixed(1);
     }
 
     // 内容宽度

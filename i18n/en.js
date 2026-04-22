@@ -218,6 +218,8 @@
     'options.resetDone': '✅ Settings reset to defaults',
     'options.language.title': 'Interface Language',
     'options.language.desc': 'Choose the display language of the extension',
+    'options.toggle.on': 'ON',
+    'options.toggle.off': 'OFF',
 
     // ========== Popup ==========
     'popup.subtitle': 'Markdown Reader Extension',

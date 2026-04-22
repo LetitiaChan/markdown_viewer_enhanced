@@ -2465,9 +2465,9 @@ ul:has(> .task-list-item) {
 
 .md-stg-btn-option {
   padding: 6px 14px;
-  border: 1.5px solid #e5e7eb;
+  border: none;
   border-radius: 8px;
-  background: #fff;
+  background: transparent;
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -2476,27 +2476,23 @@ ul:has(> .task-list-item) {
 }
 
 .md-stg-btn-option:hover {
-  border-color: #667eea;
-  color: #667eea;
+  color: #059669;
 }
 
 .md-stg-btn-option.active {
-  border-color: #667eea;
-  background: #eef0ff;
-  color: #667eea;
+  background: transparent;
+  color: #059669;
   font-weight: 600;
 }
 
 .theme-dark .md-stg-btn-option {
-  background: #1a1a2e;
-  border-color: #2a2a4a;
+  background: transparent;
   color: #9ca3af;
 }
 
 .theme-dark .md-stg-btn-option.active {
-  border-color: #667eea;
-  background: #1e1b4b;
-  color: #a5b4fc;
+  background: transparent;
+  color: #34d399;
 }
 
 /* 滑块行 */
@@ -2626,9 +2622,9 @@ ul:has(> .task-list-item) {
 .md-stg-toc-pos-btn {
   flex: 1;
   padding: 6px 14px;
-  border: 1.5px solid #e5e7eb;
+  border: none;
   border-radius: 8px;
-  background: #fff;
+  background: transparent;
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -2638,27 +2634,23 @@ ul:has(> .task-list-item) {
 }
 
 .md-stg-toc-pos-btn:hover {
-  border-color: #667eea;
-  color: #667eea;
+  color: #059669;
 }
 
 .md-stg-toc-pos-btn.active {
-  border-color: #667eea;
-  background: #eef0ff;
-  color: #667eea;
+  background: transparent;
+  color: #059669;
   font-weight: 600;
 }
 
 .theme-dark .md-stg-toc-pos-btn {
-  background: #1a1a2e;
-  border-color: #2a2a4a;
+  background: transparent;
   color: #9ca3af;
 }
 
 .theme-dark .md-stg-toc-pos-btn.active {
-  border-color: #667eea;
-  background: #1e1b4b;
-  color: #a5b4fc;
+  background: transparent;
+  color: #34d399;
 }
 
 /* 底部固定栏 */

@@ -290,9 +290,11 @@ code.hljs {
   color: #f92672;
 }
 [data-code-theme="monokai"] .hljs-emphasis {
+  color: #f8f8f2;
   font-style: italic;
 }
 [data-code-theme="monokai"] .hljs-strong {
+  color: #f8f8f2;
   font-weight: 700;
 }
 [data-code-theme="monokai"] .hljs-addition {
@@ -372,9 +374,11 @@ code.hljs {
   color: #ffd700;
 }
 [data-code-theme="vs2015"] .hljs-emphasis {
+  color: #dcdcdc;
   font-style: italic;
 }
 [data-code-theme="vs2015"] .hljs-strong {
+  color: #dcdcdc;
   font-weight: 700;
 }
 [data-code-theme="vs2015"] .hljs-bullet,
@@ -451,9 +455,11 @@ code.hljs {
   color: #e6c07b;
 }
 [data-code-theme="atom-one-dark"] .hljs-emphasis {
+  color: #abb2bf;
   font-style: italic;
 }
 [data-code-theme="atom-one-dark"] .hljs-strong {
+  color: #abb2bf;
   font-weight: 700;
 }
 [data-code-theme="atom-one-dark"] .hljs-link {
@@ -665,9 +671,11 @@ code.hljs {
   color: #d08770;
 }
 [data-code-theme="nord"] .hljs-emphasis {
+  color: #d8dee9;
   font-style: italic;
 }
 [data-code-theme="nord"] .hljs-strong {
+  color: #d8dee9;
   font-weight: 700;
 }
 [data-code-theme="nord"] .hljs-addition {
@@ -793,9 +801,11 @@ code.hljs {
   color: #859900;
 }
 [data-code-theme="solarized-dark"] .hljs-emphasis {
+  color: #839496;
   font-style: italic;
 }
 [data-code-theme="solarized-dark"] .hljs-strong {
+  color: #839496;
   font-weight: 700;
 }
 [data-code-theme="solarized-dark"] .hljs-addition {
@@ -869,9 +879,11 @@ code.hljs {
   font-weight: 700;
 }
 [data-code-theme="tokyo-night"] .hljs-emphasis {
+  color: #a9b1d6;
   font-style: italic;
 }
 [data-code-theme="tokyo-night"] .hljs-strong {
+  color: #a9b1d6;
   font-weight: 700;
 }
 [data-code-theme="tokyo-night"] .hljs-addition {
@@ -941,9 +953,11 @@ code.hljs {
   color: #56b6c2;
 }
 [data-code-theme="one-dark-pro"] .hljs-emphasis {
+  color: #abb2bf;
   font-style: italic;
 }
 [data-code-theme="one-dark-pro"] .hljs-strong {
+  color: #abb2bf;
   font-weight: 700;
 }
 [data-code-theme="one-dark-pro"] .hljs-addition {
@@ -1147,9 +1161,11 @@ code.hljs {
   color: #6796e6;
 }
 [data-code-theme="default-dark-modern"] .hljs-emphasis {
+  color: #cccccc;
   font-style: italic;
 }
 [data-code-theme="default-dark-modern"] .hljs-strong {
+  color: #cccccc;
   font-weight: 700;
 }
 [data-code-theme="default-dark-modern"] .hljs-addition {

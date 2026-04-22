@@ -161,51 +161,42 @@
       flex-shrink: 0;
     }
 
-    /* 开关按钮 */
-    .toggle-switch {
-      position: relative;
-      width: 44px;
-      height: 24px;
+    /* 胶囊开关按钮（双选样式） */
+    .toggle-capsule {
+      display: inline-flex;
+      background: #f0f2f5;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .toggle-capsule-btn {
+      padding: 5px 14px;
+      border: none;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 6px;
+      background: transparent;
       cursor: pointer;
-      display: inline-block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #8b949e;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: inherit;
+      line-height: 1.4;
     }
 
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
+    .toggle-capsule-btn:hover {
+      color: #57606a;
     }
 
-    .toggle-slider {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #d0d7de;
-      border-radius: 12px;
-      transition: background 0.25s;
-    }
-
-    .toggle-slider::before {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      left: 2px;
-      bottom: 2px;
-      background: #fff;
-      border-radius: 50%;
-      transition: transform 0.25s;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-    }
-
-    .toggle-switch input:checked + .toggle-slider {
-      background: #667eea;
-    }
-
-    .toggle-switch input:checked + .toggle-slider::before {
-      transform: translateX(20px);
+    .toggle-capsule-btn.active {
+      background: #059669;
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(5, 150, 105, 0.3);
     }
 
     /* 主题选择器（复用胶囊风格） */
@@ -282,13 +273,13 @@
       font-weight: 600;
     }
 
-    /* 胶囊按钮组（灰底圆角容器 + 白底高亮选中项） */
+    /* 胶囊按钮组（纯文字高亮风格） */
     .capsule-group {
       display: flex;
       gap: 4px;
-      background: #f0f2f5;
-      border-radius: 10px;
-      padding: 4px;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
     }
 
     .capsule-btn {
@@ -310,14 +301,14 @@
 
     .capsule-btn:hover {
       color: #57606a;
-      background: rgba(255, 255, 255, 0.5);
+      background: transparent;
     }
 
     .capsule-btn.active {
-      background: #fff;
+      background: transparent;
       color: #059669;
       font-weight: 600;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: none;
     }
 
     /* 确保面板模式/文档对齐/目录位置按钮不受其他样式干扰 */
@@ -333,10 +324,10 @@
     .capsule-group .panel-mode-btn.active,
     .capsule-group .content-align-btn.active,
     .capsule-group .toc-pos-btn.active {
-      background: #fff;
+      background: transparent;
       color: #059669;
       font-weight: 600;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: none;
     }
 
     /* 滑块控制 */
@@ -788,9 +779,9 @@
         </div>
         <div class="slider-control">
           <span class="slider-label">A</span>
-          <input type="range" id="fontSizeSlider" min="12" max="24" step="1" value="16">
+<input type="range" id="fontSizeSlider" min="12" max="24" step="1" value="18">
           <span class="slider-label" style="font-size:18px;">A</span>
-          <span class="slider-value" id="fontSizeValue">16px</span>
+          <span class="slider-value" id="fontSizeValue">18px</span>
         </div>
 
         <!-- 行高 -->
@@ -802,9 +793,9 @@
         </div>
         <div class="slider-control">
           <span class="slider-label" data-i18n="options.lineHeight.compact">紧凑</span>
-          <input type="range" id="lineHeightSlider" min="1.2" max="2.4" step="0.1" value="1.6">
+<input type="range" id="lineHeightSlider" min="1.2" max="2.4" step="0.1" value="1.8">
           <span class="slider-label" data-i18n="options.lineHeight.loose">宽松</span>
-          <span class="slider-value" id="lineHeightValue">1.6</span>
+          <span class="slider-value" id="lineHeightValue">1.8</span>
         </div>
 
         <!-- 内容宽度 -->
@@ -902,10 +893,11 @@
             <div class="setting-desc" data-i18n="options.showToc.desc">在侧边栏显示文档目录，方便快速跳转</div>
           </div>
           <div class="setting-control">
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleToc" checked>
-              <span class="toggle-slider"></span>
-            </label>
+            <div class="toggle-capsule" data-toggle="toggleToc">
+              <button class="toggle-capsule-btn active" data-value="on" data-i18n="options.toggle.on">开启</button>
+              <button class="toggle-capsule-btn" data-value="off" data-i18n="options.toggle.off">关闭</button>
+            </div>
+            <input type="checkbox" id="toggleToc" checked style="display:none">
           </div>
         </div>
 
@@ -958,10 +950,11 @@
             <div class="setting-desc" data-i18n="options.mathJax.desc">启用 MathJax/KaTeX 渲染 LaTeX 数学公式（实验性功能）</div>
           </div>
           <div class="setting-control">
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleMathJax">
-              <span class="toggle-slider"></span>
-            </label>
+            <div class="toggle-capsule" data-toggle="toggleMathJax">
+              <button class="toggle-capsule-btn" data-value="on" data-i18n="options.toggle.on">开启</button>
+              <button class="toggle-capsule-btn active" data-value="off" data-i18n="options.toggle.off">关闭</button>
+            </div>
+            <input type="checkbox" id="toggleMathJax" style="display:none">
           </div>
         </div>
 
@@ -972,10 +965,11 @@
             <div class="setting-desc" data-i18n="options.mermaid.desc">启用 Mermaid 语法渲染流程图、时序图、甘特图等</div>
           </div>
           <div class="setting-control">
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleMermaid" checked>
-              <span class="toggle-slider"></span>
-            </label>
+            <div class="toggle-capsule" data-toggle="toggleMermaid">
+              <button class="toggle-capsule-btn active" data-value="on" data-i18n="options.toggle.on">开启</button>
+              <button class="toggle-capsule-btn" data-value="off" data-i18n="options.toggle.off">关闭</button>
+            </div>
+            <input type="checkbox" id="toggleMermaid" checked style="display:none">
           </div>
         </div>
 
@@ -986,10 +980,11 @@
             <div class="setting-desc" data-i18n="options.plantuml.desc">启用 PlantUML 在线渲染 UML 图表</div>
           </div>
           <div class="setting-control">
-            <label class="toggle-switch">
-              <input type="checkbox" id="togglePlantUML" checked>
-              <span class="toggle-slider"></span>
-            </label>
+            <div class="toggle-capsule" data-toggle="togglePlantUML">
+              <button class="toggle-capsule-btn active" data-value="on" data-i18n="options.toggle.on">开启</button>
+              <button class="toggle-capsule-btn" data-value="off" data-i18n="options.toggle.off">关闭</button>
+            </div>
+            <input type="checkbox" id="togglePlantUML" checked style="display:none">
           </div>
         </div>
 
@@ -1000,10 +995,11 @@
             <div class="setting-desc" data-i18n="options.graphviz.desc">启用 Graphviz/DOT 本地渲染图表</div>
           </div>
           <div class="setting-control">
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleGraphviz" checked>
-              <span class="toggle-slider"></span>
-            </label>
+            <div class="toggle-capsule" data-toggle="toggleGraphviz">
+              <button class="toggle-capsule-btn active" data-value="on" data-i18n="options.toggle.on">开启</button>
+              <button class="toggle-capsule-btn" data-value="off" data-i18n="options.toggle.off">关闭</button>
+            </div>
+            <input type="checkbox" id="toggleGraphviz" checked style="display:none">
           </div>
         </div>
 
@@ -1014,10 +1010,11 @@
             <div class="setting-desc" data-i18n="options.lineNumbers.desc">在代码块左侧显示行号，方便代码引用和阅读</div>
           </div>
           <div class="setting-control">
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleLineNumbers">
-              <span class="toggle-slider"></span>
-            </label>
+            <div class="toggle-capsule" data-toggle="toggleLineNumbers">
+              <button class="toggle-capsule-btn" data-value="on" data-i18n="options.toggle.on">开启</button>
+              <button class="toggle-capsule-btn active" data-value="off" data-i18n="options.toggle.off">关闭</button>
+            </div>
+            <input type="checkbox" id="toggleLineNumbers" style="display:none">
           </div>
         </div>
 
@@ -1028,10 +1025,11 @@
             <div class="setting-desc" data-i18n="options.autoDetect.desc">自动识别 .md / .markdown 等扩展名的文件并渲染</div>
           </div>
           <div class="setting-control">
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleAutoDetect" checked>
-              <span class="toggle-slider"></span>
-            </label>
+            <div class="toggle-capsule" data-toggle="toggleAutoDetect">
+              <button class="toggle-capsule-btn active" data-value="on" data-i18n="options.toggle.on">开启</button>
+              <button class="toggle-capsule-btn" data-value="off" data-i18n="options.toggle.off">关闭</button>
+            </div>
+            <input type="checkbox" id="toggleAutoDetect" checked style="display:none">
           </div>
         </div>
       </div>

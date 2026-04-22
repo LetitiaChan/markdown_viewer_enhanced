@@ -35,8 +35,8 @@
   const DEFAULT_SETTINGS = {
     theme: 'light',
     codeTheme: 'default-dark-modern',
-    fontSize: 16,
-    lineHeight: 1.6,
+    fontSize: 18,
+    lineHeight: 1.8,
     showToc: true,
     tocPosition: 'right',
     panelMode: 'float',
@@ -994,9 +994,9 @@
                   </div>
                   <div class="md-stg-slider-row">
                     <span class="md-stg-slider-label">A</span>
-                    <input type="range" id="stg-fontSize" min="12" max="24" step="1" value="16">
+    <input type="range" id="stg-fontSize" min="12" max="24" step="1" value="18">
                     <span class="md-stg-slider-label" style="font-size:18px;">A</span>
-                    <span class="md-stg-slider-value" id="stg-fontSizeVal">16px</span>
+                    <span class="md-stg-slider-value" id="stg-fontSizeVal">18px</span>
                   </div>
                   <!-- 行高 -->
                   <div class="md-settings-item">
@@ -1010,9 +1010,9 @@
                   </div>
                   <div class="md-stg-slider-row">
                     <span class="md-stg-slider-label">${t('settings.lineHeight.compact')}</span>
-                    <input type="range" id="stg-lineHeight" min="1.2" max="2.0" step="0.1" value="1.6">
+    <input type="range" id="stg-lineHeight" min="1.2" max="2.0" step="0.1" value="1.8">
                     <span class="md-stg-slider-label">${t('settings.lineHeight.loose')}</span>
-                    <span class="md-stg-slider-value" id="stg-lineHeightVal">1.6</span>
+                    <span class="md-stg-slider-value" id="stg-lineHeightVal">1.8</span>
                   </div>
                   <!-- 内容最大宽度 -->
                   <div class="md-settings-item">
@@ -2995,14 +2995,14 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     // 字体大小
     const fontSizeEl = document.getElementById('stg-fontSize');
     const fontSizeValEl = document.getElementById('stg-fontSizeVal');
-    if (fontSizeEl) fontSizeEl.value = currentSettings.fontSize || 16;
-    if (fontSizeValEl) fontSizeValEl.textContent = (currentSettings.fontSize || 16) + 'px';
+    if (fontSizeEl) fontSizeEl.value = currentSettings.fontSize || 18;
+    if (fontSizeValEl) fontSizeValEl.textContent = (currentSettings.fontSize || 18) + 'px';
 
     // 行高
     const lineHeightEl = document.getElementById('stg-lineHeight');
     const lineHeightValEl = document.getElementById('stg-lineHeightVal');
-    if (lineHeightEl) lineHeightEl.value = currentSettings.lineHeight || 1.6;
-    if (lineHeightValEl) lineHeightValEl.textContent = (currentSettings.lineHeight || 1.6).toFixed(1);
+    if (lineHeightEl) lineHeightEl.value = currentSettings.lineHeight || 1.8;
+    if (lineHeightValEl) lineHeightValEl.textContent = (currentSettings.lineHeight || 1.8).toFixed(1);
 
     // 内容宽度
     const maxWidthEl = document.getElementById('stg-maxWidth');

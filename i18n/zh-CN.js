@@ -218,6 +218,8 @@
     'options.resetDone': '✅ 已恢复默认设置',
     'options.language.title': '界面语言',
     'options.language.desc': '选择插件界面的显示语言',
+    'options.toggle.on': '开启',
+    'options.toggle.off': '关闭',
 
     // ========== Popup ==========
     'popup.subtitle': 'Markdown 阅读增强插件',

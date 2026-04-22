@@ -7,8 +7,8 @@
 const DEFAULT_SETTINGS = {
   theme: 'light',           // 主题：light / dark / auto
   codeTheme: 'default-dark-modern',  // 代码高亮主题
-  fontSize: 16,             // 字体大小
-  lineHeight: 1.6,          // 行高
+fontSize: 18,             // 字体大小
+  lineHeight: 1.8,          // 行高
   showToc: true,            // 显示目录
   tocPosition: 'right',     // 目录位置：left / right
   panelMode: 'float',       // 面板模式：float / embed
