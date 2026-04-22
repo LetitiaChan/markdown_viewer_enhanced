@@ -1219,7 +1219,7 @@ html:has(.theme-dark) {
 
 .code-block.show-line-numbers pre code .code-line {
   counter-increment: line;
-  display: inline-block;
+  display: block;
   width: 100%;
   padding-left: 16px;
 }
