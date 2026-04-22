@@ -9,6 +9,8 @@ src_tree.txt
 # AI 工作流（OpenSpec / CodeBuddy）
 # ===========================
 .codebuddy/
+.review/
+.analysis-archive/
 openspec/
 AGENT-PROGRESS.md
 
