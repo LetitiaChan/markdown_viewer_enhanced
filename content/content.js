@@ -422,7 +422,7 @@
             }
           }
           return `<span class="${lineClass}">${line}</span>`;
-        }).join('\n');
+        }).join('');
       }
 
       // 普通代码块 - 使用 highlight.js
@@ -2549,7 +2549,13 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
         if (codeBlock) {
           const code = codeBlock.querySelector('code');
           if (code) {
-            copyToClipboard(code.textContent);
+            // .code-line 之间不再有 \n 文本节点（display: block + join('')），
+            // 所以需要遍历每个 .code-line 取 textContent 再用 \n 连接
+            const codeLines = code.querySelectorAll('.code-line');
+            const text = codeLines.length > 0
+              ? Array.from(codeLines).map(line => line.textContent).join('\n')
+              : code.textContent;
+            copyToClipboard(text);
             e.target.textContent = t('code.copied');
             setTimeout(() => { e.target.textContent = t('code.copy'); }, 2000);
           }

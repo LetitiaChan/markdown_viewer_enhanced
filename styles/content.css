@@ -1211,23 +1211,21 @@ html:has(.theme-dark) {
   max-width: none;
 }
 
+/* 所有 .code-line 使用 display: block，配合 wrapLines 的 join('') 消除双倍换行 */
+.code-block pre code .code-line {
+  display: block;
+}
+
 /* 代码行号显示 */
 .code-block.show-line-numbers pre code {
   counter-reset: line;
   padding-left: 0;
-  /* font-size: 0 消除 display: block 的 .code-line 之间 \n 文本节点在 white-space: pre 下产生的额外空行，
-     .code-line 上恢复正常 font-size。textContent 不受 CSS 影响，代码复制功能正常 */
-  font-size: 0;
-  line-height: 0;
 }
 
 .code-block.show-line-numbers pre code .code-line {
   counter-increment: line;
-  display: block;
   width: 100%;
   padding-left: 16px;
-  font-size: 14px;
-  line-height: 1.5;
 }
 
 .code-block.show-line-numbers pre code .code-line::before {
