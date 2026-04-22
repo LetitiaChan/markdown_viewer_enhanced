@@ -2505,26 +2505,53 @@ ul:has(> .task-list-item) {
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
 }
 
 .md-settings-code-preview pre {
   margin: 0;
   padding: 16px 18px;
-  background: #1e1e2e;
   font-size: 13px;
   line-height: 1.6;
   overflow-x: auto;
+  transition: background-color 0.3s ease;
 }
 
 .md-settings-code-preview code {
   font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
-  color: #cdd6f4;
 }
 
-.md-settings-code-preview .cp { color: #cba6f7; }
-.md-settings-code-preview .cf { color: #89b4fa; }
-.md-settings-code-preview .cm { color: #6c7086; font-style: italic; }
-.md-settings-code-preview .cs { color: #a6e3a1; }
+/* 预览区各主题背景色 */
+.md-settings-code-preview[data-code-theme="github"] pre,
+.md-settings-code-preview:not([data-code-theme]) pre { background: #ffffff; }
+.md-settings-code-preview[data-code-theme="default-light-modern"] pre { background: #ffffff; }
+.md-settings-code-preview[data-code-theme="atom-one-light"] pre { background: #fafafa; }
+.md-settings-code-preview[data-code-theme="solarized-light"] pre { background: #fdf6e3; }
+.md-settings-code-preview[data-code-theme="github-dark"] pre { background: #0d1117; }
+.md-settings-code-preview[data-code-theme="default-dark-modern"] pre { background: #1f1f1f; }
+.md-settings-code-preview[data-code-theme="monokai"] pre { background: #272822; }
+.md-settings-code-preview[data-code-theme="vs2015"] pre { background: #1e1e1e; }
+.md-settings-code-preview[data-code-theme="atom-one-dark"] pre { background: #282c34; }
+.md-settings-code-preview[data-code-theme="one-dark-pro"] pre { background: #282c34; }
+.md-settings-code-preview[data-code-theme="dracula"] pre { background: #282a36; }
+.md-settings-code-preview[data-code-theme="nord"] pre { background: #2e3440; }
+.md-settings-code-preview[data-code-theme="solarized-dark"] pre { background: #002b36; }
+.md-settings-code-preview[data-code-theme="tokyo-night"] pre { background: #1a1b26; }
+.md-settings-code-preview[data-code-theme="auto"] pre { background: #ffffff; }
+
+/* 暗色主题预览边框 */
+.md-settings-code-preview[data-code-theme="github-dark"],
+.md-settings-code-preview[data-code-theme="default-dark-modern"],
+.md-settings-code-preview[data-code-theme="monokai"],
+.md-settings-code-preview[data-code-theme="vs2015"],
+.md-settings-code-preview[data-code-theme="atom-one-dark"],
+.md-settings-code-preview[data-code-theme="one-dark-pro"],
+.md-settings-code-preview[data-code-theme="dracula"],
+.md-settings-code-preview[data-code-theme="nord"],
+.md-settings-code-preview[data-code-theme="solarized-dark"],
+.md-settings-code-preview[data-code-theme="tokyo-night"] {
+  border-color: rgba(255, 255, 255, 0.1);
+}
 
 .theme-dark .md-settings-code-preview {
   border-color: #2a2a4a;

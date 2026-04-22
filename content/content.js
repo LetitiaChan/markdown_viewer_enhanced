@@ -1134,14 +1134,14 @@
                   </select>
                   </div>
                   <!-- 代码预览 -->
-                  <div class="md-settings-code-preview" id="stg-code-preview">
-                    <pre><code><span class="cp">function</span> <span class="cf">fibonacci</span>(n) {
-  <span class="cm">// 递归实现斐波那契数列</span>
-  <span class="cp">if</span> (n <= 1) <span class="cp">return</span> n;
-  <span class="cp">return</span> <span class="cf">fibonacci</span>(n - 1) + <span class="cf">fibonacci</span>(n - 2);
+                  <div class="md-settings-code-preview" id="stg-code-preview" data-code-theme="${currentSettings.codeTheme || 'default-dark-modern'}">
+                    <pre><code class="hljs"><span class="hljs-keyword">function</span> <span class="hljs-title function_">fibonacci</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-comment">// 递归实现斐波那契数列</span>
+  <span class="hljs-keyword">if</span> (n <= <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> n;
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">1</span>) + <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">2</span>);
 }
-<span class="cp">const</span> result = <span class="cf">fibonacci</span>(10);
-console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</span>);</code></pre>
+<span class="hljs-keyword">const</span> result = <span class="hljs-title function_">fibonacci</span>(<span class="hljs-number">10</span>);
+console.<span class="hljs-title function_">log</span>(<span class="hljs-string">\`Result: \${result}\`</span>);</code></pre>
                   </div>
                 </div>
               </div>
@@ -3190,6 +3190,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     // 代码高亮主题
     const codeThemeSel = document.getElementById('stg-codeTheme');
     if (codeThemeSel) codeThemeSel.value = currentSettings.codeTheme || 'default-dark-modern';
+    // 同步预览区域主题
+    updateCodePreviewTheme(currentSettings.codeTheme || 'default-dark-modern');
 
     // 正文字体
     document.querySelectorAll('.md-stg-btn-option[data-font]').forEach(btn => {
@@ -3293,6 +3295,8 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
         currentSettings.codeTheme = codeThemeSel.value;
         applySettings(currentSettings);
         saveSettings();
+        // 同步更新预览区域的主题
+        updateCodePreviewTheme(codeThemeSel.value);
       });
     }
 
@@ -3657,6 +3661,16 @@ console.<span class="cf">log</span>(<span class="cs">\`Result: \${result}\`</spa
     });
 
     console.log(`[MD Viewer] 代码高亮主题已切换: ${resolvedTheme} (${isDarkCodeTheme ? '暗色' : '亮色'})`);
+  }
+
+  /**
+   * 更新设置面板中代码预览区域的主题
+   */
+  function updateCodePreviewTheme(themeName) {
+    const preview = document.getElementById('stg-code-preview');
+    if (!preview) return;
+    const previewTheme = themeName === 'auto' ? 'github' : (themeName || 'default-dark-modern');
+    preview.setAttribute('data-code-theme', previewTheme);
   }
 
   /**
