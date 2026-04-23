@@ -45,7 +45,6 @@ Desktop.ini
 # Node.js（如有）
 # ===========================
 node_modules/
-package-lock.json
 
 # ===========================
 # 打包产物
