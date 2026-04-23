@@ -1,5 +1,9 @@
 # Markdown Viewer Enhanced
 
+[![GitHub stars](https://img.shields.io/github/stars/LetitiaChan/markdown_viewer_enhanced?style=flat-square)](https://github.com/LetitiaChan/markdown_viewer_enhanced/stargazers)
+[![Version](https://img.shields.io/badge/version-1.3.1-blue?style=flat-square)](https://github.com/LetitiaChan/markdown_viewer_enhanced/releases/tag/v1.3.1)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://github.com/LetitiaChan/markdown_viewer_enhanced/blob/master/LICENSE)
+
 <p>
   <img src="image/setting.png" alt="setting" width="30%">
   <img src="image/view_light.png" alt="view_light" width="34%">
