@@ -390,7 +390,9 @@ html:has(.theme-dark) {
 /* ==================== 侧边栏面板 ==================== */
 .sidebar-panel {
   flex: 1;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   min-height: 0;
 }
 
@@ -639,6 +641,9 @@ html:has(.theme-dark) {
 }
 
 .md-toc-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: 8px 0;
 }
 

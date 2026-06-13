@@ -415,4 +415,22 @@ describe('Tier 3: BT-tocSearch 目录搜索回归', () => {
   test('BT-tocSearch.5 搜索框事件绑定使用了 debounce 150ms', () => {
     expect(contentJs).toMatch(/debounce\(\s*\(.*?\)\s*=>\s*filterTocItems\(.*?\)\s*,\s*150\s*\)/);
   });
+
+  test('BT-tocSearch.6 搜索框固定，目录列表独立滚动', () => {
+    const panelMatch = contentCss.match(/\.sidebar-panel\s*\{([^}]+)\}/);
+    const searchBoxMatch = contentCss.match(/\.md-toc-search-box\s*\{([^}]+)\}/);
+    const tocNavMatch = contentCss.match(/\.md-toc-nav\s*\{([^}]+)\}/);
+
+    expect(panelMatch).not.toBeNull();
+    expect(searchBoxMatch).not.toBeNull();
+    expect(tocNavMatch).not.toBeNull();
+
+    expect(panelMatch[1]).toContain('display: flex');
+    expect(panelMatch[1]).toContain('flex-direction: column');
+    expect(panelMatch[1]).toContain('overflow: hidden');
+    expect(searchBoxMatch[1]).toContain('flex-shrink: 0');
+    expect(tocNavMatch[1]).toContain('flex: 1');
+    expect(tocNavMatch[1]).toContain('min-height: 0');
+    expect(tocNavMatch[1]).toContain('overflow-y: auto');
+  });
 });
