@@ -72,16 +72,6 @@
     });
   }
 
-  // ========== 同步胶囊开关 UI 状态 ==========
-  function syncToggleCapsule(toggleId, isChecked) {
-    const capsule = document.querySelector(`.toggle-capsule[data-toggle="${toggleId}"]`);
-    if (!capsule) return;
-    const btns = capsule.querySelectorAll('.toggle-capsule-btn');
-    btns.forEach((btn) => {
-      const isOn = btn.dataset.value === 'on';
-      btn.classList.toggle('active', isOn === isChecked);
-    });
-  }
 
   // ========== 将设置应用到 UI ==========
   function applySettingsToUI(settings) {
@@ -123,7 +113,6 @@ lineHeightSlider.value = settings.lineHeight || 1.8;
 
     // 目录
     toggleToc.checked = settings.showToc !== false;
-    syncToggleCapsule('toggleToc', toggleToc.checked);
     updateTocPositionVisibility();
 
     // 目录位置
@@ -133,22 +122,18 @@ lineHeightSlider.value = settings.lineHeight || 1.8;
 
     // Mermaid
     toggleMermaid.checked = settings.enableMermaid !== false;
-    syncToggleCapsule('toggleMermaid', toggleMermaid.checked);
 
     // MathJax
     toggleMathJax.checked = settings.enableMathJax === true;
-    syncToggleCapsule('toggleMathJax', toggleMathJax.checked);
 
     // PlantUML
     if (togglePlantUML) {
       togglePlantUML.checked = settings.enablePlantUML !== false;
-      syncToggleCapsule('togglePlantUML', togglePlantUML.checked);
     }
 
     // Graphviz
     if (toggleGraphviz) {
       toggleGraphviz.checked = settings.enableGraphviz !== false;
-      syncToggleCapsule('toggleGraphviz', toggleGraphviz.checked);
     }
 
     // 面板模式
@@ -164,12 +149,10 @@ lineHeightSlider.value = settings.lineHeight || 1.8;
     // 行号
     if (toggleLineNumbers) {
       toggleLineNumbers.checked = settings.showLineNumbers === true;
-      syncToggleCapsule('toggleLineNumbers', toggleLineNumbers.checked);
     }
 
     // 自动检测
     toggleAutoDetect.checked = settings.autoDetect !== false;
-    syncToggleCapsule('toggleAutoDetect', toggleAutoDetect.checked);
 
     // 更新预览
     updatePreview();
@@ -290,21 +273,6 @@ const lineHeight = currentSettings.lineHeight || 1.8;
 
   // ========== 绑定事件 ==========
   function bindEvents() {
-    // 胶囊开关通用绑定
-    document.querySelectorAll('.toggle-capsule').forEach((capsule) => {
-      const toggleId = capsule.dataset.toggle;
-      const checkbox = document.getElementById(toggleId);
-      if (!checkbox) return;
-      capsule.querySelectorAll('.toggle-capsule-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const isOn = btn.dataset.value === 'on';
-          checkbox.checked = isOn;
-          syncToggleCapsule(toggleId, isOn);
-          checkbox.dispatchEvent(new Event('change'));
-        });
-      });
-    });
-
     // 主题切换
     themeBtns.forEach((btn) => {
       btn.addEventListener('click', () => {

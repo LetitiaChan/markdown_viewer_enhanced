@@ -3,7 +3,14 @@
  * 覆盖：buildPage DOM 结构、工具栏按钮存在性
  */
 
-const { DEFAULT_SETTINGS } = require('../../content/content.js');
+const fs = require('fs');
+const path = require('path');
+const { DEFAULT_SETTINGS, getScrollContainer } = require('../../content/content.js');
+
+const contentCss = fs.readFileSync(
+  path.join(__dirname, '../../styles/content.css'),
+  'utf8'
+);
 
 // =====================================================
 //  BT-page-build.1 DOM 结构测试
@@ -126,5 +133,74 @@ describe('BT-page-build.2 工具栏按钮', () => {
   test('2.6 所有按钮都有 md-toolbar-btn class', () => {
     const buttons = document.querySelectorAll('.md-toolbar-btn');
     expect(buttons.length).toBe(5);
+  });
+});
+
+// =====================================================
+//  BT-page-build.3 嵌入模式滚动容器判定
+//  回归：embed 模式下滚动发生在 #md-content，float 模式由 window 滚动
+// =====================================================
+describe('BT-page-build.3 滚动容器判定', () => {
+  function buildDom(embed) {
+    document.body.innerHTML = `
+      <div id="md-viewer-app" class="md-viewer-app theme-light${embed ? ' panel-embed' : ''}">
+        <div class="md-main-container">
+          <main id="md-content" class="md-content"></main>
+        </div>
+      </div>
+    `;
+  }
+
+  test('3.1 getScrollContainer 已导出', () => {
+    expect(typeof getScrollContainer).toBe('function');
+  });
+
+  test('3.2 嵌入模式返回 #md-content 作为滚动容器', () => {
+    buildDom(true);
+    expect(getScrollContainer()).toBe(document.getElementById('md-content'));
+  });
+
+  test('3.3 悬浮模式返回 null（表示 window 滚动）', () => {
+    buildDom(false);
+    expect(getScrollContainer()).toBeNull();
+  });
+
+  test('3.4 缺少 #md-viewer-app 时安全回退 null', () => {
+    document.body.innerHTML = '';
+    expect(getScrollContainer()).toBeNull();
+  });
+});
+
+// =====================================================
+//  BT-page-build.4 嵌入模式高度链 CSS 契约
+//  回归：app 必须用固定 height:100vh（而非 min-height）约束 flex 子项，
+//  否则长文档撑高容器导致正文/目录内部滚动失效、退化为整页 window 滚动
+// =====================================================
+describe('BT-page-build.4 嵌入模式高度链 CSS', () => {
+  test('4.1 存在 .md-viewer-app.panel-embed 复合选择器', () => {
+    expect(contentCss).toContain('.md-viewer-app.panel-embed');
+  });
+
+  test('4.2 嵌入模式 app 使用固定 height:100vh 并隐藏外溢', () => {
+    const m = contentCss.match(/\.md-viewer-app\.panel-embed\s*\{([^}]*)\}/);
+    expect(m).not.toBeNull();
+    expect(m[1]).toMatch(/height:\s*100vh/);
+    expect(m[1]).toMatch(/overflow:\s*hidden/);
+  });
+
+  test('4.3 嵌入模式 main-container 不再硬编码 calc(100vh - 30px)', () => {
+    const m = contentCss.match(/\.panel-embed\s+\.md-main-container\s*\{([^}]*)\}/);
+    expect(m).not.toBeNull();
+    expect(m[1]).not.toMatch(/calc\(100vh\s*-\s*30px\)/);
+    expect(m[1]).toMatch(/min-height:\s*0/);
+  });
+
+  test('4.4 正文与目录在嵌入模式各自独立滚动 (overflow-y:auto + min-height:0)', () => {
+    const content = contentCss.match(/\.panel-embed\s+\.md-content\s*\{([^}]*)\}/);
+    const sidebar = contentCss.match(/\.panel-embed\s+\.md-toc-sidebar\s*\{([^}]*)\}/);
+    expect(content[1]).toMatch(/overflow-y:\s*auto/);
+    expect(content[1]).toMatch(/min-height:\s*0/);
+    expect(sidebar[1]).toMatch(/overflow-y:\s*auto/);
+    expect(sidebar[1]).toMatch(/min-height:\s*0/);
   });
 });

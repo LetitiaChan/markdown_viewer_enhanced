@@ -1624,11 +1624,11 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     if (headings.length === 0 || tocLinks.length === 0) return;
 
     let currentIndex = 0;
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const offset = 100;
+    // 用视口相对位置判定当前章节，无论滚动发生在 window 还是 #md-content 都适用
+    const offset = 120;
 
     headings.forEach((heading, index) => {
-      if (heading.offsetTop - offset <= scrollTop) {
+      if (heading.getBoundingClientRect().top - offset <= 0) {
         currentIndex = index;
       }
     });
@@ -1645,6 +1645,31 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
 
   function isFileProtocol() {
     return window.location.protocol === 'file:';
+  }
+
+  // ==================== 工具函数（滚动容器） ====================
+
+  /**
+   * 返回当前实际的滚动容器：
+   * 嵌入(embed)模式下正文在 #md-content 内部滚动，window 不滚动；
+   * 悬浮(float)模式下页面整体由 window 滚动。
+   * @returns {HTMLElement|null} 嵌入模式返回 #md-content，否则返回 null（表示 window）
+   */
+  function getScrollContainer() {
+    const app = document.getElementById('md-viewer-app');
+    if (app && app.classList.contains('panel-embed')) {
+      return document.getElementById('md-content');
+    }
+    return null;
+  }
+
+  /**
+   * 读取当前滚动位置（自动适配 embed / float 两种滚动容器）
+   */
+  function getScrollTop() {
+    const container = getScrollContainer();
+    if (container) return container.scrollTop;
+    return window.scrollY || document.documentElement.scrollTop || 0;
   }
 
   // ==================== 侧边栏菜单 ====================
@@ -2155,19 +2180,30 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     // 回到顶部
     const btnFloatTop = document.getElementById('btn-float-top');
     const scrollTopHandler = () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const container = getScrollContainer();
+      if (container) {
+        container.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     };
     if (btnFloatTop) btnFloatTop.addEventListener('click', scrollTopHandler);
 
     // 滚动事件 - 显示/隐藏浮动按钮 + 目录高亮
-    window.addEventListener('scroll', debounce(() => {
+    // 同时监听 window 与 #md-content：embed 模式下正文在 #md-content 内滚动，
+    // float 模式下页面由 window 滚动；getScrollContainer 在回调内实时判定，
+    // 因此运行时切换面板模式也无需重新绑定。
+    const onScroll = debounce(() => {
       // 浮动回到顶部按钮
       if (btnFloatTop) {
-        btnFloatTop.style.display = window.scrollY > 300 ? 'block' : 'none';
+        btnFloatTop.style.display = getScrollTop() > 300 ? 'block' : 'none';
       }
       // 目录高亮
       updateTocHighlight();
-    }, 100));
+    }, 100);
+    window.addEventListener('scroll', onScroll);
+    const contentScrollEl = document.getElementById('md-content');
+    if (contentScrollEl) contentScrollEl.addEventListener('scroll', onScroll);
 
     // 刷新
     const btnRefresh = document.getElementById('btn-refresh');
@@ -3673,6 +3709,7 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       debounce,
       isMarkdownFile,
       isFileProtocol,
+      getScrollContainer,
       // 懒加载
       loadScript,
       _loadedScripts,
