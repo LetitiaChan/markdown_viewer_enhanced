@@ -1358,11 +1358,55 @@ html:has(.theme-dark) {
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   transition: background 0.3s, border-color 0.3s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.front-matter-header:hover {
+  background: #e8eaed;
+}
+
+.theme-dark .front-matter-header:hover {
+  background: #363636;
+}
+
+.front-matter-collapsed .front-matter-header {
+  border-bottom-color: transparent;
 }
 
 .theme-dark .front-matter-header {
   background: #2d2d2d;
   border-bottom-color: #444;
+}
+
+/* 箭头指示器 */
+.front-matter-arrow {
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 10px;
+  transition: transform 0.3s ease;
+  color: #586069;
+}
+
+.theme-dark .front-matter-arrow {
+  color: #8b949e;
+}
+
+.front-matter-block:not(.front-matter-collapsed) .front-matter-arrow {
+  transform: rotate(90deg);
+}
+
+/* 内容区折叠动画 */
+.front-matter-content {
+  overflow: hidden;
+  max-height: 600px;
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.front-matter-collapsed .front-matter-content {
+  max-height: 0;
+  opacity: 0;
 }
 
 .front-matter-icon {

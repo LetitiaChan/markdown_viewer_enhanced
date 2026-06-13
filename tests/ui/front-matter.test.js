@@ -109,7 +109,7 @@ describe('BT-front-matter YAML Front Matter 渲染', () => {
         // 在测试环境中没有 hljs，使用 escapeHtml
         const highlightedYaml = escapeHtml(yamlContent);
 
-        const frontMatterHtml = `<div class="front-matter-block"><div class="front-matter-header"><span class="front-matter-icon">⚙</span><span class="front-matter-title">YAML Front Matter</span></div><pre><code class="hljs language-yaml">${highlightedYaml}</code></pre></div>`;
+        const frontMatterHtml = `<div class="front-matter-block front-matter-collapsed"><div class="front-matter-header" role="button" tabindex="0" aria-expanded="false"><span class="front-matter-arrow">▶</span><span class="front-matter-icon">⚙</span><span class="front-matter-title">YAML Front Matter</span></div><div class="front-matter-content"><pre><code class="hljs language-yaml">${highlightedYaml}</code></pre></div></div>`;
 
         return { frontMatterHtml, remainingMarkdown };
       };
@@ -184,17 +184,81 @@ describe('BT-front-matter YAML Front Matter 渲染', () => {
       expect(result.remainingMarkdown).toBe('Content');
     });
 
-    test('2.9 生成的 HTML 结构正确', () => {
+    test('2.9 生成的 HTML 结构正确（含折叠元素）', () => {
       const markdown = '---\nalwaysApply: true\n---\n# Hello';
       const result = preprocessFrontMatter(markdown);
 
       // 检查 HTML 结构
-      expect(result.frontMatterHtml).toMatch(/<div class="front-matter-block">/);
-      expect(result.frontMatterHtml).toMatch(/<div class="front-matter-header">/);
+      expect(result.frontMatterHtml).toMatch(/<div class="front-matter-block front-matter-collapsed">/);
+      expect(result.frontMatterHtml).toMatch(/<div class="front-matter-header"/);
+      expect(result.frontMatterHtml).toMatch(/aria-expanded="false"/);
+      expect(result.frontMatterHtml).toMatch(/<span class="front-matter-arrow">/);
       expect(result.frontMatterHtml).toMatch(/<span class="front-matter-icon">/);
       expect(result.frontMatterHtml).toMatch(/<span class="front-matter-title">/);
+      expect(result.frontMatterHtml).toMatch(/<div class="front-matter-content">/);
       expect(result.frontMatterHtml).toMatch(/<pre><code class="hljs language-yaml">/);
-      expect(result.frontMatterHtml).toMatch(/<\/code><\/pre><\/div>$/);
+    });
+  });
+
+  // =====================================================
+  //  Tier 2.5 — 折叠/展开交互断言
+  // =====================================================
+  describe('Tier 2.5 — 折叠/展开交互', () => {
+    let container;
+    let clickHandler;
+
+    beforeEach(() => {
+      container = document.createElement('div');
+      container.innerHTML = `<div class="front-matter-block front-matter-collapsed"><div class="front-matter-header" role="button" tabindex="0" aria-expanded="false"><span class="front-matter-arrow">▶</span><span class="front-matter-icon">⚙</span><span class="front-matter-title">YAML Front Matter</span></div><div class="front-matter-content"><pre><code class="hljs language-yaml">key: value</code></pre></div></div>`;
+      document.body.appendChild(container);
+
+      // 绑定折叠事件（模拟 bindEvents 中的逻辑）
+      clickHandler = (e) => {
+        const header = e.target.closest('.front-matter-header');
+        if (header) {
+          const block = header.closest('.front-matter-block');
+          if (block) {
+            const isCollapsed = block.classList.toggle('front-matter-collapsed');
+            header.setAttribute('aria-expanded', String(!isCollapsed));
+          }
+        }
+      };
+      document.addEventListener('click', clickHandler);
+    });
+
+    afterEach(() => {
+      document.removeEventListener('click', clickHandler);
+      document.body.removeChild(container);
+    });
+
+    test('2.10 默认状态为折叠', () => {
+      const block = container.querySelector('.front-matter-block');
+      expect(block.classList.contains('front-matter-collapsed')).toBe(true);
+      expect(block.querySelector('.front-matter-header').getAttribute('aria-expanded')).toBe('false');
+    });
+
+    test('2.11 点击 header 展开内容', () => {
+      const header = container.querySelector('.front-matter-header');
+      header.click();
+      const block = container.querySelector('.front-matter-block');
+      expect(block.classList.contains('front-matter-collapsed')).toBe(false);
+      expect(header.getAttribute('aria-expanded')).toBe('true');
+    });
+
+    test('2.12 再次点击 header 折叠内容', () => {
+      const header = container.querySelector('.front-matter-header');
+      header.click(); // 展开
+      header.click(); // 折叠
+      const block = container.querySelector('.front-matter-block');
+      expect(block.classList.contains('front-matter-collapsed')).toBe(true);
+      expect(header.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    test('2.13 点击箭头图标也能触发展开/折叠', () => {
+      const arrow = container.querySelector('.front-matter-arrow');
+      arrow.click();
+      const block = container.querySelector('.front-matter-block');
+      expect(block.classList.contains('front-matter-collapsed')).toBe(false);
     });
   });
 
@@ -258,6 +322,34 @@ describe('BT-front-matter YAML Front Matter 渲染', () => {
       expect(codeMatch).not.toBeNull();
       expect(codeMatch[1]).toMatch(/font-family/);
       expect(codeMatch[1]).toMatch(/Consolas|monospace/);
+    });
+
+    test('3.7 BT-front-matter.7 CSS 包含折叠内容区的 max-height 过渡动画', () => {
+      expect(contentCss).toMatch(/\.front-matter-content\s*\{[^}]*max-height/);
+      expect(contentCss).toMatch(/\.front-matter-content\s*\{[^}]*transition/);
+    });
+
+    test('3.8 BT-front-matter.8 CSS 折叠状态下内容区 max-height 为 0', () => {
+      expect(contentCss).toMatch(/\.front-matter-collapsed\s+\.front-matter-content\s*\{[^}]*max-height:\s*0/);
+    });
+
+    test('3.9 BT-front-matter.9 CSS 箭头指示器有旋转过渡', () => {
+      expect(contentCss).toMatch(/\.front-matter-arrow\s*\{[^}]*transition[^}]*transform/);
+    });
+
+    test('3.10 BT-front-matter.10 CSS 展开状态箭头旋转 90 度', () => {
+      expect(contentCss).toMatch(/\.front-matter-block:not\(\.front-matter-collapsed\)\s+\.front-matter-arrow\s*\{[^}]*rotate\(90deg\)/);
+    });
+
+    test('3.11 BT-front-matter.11 header 有 cursor: pointer 样式', () => {
+      const headerMatch = contentCss.match(/\.front-matter-header\s*\{([^}]+)\}/);
+      expect(headerMatch).not.toBeNull();
+      expect(headerMatch[1]).toMatch(/cursor:\s*pointer/);
+    });
+
+    test('3.12 BT-front-matter.12 content.js 中有 front-matter-collapsed 类名切换逻辑', () => {
+      expect(contentJs).toMatch(/front-matter-collapsed/);
+      expect(contentJs).toMatch(/classList\.toggle\(['"]front-matter-collapsed['"]\)/);
     });
   });
 });

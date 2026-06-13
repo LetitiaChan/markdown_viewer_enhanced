@@ -212,8 +212,8 @@
       highlightedYaml = escapeHtml(yamlContent);
     }
 
-    // 生成 Front Matter HTML 块（参考代码块结构）
-    const frontMatterHtml = `<div class="front-matter-block"><div class="front-matter-header"><span class="front-matter-icon">⚙</span><span class="front-matter-title">YAML Front Matter</span></div><pre><code class="hljs language-yaml">${highlightedYaml}</code></pre></div>`;
+    // 生成 Front Matter HTML 块（默认折叠，点击 header 展开/收起）
+    const frontMatterHtml = `<div class="front-matter-block front-matter-collapsed"><div class="front-matter-header" role="button" tabindex="0" aria-expanded="false"><span class="front-matter-arrow">▶</span><span class="front-matter-icon">⚙</span><span class="front-matter-title">YAML Front Matter</span></div><div class="front-matter-content"><pre><code class="hljs language-yaml">${highlightedYaml}</code></pre></div></div>`;
 
     return { frontMatterHtml, remainingMarkdown };
   }
@@ -2881,6 +2881,18 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
         openSettingsPanel();
       });
     }
+
+    // YAML Front Matter 折叠/展开
+    document.addEventListener('click', (e) => {
+      const header = e.target.closest('.front-matter-header');
+      if (header) {
+        const block = header.closest('.front-matter-block');
+        if (block) {
+          const isCollapsed = block.classList.toggle('front-matter-collapsed');
+          header.setAttribute('aria-expanded', String(!isCollapsed));
+        }
+      }
+    });
 
     // 代码复制按钮
     document.addEventListener('click', (e) => {
