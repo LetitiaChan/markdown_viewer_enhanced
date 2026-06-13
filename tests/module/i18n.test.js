@@ -108,10 +108,11 @@ describe('BT-i18n.3 applyLanguage DOM 更新 (Tier 2)', () => {
     i18n.setLanguage('zh-CN');
   });
 
-  test('3.1 applyLanguage 更新 textContent', () => {
+  test('3.1 applyLanguage 更新 innerHTML（SVG 图标内容）', () => {
     i18n.applyLanguage(document.body);
     const el = document.querySelector('[data-i18n="toolbar.toc"]');
-    expect(el.textContent).toBe(zhCN['toolbar.toc']);
+    expect(el.innerHTML).toContain('<svg');
+    expect(el.innerHTML).toContain('viewBox="0 0 24 24"');
   });
 
   test('3.2 applyLanguage 更新 title 属性', () => {
@@ -130,7 +131,8 @@ describe('BT-i18n.3 applyLanguage DOM 更新 (Tier 2)', () => {
     i18n.setLanguage('en');
     i18n.applyLanguage(document.body);
     const el = document.querySelector('[data-i18n="toolbar.toc"]');
-    expect(el.textContent).toBe(en['toolbar.toc']);
+    expect(el.innerHTML).toContain('<svg');
+    expect(el.innerHTML).toContain('viewBox="0 0 24 24"');
   });
 });
 

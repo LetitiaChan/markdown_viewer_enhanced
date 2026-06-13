@@ -49,11 +49,13 @@ html:has(.theme-dark) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
+  padding: 4px 12px;
   background: #ffffff;
   border-bottom: 1px solid #e1e4e8;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
+  height: 36px;
+  box-sizing: border-box;
 }
 
 .theme-dark .md-toolbar {
@@ -70,7 +72,7 @@ html:has(.theme-dark) {
 }
 
 .md-toolbar-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #24292e;
   white-space: nowrap;
@@ -85,36 +87,57 @@ html:has(.theme-dark) {
 .md-toolbar-right {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .md-toolbar-btn {
-  padding: 4px 10px;
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   border: 1px solid #d1d5da;
   border-radius: 6px;
-  background: #f6f8fa;
-  color: #24292e;
+  background: #ffffff;
+  color: #57606a;
   cursor: pointer;
   transition: all 0.2s;
-  white-space: nowrap;
+}
+
+.md-toolbar-btn svg {
+  display: block;
 }
 
 .md-toolbar-btn:hover {
-  background: #e1e4e8;
+  background: #f3f4f6;
   border-color: #c8c8c8;
+  color: #24292e;
+}
+
+.md-toolbar-btn.active {
+  border-color: #2da44e;
+  color: #2da44e;
+  background: #f0fff4;
 }
 
 .theme-dark .md-toolbar-btn {
   background: #2d2d2d;
   border-color: #444;
-  color: #e0e0e0;
+  color: #8b949e;
 }
 
 .theme-dark .md-toolbar-btn:hover {
   background: #3a3a3a;
   border-color: #555;
+  color: #e0e0e0;
+}
+
+.theme-dark .md-toolbar-btn.active {
+  border-color: #3fb950;
+  color: #3fb950;
+  background: #0d1117;
 }
 
 /* ==================== 文件变更检测徽章 ==================== */
@@ -190,6 +213,36 @@ html:has(.theme-dark) {
 .theme-dark .md-toc-sidebar {
   background: #1a1a1a;
   border-color: #333;
+}
+
+/* ==================== 嵌入模式 ==================== */
+/* 悬浮模式（默认）：侧边栏 position:fixed 覆盖在内容之上 */
+/* 嵌入模式：侧边栏参与 flex 布局，占据独立空间，内容区被自然挤开 */
+.panel-embed .md-toc-sidebar {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  height: auto;
+  align-self: stretch;
+  flex-shrink: 0;
+  z-index: auto;
+  box-shadow: none;
+}
+
+.panel-embed .md-toc-sidebar.toc-right {
+  box-shadow: none;
+  order: 2;
+}
+
+.panel-embed .md-toc-sidebar.toc-right ~ .md-content,
+.panel-embed .md-content {
+  order: 1;
+}
+
+/* 嵌入模式下侧边栏滚动独立于内容区 */
+.panel-embed .md-main-container {
+  align-items: stretch;
 }
 
 /* ==================== 侧边栏页签栏 ==================== */
@@ -1064,7 +1117,12 @@ html:has(.theme-dark) {
   .theme-auto .md-toolbar-btn {
     background: #2d2d2d;
     border-color: #444;
-    color: #e0e0e0;
+    color: #8b949e;
+  }
+  .theme-auto .md-toolbar-btn.active {
+    border-color: #3fb950;
+    color: #3fb950;
+    background: #0d1117;
   }
   .theme-auto .md-toc-sidebar {
     background: #1a1a1a;
@@ -3188,12 +3246,12 @@ ul:has(> .task-list-item) {
 /* ==================== 响应式 ==================== */
 @media (max-width: 768px) {
   .md-toolbar {
-    padding: 6px 12px;
+    padding: 4px 8px;
   }
 
   .md-toolbar-btn {
-    padding: 4px 6px;
-    font-size: 12px;
+    width: 26px;
+    height: 26px;
   }
 
   .md-toc-sidebar {

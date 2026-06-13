@@ -2521,9 +2521,14 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     const tocSidebar = document.getElementById('md-toc-sidebar');
     const resizeHandle = document.getElementById('sidebar-resize-handle');
     if (btnToggleToc && tocSidebar) {
+      // 初始化 TOC 按钮 active 状态
+      if (tocSidebar.classList.contains('visible')) {
+        btnToggleToc.classList.add('active');
+      }
       btnToggleToc.addEventListener('click', () => {
         tocSidebar.classList.toggle('visible');
         tocSidebar.classList.toggle('hidden');
+        btnToggleToc.classList.toggle('active', tocSidebar.classList.contains('visible'));
         if (resizeHandle) {
           resizeHandle.style.display = tocSidebar.classList.contains('visible') ? '' : 'none';
         }
@@ -2536,6 +2541,7 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       btnCloseToc.addEventListener('click', () => {
         tocSidebar.classList.remove('visible');
         tocSidebar.classList.add('hidden');
+        if (btnToggleToc) btnToggleToc.classList.remove('active');
         if (resizeHandle) resizeHandle.style.display = 'none';
       });
     }
@@ -2834,11 +2840,11 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
         if (isShowingRaw) {
           rawContent.style.display = 'none';
           mdContent.style.display = 'block';
-          btnToggleRaw.textContent = t('toolbar.source');
+          btnToggleRaw.innerHTML = t('toolbar.source');
         } else {
           rawContent.style.display = 'block';
           mdContent.style.display = 'none';
-          btnToggleRaw.textContent = t('toolbar.preview');
+          btnToggleRaw.innerHTML = t('toolbar.preview');
         }
       });
     }
