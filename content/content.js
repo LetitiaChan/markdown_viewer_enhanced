@@ -1225,10 +1225,10 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
                       <span class="md-settings-item-icon">📑</span>
                       <span class="md-settings-label">${t('settings.showToc')}</span>
                     </div>
-                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-showToc" data-key="showToc">
-                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
-                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
-                    </div>
+                    <label class="md-stg-toggle-switch">
+                      <input type="checkbox" id="stg-showToc" class="md-stg-bool-toggle" data-key="showToc">
+                      <span class="md-stg-toggle-slider"></span>
+                    </label>
                   </div>
                   <div class="md-settings-item" id="stg-tocPosRow">
                     <div class="md-settings-item-left">
@@ -1272,60 +1272,60 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
                       <span class="md-settings-item-icon">🔢</span>
                       <span class="md-settings-label">${t('settings.mathJax')}</span>
                     </div>
-                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-enableMathJax" data-key="enableMathJax">
-                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
-                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
-                    </div>
+                    <label class="md-stg-toggle-switch">
+                      <input type="checkbox" id="stg-enableMathJax" class="md-stg-bool-toggle" data-key="enableMathJax">
+                      <span class="md-stg-toggle-slider"></span>
+                    </label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">📊</span>
                       <span class="md-settings-label">${t('settings.mermaid')}</span>
                     </div>
-                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-enableMermaid" data-key="enableMermaid">
-                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
-                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
-                    </div>
+                    <label class="md-stg-toggle-switch">
+                      <input type="checkbox" id="stg-enableMermaid" class="md-stg-bool-toggle" data-key="enableMermaid">
+                      <span class="md-stg-toggle-slider"></span>
+                    </label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🌱</span>
                       <span class="md-settings-label">${t('settings.plantuml')}</span>
                     </div>
-                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-enablePlantUML" data-key="enablePlantUML">
-                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
-                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
-                    </div>
+                    <label class="md-stg-toggle-switch">
+                      <input type="checkbox" id="stg-enablePlantUML" class="md-stg-bool-toggle" data-key="enablePlantUML">
+                      <span class="md-stg-toggle-slider"></span>
+                    </label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🔗</span>
                       <span class="md-settings-label">${t('settings.graphviz')}</span>
                     </div>
-                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-enableGraphviz" data-key="enableGraphviz">
-                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
-                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
-                    </div>
+                    <label class="md-stg-toggle-switch">
+                      <input type="checkbox" id="stg-enableGraphviz" class="md-stg-bool-toggle" data-key="enableGraphviz">
+                      <span class="md-stg-toggle-slider"></span>
+                    </label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">#️⃣</span>
                       <span class="md-settings-label">${t('settings.lineNumbers')}</span>
                     </div>
-                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-showLineNumbers" data-key="showLineNumbers">
-                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
-                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
-                    </div>
+                    <label class="md-stg-toggle-switch">
+                      <input type="checkbox" id="stg-showLineNumbers" class="md-stg-bool-toggle" data-key="showLineNumbers">
+                      <span class="md-stg-toggle-slider"></span>
+                    </label>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🔍</span>
                       <span class="md-settings-label">${t('settings.autoDetect')}</span>
                     </div>
-                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-autoDetect" data-key="autoDetect">
-                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
-                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
-                    </div>
+                    <label class="md-stg-toggle-switch">
+                      <input type="checkbox" id="stg-autoDetect" class="md-stg-bool-toggle" data-key="autoDetect">
+                      <span class="md-stg-toggle-slider"></span>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -2857,7 +2857,7 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     if (maxWidthEl) maxWidthEl.value = currentSettings.maxWidth || 1200;
     if (maxWidthValEl) maxWidthValEl.textContent = (currentSettings.maxWidth || 1200) + 'px';
 
-    // 功能开关（分段按钮组）
+    // 功能开关
     const boolGroupStates = {
       'stg-showToc': currentSettings.showToc !== false,
       'stg-enableMathJax': currentSettings.enableMathJax === true,
@@ -2870,9 +2870,7 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     Object.entries(boolGroupStates).forEach(([id, isOn]) => {
       const group = document.getElementById(id);
       if (!group) return;
-      group.querySelectorAll('.md-stg-bool-btn').forEach(btn => {
-        btn.classList.toggle('active', (btn.dataset.val === 'on') === isOn);
-      });
+      group.checked = isOn;
     });
 
     // 目录位置
@@ -2998,24 +2996,21 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       maxWidthEl.addEventListener('change', () => saveSettings());
     }
 
-    // 功能开关（分段按钮组）：统一处理所有布尔开关
-    document.querySelectorAll('.md-stg-bool-group').forEach(group => {
-      const key = group.dataset.key;
-      group.querySelectorAll('.md-stg-bool-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const isOn = btn.dataset.val === 'on';
-          group.querySelectorAll('.md-stg-bool-btn').forEach(b => b.classList.toggle('active', b === btn));
-          currentSettings[key] = isOn;
-          if (key === 'showToc') {
-            const tocPosRow = document.getElementById('stg-tocPosRow');
-            if (tocPosRow) tocPosRow.style.display = isOn ? 'flex' : 'none';
-          }
-          // autoDetect 仅影响后续页面检测，无需重新应用当前页面样式
-          if (key !== 'autoDetect') {
-            applySettings(currentSettings);
-          }
-          saveSettings();
-        });
+    // 功能开关：统一处理所有布尔开关
+    document.querySelectorAll('.md-stg-bool-toggle').forEach(toggle => {
+      const key = toggle.dataset.key;
+      toggle.addEventListener('change', () => {
+        const isOn = toggle.checked;
+        currentSettings[key] = isOn;
+        if (key === 'showToc') {
+          const tocPosRow = document.getElementById('stg-tocPosRow');
+          if (tocPosRow) tocPosRow.style.display = isOn ? 'flex' : 'none';
+        }
+        // autoDetect 仅影响后续页面检测，无需重新应用当前页面样式
+        if (key !== 'autoDetect') {
+          applySettings(currentSettings);
+        }
+        saveSettings();
       });
     });
 

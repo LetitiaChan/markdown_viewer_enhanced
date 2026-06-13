@@ -54,21 +54,32 @@ describe('Tier 1: 设置面板增强存在性', () => {
     expect(mathInCard).toBeLessThan(mermaidInCard);
   });
 
-  test('1.8 i18n 包含面板模式 key', () => {
+  test('1.8 大设置布尔项使用 toggle-switch 结构', () => {
+    expect(contentJs).toContain('class="md-stg-toggle-switch"');
+    expect(contentJs).toContain('class="md-stg-bool-toggle" data-key="showToc"');
+    expect(contentJs).toContain('class="md-stg-bool-toggle" data-key="enableMathJax"');
+    expect(contentJs).toContain('class="md-stg-bool-toggle" data-key="enableMermaid"');
+    expect(contentJs).toContain('class="md-stg-bool-toggle" data-key="enablePlantUML"');
+    expect(contentJs).toContain('class="md-stg-bool-toggle" data-key="enableGraphviz"');
+    expect(contentJs).toContain('class="md-stg-bool-toggle" data-key="showLineNumbers"');
+    expect(contentJs).toContain('class="md-stg-bool-toggle" data-key="autoDetect"');
+  });
+
+  test('1.9 i18n 包含面板模式 key', () => {
     expect(zhCN).toContain("'settings.panelMode'");
     expect(enJs).toContain("'settings.panelMode'");
   });
 
-  test('1.9 i18n 包含文档对齐 key', () => {
+  test('1.10 i18n 包含文档对齐 key', () => {
     expect(zhCN).toContain("'settings.contentAlign'");
     expect(enJs).toContain("'settings.contentAlign'");
   });
 
-  test('1.10 CSS 包含底部链接样式', () => {
+  test('1.11 CSS 包含底部链接样式', () => {
     expect(contentCss).toContain('.md-settings-footer-link');
   });
 
-  test('1.11 CSS 包含设置项描述样式', () => {
+  test('1.12 CSS 包含设置项描述样式', () => {
     expect(contentCss).toContain('.md-settings-item-desc');
   });
 });
@@ -84,12 +95,17 @@ describe('Tier 2: 设置逻辑', () => {
     expect(contentJs).toContain("currentSettings.contentAlign");
   });
 
-  test('2.3 applySettings 应用文档对齐', () => {
+  test('2.3 syncSettingsToPanel 同步布尔开关 checked 状态', () => {
+    expect(contentJs).toContain('group.checked = isOn');
+    expect(contentJs).toContain("document.querySelectorAll('.md-stg-bool-toggle')");
+  });
+
+  test('2.4 applySettings 应用文档对齐', () => {
     expect(contentJs).toContain("content.style.marginLeft");
     expect(contentJs).toContain("content.style.marginRight");
   });
 
-  test('2.4 applySettings 应用面板模式 class', () => {
+  test('2.5 applySettings 应用面板模式 class', () => {
     expect(contentJs).toContain("panel-embed");
   });
 });
@@ -101,6 +117,12 @@ describe('Tier 3: 场景特定', () => {
 
   test('BT-settings-enhance.2 文档对齐事件绑定', () => {
     expect(contentJs).toContain("currentSettings.contentAlign = btn.dataset.align");
+  });
+
+  test('BT-settings-enhance.3 布尔开关 change 事件写入设置', () => {
+    expect(contentJs).toContain("toggle.addEventListener('change'");
+    expect(contentJs).toContain('currentSettings[key] = isOn');
+    expect(contentJs).toContain("if (key !== 'autoDetect')");
   });
 });
 
@@ -148,6 +170,22 @@ describe('Tier 2: 设置弹窗按钮组暗色主题适配', () => {
 
   test('BT-stg-segment-dark.3 暗色主题下 toc-pos-btn active 有蓝色边框', () => {
     expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-toc-pos-btn\.active[^{]*\{[^}]*border-color:\s*#818cf8/);
+  });
+});
+
+describe('Tier 3: 大设置页 toggle-switch 样式', () => {
+  test('BT-stg-toggle.1 toggle-switch 有开关尺寸和圆角滑槽', () => {
+    expect(contentCss).toMatch(/\.md-stg-toggle-switch\s*\{[^}]*width:\s*44px/);
+    expect(contentCss).toMatch(/\.md-stg-toggle-switch\s*\{[^}]*height:\s*24px/);
+    expect(contentCss).toMatch(/\.md-stg-toggle-slider\s*\{[^}]*border-radius:\s*12px/);
+  });
+
+  test('BT-stg-toggle.2 checked 状态使用品牌蓝色', () => {
+    expect(contentCss).toMatch(/\.md-stg-toggle-switch input:checked \+ \.md-stg-toggle-slider\s*\{[^}]*background:\s*#667eea/);
+  });
+
+  test('BT-stg-toggle.3 checked 状态滑块移动 20px', () => {
+    expect(contentCss).toMatch(/\.md-stg-toggle-switch input:checked \+ \.md-stg-toggle-slider::before\s*\{[^}]*transform:\s*translateX\(20px\)/);
   });
 });
 
