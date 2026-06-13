@@ -117,23 +117,23 @@ describe('Tier 1: 设置弹窗按钮组 segment 样式存在性', () => {
     expect(contentCss).toMatch(/\.md-stg-btn-option[^{]*\{[^}]*border:\s*1\.5px\s+solid\s+transparent/);
   });
 
-  test('BT-stg-segment.3 md-stg-btn-option.active 有绿色边框', () => {
-    expect(contentCss).toMatch(/\.md-stg-btn-option\.active[^{]*\{[^}]*border-color:\s*#059669/);
+  test('BT-stg-segment.3 md-stg-btn-option.active 有蓝色边框', () => {
+    expect(contentCss).toMatch(/\.md-stg-btn-option\.active[^{]*\{[^}]*border-color:\s*#667eea/);
   });
 
   test('BT-stg-segment.4 md-stg-panel-mode-btn 有 CSS 样式定义', () => {
     expect(contentCss).toContain('.md-stg-panel-mode-btn');
-    expect(contentCss).toMatch(/\.md-stg-panel-mode-btn\.active[^{]*\{[^}]*border-color:\s*#059669/);
+    expect(contentCss).toMatch(/\.md-stg-panel-mode-btn\.active[^{]*\{[^}]*border-color:\s*#667eea/);
   });
 
   test('BT-stg-segment.5 md-stg-align-btn 有 CSS 样式定义', () => {
     expect(contentCss).toContain('.md-stg-align-btn');
-    expect(contentCss).toMatch(/\.md-stg-align-btn\.active[^{]*\{[^}]*border-color:\s*#059669/);
+    expect(contentCss).toMatch(/\.md-stg-align-btn\.active[^{]*\{[^}]*border-color:\s*#667eea/);
   });
 
   test('BT-stg-segment.6 md-stg-toc-pos-btn 有 segment 按钮样式', () => {
     expect(contentCss).toMatch(/\.md-stg-toc-pos-btn\s*\{[^}]*border:\s*1\.5px\s+solid\s+transparent/);
-    expect(contentCss).toMatch(/\.md-stg-toc-pos-btn\.active[^{]*\{[^}]*border-color:\s*#059669/);
+    expect(contentCss).toMatch(/\.md-stg-toc-pos-btn\.active[^{]*\{[^}]*border-color:\s*#667eea/);
   });
 });
 
@@ -142,12 +142,12 @@ describe('Tier 2: 设置弹窗按钮组暗色主题适配', () => {
     expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-btn-group\s*\{[^}]*border-color:\s*#2a2a4a/);
   });
 
-  test('BT-stg-segment-dark.2 暗色主题下 active 按钮有绿色边框', () => {
-    expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-btn-option\.active[^{]*\{[^}]*border-color:\s*#34d399/);
+  test('BT-stg-segment-dark.2 暗色主题下 active 按钮有蓝色边框', () => {
+    expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-btn-option\.active[^{]*\{[^}]*border-color:\s*#818cf8/);
   });
 
-  test('BT-stg-segment-dark.3 暗色主题下 toc-pos-btn active 有绿色边框', () => {
-    expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-toc-pos-btn\.active[^{]*\{[^}]*border-color:\s*#34d399/);
+  test('BT-stg-segment-dark.3 暗色主题下 toc-pos-btn active 有蓝色边框', () => {
+    expect(contentCss).toMatch(/\.theme-dark\s+\.md-stg-toc-pos-btn\.active[^{]*\{[^}]*border-color:\s*#818cf8/);
   });
 });
 

@@ -214,33 +214,33 @@ describe('BT-popup.3 按钮组 segment 样式统一性', () => {
     expect(css).toMatch(/inline-flex/);
   });
 
-  // Tier 2 — 行为级断言：验证选中态使用绿色
-  test('3.7 [Tier2] theme-btn 选中态使用绿色 #059669', () => {
+  // Tier 2 — 行为级断言：验证选中态使用品牌蓝
+  test('3.7 [Tier2] theme-btn 选中态使用品牌蓝 #667eea', () => {
     const activeMatch = popupHtml.match(/\.theme-btn\.active\s*\{([^}]+)\}/);
     expect(activeMatch).not.toBeNull();
-    expect(activeMatch[1]).toContain('#059669');
+    expect(activeMatch[1]).toContain('#667eea');
   });
 
-  test('3.8 [Tier2] btn-option 选中态使用绿色 #059669', () => {
+  test('3.8 [Tier2] btn-option 选中态使用品牌蓝 #667eea', () => {
     const activeMatch = popupHtml.match(/\.btn-option\.active\s*\{([^}]+)\}/);
     expect(activeMatch).not.toBeNull();
-    expect(activeMatch[1]).toContain('#059669');
+    expect(activeMatch[1]).toContain('#667eea');
   });
 
-  test('3.9 [Tier2] toc-pos-btn 选中态使用绿色 #059669', () => {
+  test('3.9 [Tier2] toc-pos-btn 选中态使用品牌蓝 #667eea', () => {
     const activeMatch = popupHtml.match(/\.toc-pos-btn\.active\s*\{([^}]+)\}/);
     expect(activeMatch).not.toBeNull();
-    expect(activeMatch[1]).toContain('#059669');
+    expect(activeMatch[1]).toContain('#667eea');
   });
 
-  // Tier 3 — 任务特定断言：popup 与 options 按钮组风格一致
-  test('3.10 [Tier3] popup 所有按钮组不再使用旧紫色 #667eea 选中态', () => {
+  // Tier 3 — 任务特定断言：popup 与 options 按钮组风格一致，统一品牌蓝相框
+  test('3.10 [Tier3] popup 所有按钮组选中态统一使用品牌蓝 #667eea 且不再使用绿色 #059669', () => {
     // 提取所有 .active 规则块
     const activeBlocks = popupHtml.match(/\.(theme-btn|btn-option|toc-pos-btn)\.active\s*\{[^}]+\}/g);
     expect(activeBlocks).not.toBeNull();
     activeBlocks.forEach(block => {
-      expect(block).not.toMatch(/#667eea/);
-      expect(block).not.toMatch(/#f0f0ff/);
+      expect(block).toMatch(/#667eea/);
+      expect(block).not.toMatch(/#059669/);
     });
   });
 

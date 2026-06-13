@@ -227,9 +227,19 @@ html:has(.theme-dark) {
 
 /* ==================== 嵌入模式 ==================== */
 /* 悬浮模式（默认）：侧边栏 position:fixed 覆盖在内容之上 */
-/* 嵌入模式：侧边栏参与 flex 布局，占据独立空间，内容区被自然挤开 */
+/* 嵌入模式：app 固定为视口高度，工具栏占顶部固定高度，主区 flex 填满剩余空间；
+   目录与正文各自 overflow:auto 独立滚动，互不影响，window 不产生整页滚动。
+   注意：必须用 height（而非 min-height）给 app 一个确定高度，否则长文档会把
+   flex 容器撑高、子项高度失去定值、内部滚动失效（退化为整页 window 滚动）。 */
+.md-viewer-app.panel-embed {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .panel-embed .md-main-container {
-  height: calc(100vh - 30px);
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -239,6 +249,7 @@ html:has(.theme-dark) {
   left: auto;
   right: auto;
   height: 100%;
+  min-height: 0;
   flex-shrink: 0;
   z-index: auto;
   box-shadow: none;
@@ -253,6 +264,7 @@ html:has(.theme-dark) {
 .panel-embed .md-content {
   order: 1;
   overflow-y: auto;
+  min-height: 0;
   height: 100%;
 }
 
@@ -2652,9 +2664,9 @@ ul:has(> .task-list-item) {
 .md-stg-align-btn.active,
 .md-stg-bool-btn.active {
   background: #fff;
-  color: #059669;
+  color: #667eea;
   font-weight: 600;
-  border-color: #059669;
+  border-color: #667eea;
 }
 
 .theme-dark .md-stg-btn-group {
@@ -2681,9 +2693,9 @@ ul:has(> .task-list-item) {
 .theme-dark .md-stg-panel-mode-btn.active,
 .theme-dark .md-stg-align-btn.active,
 .theme-dark .md-stg-bool-btn.active {
-  background: rgba(52, 211, 153, 0.1);
-  color: #34d399;
-  border-color: #34d399;
+  background: rgba(102, 126, 234, 0.15);
+  color: #a5b4fc;
+  border-color: #818cf8;
 }
 
 /* 字体下拉选择器 */
@@ -2703,8 +2715,8 @@ ul:has(> .task-list-item) {
 }
 
 .md-stg-font-select:focus {
-  border-color: #34d399;
-  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.15);
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
 }
 
 .md-stg-font-select option {
@@ -2747,8 +2759,8 @@ ul:has(> .task-list-item) {
 }
 
 .md-stg-font-custom:focus {
-  border-color: #34d399;
-  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.15);
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
 }
 
 .md-stg-font-custom::placeholder {
@@ -2857,9 +2869,9 @@ ul:has(> .task-list-item) {
 
 .md-stg-toc-pos-btn.active {
   background: #fff;
-  color: #059669;
+  color: #667eea;
   font-weight: 600;
-  border-color: #059669;
+  border-color: #667eea;
 }
 
 .theme-dark .md-stg-toc-pos-btn {
@@ -2872,9 +2884,9 @@ ul:has(> .task-list-item) {
 }
 
 .theme-dark .md-stg-toc-pos-btn.active {
-  background: rgba(52, 211, 153, 0.1);
-  color: #34d399;
-  border-color: #34d399;
+  background: rgba(102, 126, 234, 0.15);
+  color: #a5b4fc;
+  border-color: #818cf8;
 }
 
 /* 底部固定栏 */
