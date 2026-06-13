@@ -25,8 +25,8 @@ describe('Tier 1: 设置面板增强存在性', () => {
   });
 
   test('1.3 DEFAULT_SETTINGS 包含 panelMode', () => {
-    expect(contentJs).toContain("panelMode: 'float'");
-    expect(bgJs).toContain("panelMode: 'float'");
+    expect(contentJs).toContain("panelMode: 'embed'");
+    expect(bgJs).toContain("panelMode: 'embed'");
   });
 
   test('1.4 DEFAULT_SETTINGS 包含 contentAlign', () => {

@@ -39,7 +39,7 @@
     lineHeight: 1.8,
     showToc: true,
     tocPosition: 'right',
-    panelMode: 'float',
+    panelMode: 'embed',
     contentAlign: 'center',
     enableMermaid: true,
     enableMathJax: true,
@@ -3513,7 +3513,7 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
 
     // 面板模式
     document.querySelectorAll('.md-stg-panel-mode-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.mode === (currentSettings.panelMode || 'float'));
+      btn.classList.toggle('active', btn.dataset.mode === (currentSettings.panelMode || 'embed'));
     });
 
     // 文档对齐
