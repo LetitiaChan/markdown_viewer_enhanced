@@ -49,12 +49,12 @@ html:has(.theme-dark) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 12px;
+  padding: 2px 12px;
   background: #ffffff;
   border-bottom: 1px solid #e1e4e8;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
-  height: 36px;
+  height: 30px;
   box-sizing: border-box;
 }
 
@@ -95,8 +95,8 @@ html:has(.theme-dark) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: 1px solid #d1d5da;
   border-radius: 6px;
@@ -108,6 +108,8 @@ html:has(.theme-dark) {
 
 .md-toolbar-btn svg {
   display: block;
+  width: 16px;
+  height: 16px;
 }
 
 .md-toolbar-btn:hover {
@@ -1261,7 +1263,7 @@ html:has(.theme-dark) {
   .theme-auto .md-float-top {
     background: #2d2d2d;
     border-color: #444;
-    color: #e0e0e0;
+    color: #8b949e;
   }
   .theme-auto .code-block {
     border-color: #333;
@@ -2279,15 +2281,15 @@ ul:has(> .task-list-item) {
   position: fixed;
   bottom: 32px;
   right: 32px;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   font-size: 18px;
-  border: 1px solid #d1d5da;
+  border: 1px solid #e1e4e8;
   border-radius: 50%;
   background: #fff;
-  color: #586069;
+  color: #57606a;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   transition: all 0.2s;
   z-index: 999;
   display: flex;
@@ -2297,19 +2299,21 @@ ul:has(> .task-list-item) {
 
 .md-float-top:hover {
   background: #f6f8fa;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  border-color: #c8c8c8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .theme-dark .md-float-top {
   background: #2d2d2d;
   border-color: #444;
-  color: #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  color: #8b949e;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .theme-dark .md-float-top:hover {
   background: #3a3a3a;
+  border-color: #555;
+  color: #e0e0e0;
 }
 
 /* ==================== 错误提示 ==================== */
@@ -3250,8 +3254,8 @@ ul:has(> .task-list-item) {
   }
 
   .md-toolbar-btn {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
   }
 
   .md-toc-sidebar {

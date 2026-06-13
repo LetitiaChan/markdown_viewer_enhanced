@@ -950,7 +950,7 @@
 
     // 构建页面 DOM 结构
     document.body.innerHTML = `
-      <div id="md-viewer-app" class="md-viewer-app theme-${currentSettings.theme}">
+      <div id="md-viewer-app" class="md-viewer-app theme-${currentSettings.theme}${currentSettings.panelMode === 'embed' ? ' panel-embed' : ''}">
         <!-- 顶部工具栏 -->
         <div id="md-toolbar" class="md-toolbar">
           <div class="md-toolbar-left">
@@ -1010,7 +1010,7 @@
         </div>
 
         <!-- 回到顶部浮动按钮 -->
-        <button id="btn-float-top" class="md-float-top" style="display:none;" title="${t('sidebar.backToTop.title')}">⬆️</button>
+        <button id="btn-float-top" class="md-float-top" style="display:none;" title="${t('sidebar.backToTop.title')}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
 
 
         <!-- Mermaid 图表预览遮罩 -->
@@ -2822,7 +2822,7 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
         const currentIndex = themes.indexOf(currentSettings.theme);
         const nextTheme = themes[(currentIndex + 1) % themes.length];
         currentSettings.theme = nextTheme;
-        app.className = `md-viewer-app theme-${nextTheme}`;
+        app.className = `md-viewer-app theme-${nextTheme}${currentSettings.panelMode === 'embed' ? ' panel-embed' : ''}`;
         // 保存设置
         saveSettings();
         // 重新渲染 Mermaid（主题变化需要重新渲染）
@@ -3789,10 +3789,7 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     currentSettings = { ...DEFAULT_SETTINGS, ...settings };
     const app = document.getElementById('md-viewer-app');
     if (app) {
-      app.className = `md-viewer-app theme-${currentSettings.theme}`;
-      if (currentSettings.panelMode === 'embed') {
-        app.classList.add('panel-embed');
-      }
+      app.className = `md-viewer-app theme-${currentSettings.theme}${currentSettings.panelMode === 'embed' ? ' panel-embed' : ''}`;
     }
 
     const content = document.getElementById('md-content');
@@ -4166,7 +4163,7 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const app = document.getElementById('md-viewer-app');
     if (app) {
-      app.className = `md-viewer-app theme-${isDark ? 'dark' : 'light'}`;
+      app.className = `md-viewer-app theme-${isDark ? 'dark' : 'light'}${currentSettings.panelMode === 'embed' ? ' panel-embed' : ''}`;
     }
   }
 
