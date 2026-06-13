@@ -65,9 +65,9 @@ describe('BT-settings-panel.2 设置项交互', () => {
       <div class="md-settings-body">
         <input type="range" id="stg-fontSize" min="12" max="24" step="1" value="16">
         <span id="stg-fontSizeVal">16px</span>
-        <input type="range" id="stg-lineHeight" min="1.2" max="2.0" step="0.1" value="1.6">
+        <input type="range" id="stg-lineHeight" min="1.2" max="2.4" step="0.1" value="1.6">
         <span id="stg-lineHeightVal">1.6</span>
-        <input type="range" id="stg-maxWidth" min="600" max="1400" step="50" value="1200">
+        <input type="range" id="stg-maxWidth" min="600" max="1800" step="50" value="1200">
         <span id="stg-maxWidthVal">1200px</span>
         <input type="checkbox" id="stg-showToc" checked>
         <input type="checkbox" id="stg-enableMermaid" checked>

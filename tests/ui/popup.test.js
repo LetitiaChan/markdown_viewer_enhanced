@@ -13,9 +13,9 @@ describe('BT-popup.1 设置加载到 UI', () => {
       <span id="statusText">检测中...</span>
       <input type="range" id="fontSizeSlider" min="12" max="24" value="16">
       <span id="fontSizeValue">16px</span>
-      <input type="range" id="lineHeightSlider" min="1.2" max="2.0" step="0.1" value="1.6">
+      <input type="range" id="lineHeightSlider" min="1.2" max="2.4" step="0.1" value="1.6">
       <span id="lineHeightValue">1.6</span>
-      <input type="range" id="maxWidthSlider" min="600" max="1400" step="50" value="1200">
+      <input type="range" id="maxWidthSlider" min="600" max="1800" step="50" value="1200">
       <span id="maxWidthValue">1200px</span>
       <select id="codeThemeSelect">
         <option value="default-dark-modern">Default Dark Modern</option>

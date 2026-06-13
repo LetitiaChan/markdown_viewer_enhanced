@@ -1147,7 +1147,7 @@
                   </div>
                   <div class="md-stg-slider-row">
                     <span class="md-stg-slider-label">${t('settings.lineHeight.compact')}</span>
-    <input type="range" id="stg-lineHeight" min="1.2" max="2.0" step="0.1" value="1.8">
+    <input type="range" id="stg-lineHeight" min="1.2" max="2.4" step="0.1" value="1.8">
                     <span class="md-stg-slider-label">${t('settings.lineHeight.loose')}</span>
                     <span class="md-stg-slider-value" id="stg-lineHeightVal">1.8</span>
                   </div>
@@ -1163,7 +1163,7 @@
                   </div>
                   <div class="md-stg-slider-row">
                     <span class="md-stg-slider-label">${t('settings.maxWidth.narrow')}</span>
-                    <input type="range" id="stg-maxWidth" min="600" max="1400" step="50" value="1200">
+                    <input type="range" id="stg-maxWidth" min="600" max="1800" step="50" value="1200">
                     <span class="md-stg-slider-label">${t('settings.maxWidth.wide')}</span>
                     <span class="md-stg-slider-value" id="stg-maxWidthVal">1200px</span>
                   </div>
@@ -1237,7 +1237,10 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
                       <span class="md-settings-item-icon">📑</span>
                       <span class="md-settings-label">${t('settings.showToc')}</span>
                     </div>
-                    <label class="md-stg-toggle"><input type="checkbox" id="stg-showToc" checked><span class="md-stg-toggle-slider"></span></label>
+                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-showToc" data-key="showToc">
+                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
+                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
+                    </div>
                   </div>
                   <div class="md-settings-item" id="stg-tocPosRow">
                     <div class="md-settings-item-left">
@@ -1281,42 +1284,60 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
                       <span class="md-settings-item-icon">🔢</span>
                       <span class="md-settings-label">${t('settings.mathJax')}</span>
                     </div>
-                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMathJax"><span class="md-stg-toggle-slider"></span></label>
+                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-enableMathJax" data-key="enableMathJax">
+                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
+                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
+                    </div>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">📊</span>
                       <span class="md-settings-label">${t('settings.mermaid')}</span>
                     </div>
-                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enableMermaid" checked><span class="md-stg-toggle-slider"></span></label>
+                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-enableMermaid" data-key="enableMermaid">
+                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
+                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
+                    </div>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🌱</span>
                       <span class="md-settings-label">${t('settings.plantuml')}</span>
                     </div>
-                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enablePlantUML" checked><span class="md-stg-toggle-slider"></span></label>
+                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-enablePlantUML" data-key="enablePlantUML">
+                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
+                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
+                    </div>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🔗</span>
                       <span class="md-settings-label">${t('settings.graphviz')}</span>
                     </div>
-                    <label class="md-stg-toggle"><input type="checkbox" id="stg-enableGraphviz" checked><span class="md-stg-toggle-slider"></span></label>
+                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-enableGraphviz" data-key="enableGraphviz">
+                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
+                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
+                    </div>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">#️⃣</span>
                       <span class="md-settings-label">${t('settings.lineNumbers')}</span>
                     </div>
-                    <label class="md-stg-toggle"><input type="checkbox" id="stg-showLineNumbers"><span class="md-stg-toggle-slider"></span></label>
+                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-showLineNumbers" data-key="showLineNumbers">
+                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
+                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
+                    </div>
                   </div>
                   <div class="md-settings-item">
                     <div class="md-settings-item-left">
                       <span class="md-settings-item-icon">🔍</span>
                       <span class="md-settings-label">${t('settings.autoDetect')}</span>
                     </div>
-                    <label class="md-stg-toggle"><input type="checkbox" id="stg-autoDetect" checked><span class="md-stg-toggle-slider"></span></label>
+                    <div class="md-stg-btn-group md-stg-bool-group" id="stg-autoDetect" data-key="autoDetect">
+                      <button class="md-stg-bool-btn" data-val="on">${t('settings.switch.on')}</button>
+                      <button class="md-stg-bool-btn" data-val="off">${t('settings.switch.off')}</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -3518,9 +3539,23 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     if (maxWidthEl) maxWidthEl.value = currentSettings.maxWidth || 1200;
     if (maxWidthValEl) maxWidthValEl.textContent = (currentSettings.maxWidth || 1200) + 'px';
 
-    // 开关
-    const stgShowToc = document.getElementById('stg-showToc');
-    if (stgShowToc) stgShowToc.checked = currentSettings.showToc !== false;
+    // 功能开关（分段按钮组）
+    const boolGroupStates = {
+      'stg-showToc': currentSettings.showToc !== false,
+      'stg-enableMathJax': currentSettings.enableMathJax === true,
+      'stg-enableMermaid': currentSettings.enableMermaid !== false,
+      'stg-enablePlantUML': currentSettings.enablePlantUML !== false,
+      'stg-enableGraphviz': currentSettings.enableGraphviz !== false,
+      'stg-showLineNumbers': currentSettings.showLineNumbers === true,
+      'stg-autoDetect': currentSettings.autoDetect !== false,
+    };
+    Object.entries(boolGroupStates).forEach(([id, isOn]) => {
+      const group = document.getElementById(id);
+      if (!group) return;
+      group.querySelectorAll('.md-stg-bool-btn').forEach(btn => {
+        btn.classList.toggle('active', (btn.dataset.val === 'on') === isOn);
+      });
+    });
 
     // 目录位置
     document.querySelectorAll('.md-stg-toc-pos-btn').forEach(btn => {
@@ -3538,24 +3573,6 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
     document.querySelectorAll('.md-stg-align-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.align === (currentSettings.contentAlign || 'center'));
     });
-
-    const stgMermaid = document.getElementById('stg-enableMermaid');
-    if (stgMermaid) stgMermaid.checked = currentSettings.enableMermaid !== false;
-
-    const stgMathJax = document.getElementById('stg-enableMathJax');
-    if (stgMathJax) stgMathJax.checked = currentSettings.enableMathJax === true;
-
-    const stgPlantUML = document.getElementById('stg-enablePlantUML');
-    if (stgPlantUML) stgPlantUML.checked = currentSettings.enablePlantUML !== false;
-
-    const stgGraphviz = document.getElementById('stg-enableGraphviz');
-    if (stgGraphviz) stgGraphviz.checked = currentSettings.enableGraphviz !== false;
-
-    const stgLineNumbers = document.getElementById('stg-showLineNumbers');
-    if (stgLineNumbers) stgLineNumbers.checked = currentSettings.showLineNumbers === true;
-
-    const stgAutoDetect = document.getElementById('stg-autoDetect');
-    if (stgAutoDetect) stgAutoDetect.checked = currentSettings.autoDetect !== false;
 
     // 语言下拉框
     const stgLang = document.getElementById('stg-language');
@@ -3663,17 +3680,26 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
       maxWidthEl.addEventListener('change', () => saveSettings());
     }
 
-    // 显示目录
-    const stgShowToc = document.getElementById('stg-showToc');
-    if (stgShowToc) {
-      stgShowToc.addEventListener('change', () => {
-        currentSettings.showToc = stgShowToc.checked;
-        const tocPosRow = document.getElementById('stg-tocPosRow');
-        if (tocPosRow) tocPosRow.style.display = stgShowToc.checked ? 'flex' : 'none';
-        applySettings(currentSettings);
-        saveSettings();
+    // 功能开关（分段按钮组）：统一处理所有布尔开关
+    document.querySelectorAll('.md-stg-bool-group').forEach(group => {
+      const key = group.dataset.key;
+      group.querySelectorAll('.md-stg-bool-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const isOn = btn.dataset.val === 'on';
+          group.querySelectorAll('.md-stg-bool-btn').forEach(b => b.classList.toggle('active', b === btn));
+          currentSettings[key] = isOn;
+          if (key === 'showToc') {
+            const tocPosRow = document.getElementById('stg-tocPosRow');
+            if (tocPosRow) tocPosRow.style.display = isOn ? 'flex' : 'none';
+          }
+          // autoDetect 仅影响后续页面检测，无需重新应用当前页面样式
+          if (key !== 'autoDetect') {
+            applySettings(currentSettings);
+          }
+          saveSettings();
+        });
       });
-    }
+    });
 
     // 目录位置
     document.querySelectorAll('.md-stg-toc-pos-btn').forEach(btn => {
@@ -3707,65 +3733,6 @@ console.<span class="hljs-title function_">log</span>(<span class="hljs-string">
         saveSettings();
       });
     });
-
-    // Mermaid 开关
-    const stgMermaid = document.getElementById('stg-enableMermaid');
-    if (stgMermaid) {
-      stgMermaid.addEventListener('change', () => {
-        currentSettings.enableMermaid = stgMermaid.checked;
-        applySettings(currentSettings);
-        saveSettings();
-      });
-    }
-
-    // 数学公式开关
-    const stgMathJax = document.getElementById('stg-enableMathJax');
-    if (stgMathJax) {
-      stgMathJax.addEventListener('change', () => {
-        currentSettings.enableMathJax = stgMathJax.checked;
-        applySettings(currentSettings);
-        saveSettings();
-      });
-    }
-
-    // PlantUML 开关
-    const stgPlantUML = document.getElementById('stg-enablePlantUML');
-    if (stgPlantUML) {
-      stgPlantUML.addEventListener('change', () => {
-        currentSettings.enablePlantUML = stgPlantUML.checked;
-        applySettings(currentSettings);
-        saveSettings();
-      });
-    }
-
-    // Graphviz 开关
-    const stgGraphviz = document.getElementById('stg-enableGraphviz');
-    if (stgGraphviz) {
-      stgGraphviz.addEventListener('change', () => {
-        currentSettings.enableGraphviz = stgGraphviz.checked;
-        applySettings(currentSettings);
-        saveSettings();
-      });
-    }
-
-    // 代码行号开关
-    const stgLineNumbers = document.getElementById('stg-showLineNumbers');
-    if (stgLineNumbers) {
-      stgLineNumbers.addEventListener('change', () => {
-        currentSettings.showLineNumbers = stgLineNumbers.checked;
-        applySettings(currentSettings);
-        saveSettings();
-      });
-    }
-
-    // 自动检测开关
-    const stgAutoDetect = document.getElementById('stg-autoDetect');
-    if (stgAutoDetect) {
-      stgAutoDetect.addEventListener('change', () => {
-        currentSettings.autoDetect = stgAutoDetect.checked;
-        saveSettings();
-      });
-    }
 
     // 重置按钮
     const btnReset = document.getElementById('btn-settings-reset');

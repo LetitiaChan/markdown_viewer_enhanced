@@ -2828,7 +2828,8 @@ ul:has(> .task-list-item) {
 
 .md-stg-btn-option,
 .md-stg-panel-mode-btn,
-.md-stg-align-btn {
+.md-stg-align-btn,
+.md-stg-bool-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -2847,14 +2848,16 @@ ul:has(> .task-list-item) {
 
 .md-stg-btn-option:hover,
 .md-stg-panel-mode-btn:hover,
-.md-stg-align-btn:hover {
+.md-stg-align-btn:hover,
+.md-stg-bool-btn:hover {
   color: #57606a;
   background: #f6f8fa;
 }
 
 .md-stg-btn-option.active,
 .md-stg-panel-mode-btn.active,
-.md-stg-align-btn.active {
+.md-stg-align-btn.active,
+.md-stg-bool-btn.active {
   background: #fff;
   color: #059669;
   font-weight: 600;
@@ -2868,20 +2871,23 @@ ul:has(> .task-list-item) {
 
 .theme-dark .md-stg-btn-option,
 .theme-dark .md-stg-panel-mode-btn,
-.theme-dark .md-stg-align-btn {
+.theme-dark .md-stg-align-btn,
+.theme-dark .md-stg-bool-btn {
   color: #9ca3af;
 }
 
 .theme-dark .md-stg-btn-option:hover,
 .theme-dark .md-stg-panel-mode-btn:hover,
-.theme-dark .md-stg-align-btn:hover {
+.theme-dark .md-stg-align-btn:hover,
+.theme-dark .md-stg-bool-btn:hover {
   color: #d1d5db;
   background: rgba(255, 255, 255, 0.05);
 }
 
 .theme-dark .md-stg-btn-option.active,
 .theme-dark .md-stg-panel-mode-btn.active,
-.theme-dark .md-stg-align-btn.active {
+.theme-dark .md-stg-align-btn.active,
+.theme-dark .md-stg-bool-btn.active {
   background: rgba(52, 211, 153, 0.1);
   color: #34d399;
   border-color: #34d399;
@@ -3030,63 +3036,6 @@ ul:has(> .task-list-item) {
 .theme-dark .md-stg-slider-value {
   background: #1e1b4b;
   color: #a5b4fc;
-}
-
-/* 开关 */
-.md-stg-toggle {
-  position: relative;
-  width: 40px;
-  height: 22px;
-  cursor: pointer;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.md-stg-toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  position: absolute;
-}
-
-.md-stg-toggle-slider {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #d1d5db;
-  border-radius: 11px;
-  transition: background 0.2s;
-}
-
-.md-stg-toggle-slider::before {
-  content: '';
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  left: 2px;
-  bottom: 2px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-.md-stg-toggle input:checked + .md-stg-toggle-slider {
-  background: #667eea;
-}
-
-.md-stg-toggle input:checked + .md-stg-toggle-slider::before {
-  transform: translateX(18px);
-}
-
-.theme-dark .md-stg-toggle-slider {
-  background: #374151;
-}
-
-.theme-dark .md-stg-toggle-slider::before {
-  background: #d1d5db;
 }
 
 /* 目录位置按钮（segment 按钮组风格） */

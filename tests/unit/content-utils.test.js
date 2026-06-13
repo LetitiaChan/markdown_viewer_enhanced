@@ -248,7 +248,7 @@ describe('BT-content-utils.6 DEFAULT_SETTINGS 完整性', () => {
     expect(DEFAULT_SETTINGS.lineHeight).toBeGreaterThanOrEqual(1.0);
     expect(DEFAULT_SETTINGS.lineHeight).toBeLessThanOrEqual(3.0);
     expect(DEFAULT_SETTINGS.maxWidth).toBeGreaterThanOrEqual(600);
-    expect(DEFAULT_SETTINGS.maxWidth).toBeLessThanOrEqual(1600);
+    expect(DEFAULT_SETTINGS.maxWidth).toBeLessThanOrEqual(1800);
   });
 });
 

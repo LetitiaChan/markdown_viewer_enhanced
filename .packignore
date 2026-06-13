@@ -9,13 +9,20 @@
 image/
 
 # ===========================
-# AI 工作流（OpenSpec / CodeBuddy）
+# AI 工作流（OpenSpec / CodeBuddy / Cursor）
 # ===========================
 .codebuddy/
+.cursor/
 .review/
 .analysis-archive/
+.analysis-cache.md
 openspec/
 AGENT-PROGRESS.md
+
+# ===========================
+# 本地工具脚本
+# ===========================
+scripts/
 
 # ===========================
 # 测试相关
@@ -32,17 +39,9 @@ node_modules/
 README.md
 CHANGELOG.md
 DESCRIPTION.md
+LICENSE
 todo.md
 *.log
-
-# ===========================
-# 构建 / 临时输出
-# ===========================
-build_tree.txt
-dir_output.txt
-src_tree.txt
-*.tmp
-*.bak
 
 # ===========================
 # 打包产物（避免嵌套打包）
@@ -84,6 +83,7 @@ pack.ps1
 .packignore
 
 # ===========================
-# Cursor/AI 规则文件
+# 临时文件
 # ===========================
-rules_PT.mdc
+*.tmp
+*.bak

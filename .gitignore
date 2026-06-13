@@ -1,29 +1,24 @@
 # ===========================
-# 构建/目录输出文件
-# ===========================
-build_tree.txt
-dir_output.txt
-src_tree.txt
-
-# ===========================
-# AI 工作流（OpenSpec / CodeBuddy）
+# AI 工作流（OpenSpec / CodeBuddy / Cursor）
 # ===========================
 .codebuddy/
+.cursor/
 .review/
 .analysis-archive/
+.analysis-cache.md
 openspec/
 AGENT-PROGRESS.md
 
 # ===========================
-# 图标生成工具（非运行时资源）
+# 本地工具脚本
+# ===========================
+scripts/
+
+# ===========================
+# 图标生成工具（非运行时）
 # ===========================
 icons/generate_icons.html
 icons/generate_icons.ps1
-
-# ===========================
-# Cursor/AI 规则文件
-# ===========================
-rules_PT.mdc
 
 # ===========================
 # 系统文件
@@ -42,7 +37,7 @@ Desktop.ini
 *~
 
 # ===========================
-# Node.js（如有）
+# Node.js
 # ===========================
 node_modules/
 
@@ -59,5 +54,3 @@ node_modules/
 *.log
 *.tmp
 *.bak
-.analysis-archive/
-todo.md
