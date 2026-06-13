@@ -1,14 +1,12 @@
 /**
  * 单元测试：content.js 工具函数
- * 覆盖：generateId, escapeHtml, debounce, parseSizeToBytes, isMarkdownFile 等
+ * 覆盖：generateId, escapeHtml, debounce, isMarkdownFile 等
  */
 
 const {
   generateId,
   escapeHtml,
   debounce,
-  parseSizeToBytes,
-  getFileIcon,
   DEFAULT_SETTINGS,
   MD_EXTENSIONS,
   SUPPORTED_FILE_EXTENSIONS,
@@ -139,42 +137,6 @@ describe('BT-content-utils.3 debounce', () => {
   });
 });
 
-// =====================================================
-//  BT-content-utils.4 parseSizeToBytes 函数测试
-// =====================================================
-describe('BT-content-utils.4 parseSizeToBytes', () => {
-  test('4.1 解析 KB', () => {
-    expect(parseSizeToBytes('100 KB')).toBe(100 * 1024);
-  });
-
-  test('4.2 解析 MB', () => {
-    expect(parseSizeToBytes('1.5 MB')).toBe(1.5 * 1048576);
-  });
-
-  test('4.3 解析 GB', () => {
-    expect(parseSizeToBytes('2 GB')).toBe(2 * 1073741824);
-  });
-
-  test('4.4 解析纯字节', () => {
-    expect(parseSizeToBytes('512 B')).toBe(512);
-  });
-
-  test('4.5 解析简写 K', () => {
-    expect(parseSizeToBytes('10K')).toBe(10 * 1024);
-  });
-
-  test('4.6 空字符串返回 0', () => {
-    expect(parseSizeToBytes('')).toBe(0);
-  });
-
-  test('4.7 横杠返回 0', () => {
-    expect(parseSizeToBytes('-')).toBe(0);
-  });
-
-  test('4.8 null 返回 0', () => {
-    expect(parseSizeToBytes(null)).toBe(0);
-  });
-});
 
 // =====================================================
 //  BT-content-utils.5 MD_EXTENSIONS 正则测试
@@ -252,29 +214,3 @@ describe('BT-content-utils.6 DEFAULT_SETTINGS 完整性', () => {
   });
 });
 
-// =====================================================
-//  BT-content-utils.7 getFileIcon 函数测试
-// =====================================================
-describe('BT-content-utils.7 getFileIcon', () => {
-  test('7.1 目录返回文件夹图标', () => {
-    expect(getFileIcon('docs', true)).toBe('📁');
-  });
-
-  test('7.2 Markdown 文件返回文档图标', () => {
-    const icon = getFileIcon('readme.md', false);
-    // getFileIcon 返回单字符标识符，具体值取决于实现
-    expect(typeof icon).toBe('string');
-    expect(icon.length).toBeGreaterThan(0);
-  });
-
-  test('7.3 图片文件返回图片图标', () => {
-    expect(getFileIcon('photo.png', false)).toBe('🖼️');
-    expect(getFileIcon('photo.jpg', false)).toBe('🖼️');
-  });
-
-  test('7.4 未知文件返回默认图标', () => {
-    const icon = getFileIcon('unknown.xyz', false);
-    expect(typeof icon).toBe('string');
-    expect(icon.length).toBeGreaterThan(0);
-  });
-});

@@ -211,13 +211,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ injected: injectedTabs.has(message.tabId) });
       return false;
 
-    case 'FETCH_DIRECTORY':
-      fetchDirectoryViaTab(message.url).then(items => {
-        console.log('[MD Viewer BG] 目录获取完成，文件数:', items.length);
-        sendResponse({ items });
-      });
-      return true; // 异步响应
-
     case 'CHECK_FILE_PERMISSION':
       // 检查是否拥有 file:// 可选权限
       hasFilePermission().then(has => {
@@ -261,181 +254,14 @@ async function requestFilePermission() {
   }
 }
 
-/**
- * 通过临时 tab + chrome.scripting.executeScript 获取 file:// 目录列表
- * 1. 检查/请求 file:// 权限
- * 2. 创建一个不可见的 tab 打开目录 URL
- * 3. 在该 tab 中注入脚本提取文件列表
- * 4. 关闭 tab 并返回结果
- */
-async function fetchDirectoryViaTab(dirUrl) {
-  let tabId = null;
-  try {
-    // 检查是否拥有 file:// 权限
-    const hasPerm = await hasFilePermission();
-    if (!hasPerm) {
-      console.warn('[MD Viewer BG] 缺少 file:// 权限，无法获取目录');
-      return [];
-    }
-
-    console.log('[MD Viewer BG] 开始获取目录:', dirUrl);
-
-    // 创建不活跃的 tab（不会获取焦点）
-    const tab = await chrome.tabs.create({
-      url: dirUrl,
-      active: false,
-    });
-    tabId = tab.id;
-    console.log('[MD Viewer BG] 临时 tab 已创建, id:', tabId, ', status:', tab.status);
-
-    // 等待 tab 加载完成
-    if (tab.status !== 'complete') {
-      await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          chrome.tabs.onUpdated.removeListener(listener);
-          reject(new Error('Tab 加载超时 (8s)'));
-        }, 8000);
-
-        function listener(updatedTabId, changeInfo) {
-          if (updatedTabId === tabId && changeInfo.status === 'complete') {
-            clearTimeout(timeout);
-            chrome.tabs.onUpdated.removeListener(listener);
-            resolve();
-          }
-        }
-        chrome.tabs.onUpdated.addListener(listener);
-      });
-    }
-
-    // 等待一小段时间确保 DOM 完全渲染
-    await new Promise(r => setTimeout(r, 300));
-
-    console.log('[MD Viewer BG] Tab 加载完成，注入脚本提取目录...');
-
-    // 在 tab 中注入脚本提取文件列表
-    const results = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: extractDirectoryItems,
-      args: [dirUrl],
-    });
-
-    console.log('[MD Viewer BG] 脚本执行结果:', JSON.stringify(results?.[0]?.result?.length || 0), '个条目');
-
-    const items = (results && results[0] && results[0].result) ? results[0].result : [];
-
-    // 关闭临时 tab
-    await chrome.tabs.remove(tabId);
-    tabId = null;
-
-    return items;
-  } catch (err) {
-    console.error('[MD Viewer BG] fetchDirectoryViaTab 错误:', err.message || String(err));
-    // 确保清理 tab
-    if (tabId) {
-      try { await chrome.tabs.remove(tabId); } catch (_) { /* ignore */ }
-    }
-    return []; // 返回空数组而非抛出异常，避免 sendResponse 失败
-  }
-}
-
-/**
- * 注入到目录 tab 中执行的函数——提取文件/目录列表
- * 注意：此函数在目录页面的上下文中运行，不能引用外部变量
- */
-function extractDirectoryItems(baseUrl) {
-  const items = [];
-
-  // 调试：输出页面基本信息
-  console.log('[MD Viewer Inject] 页面 URL:', location.href);
-  console.log('[MD Viewer Inject] 页面 title:', document.title);
-  console.log('[MD Viewer Inject] body children:', document.body ? document.body.children.length : 'no body');
-  console.log('[MD Viewer Inject] body innerHTML 前200字符:', document.body ? document.body.innerHTML.substring(0, 200) : 'no body');
-
-  // Chrome 的 file:// 目录页面结构：
-  // <body>
-  //   <div id="parentDirLink">...</div> (可选)
-  //   <h1 id="header">...</h1>
-  //   <table>
-  //     <thead><tr><th>Name</th><th>Size</th><th>Date Modified</th></tr></thead>
-  //     <tbody id="tbody">
-  //       <tr><td data-value="..."><a class="icon ...">filename</a></td>...</tr>
-  //     </tbody>
-  //   </table>
-  // </body>
-
-  // 策略 1：Chrome 风格 - tbody#tbody 或 table 内的 tbody
-  const rows = document.querySelectorAll(
-    '#tbody tr, #table tbody tr, table tbody tr, table tr'
-  );
-  console.log('[MD Viewer Inject] 找到 tr 行数:', rows.length);
-
-  if (rows.length > 0) {
-    rows.forEach(row => {
-      const link = row.querySelector('a');
-      if (!link) return;
-      const name = link.textContent.trim();
-      if (!name || name === '.' || name === '..' || name === 'Name') return;
-
-      const href = link.getAttribute('href');
-      if (!href || href.startsWith('?')) return;
-
-      // Chrome 目录页面中 dir 结尾有 /，且 a 元素有 class="icon dir"
-      const isDir = name.endsWith('/') || link.classList.contains('dir');
-      const displayName = name.endsWith('/') ? name.slice(0, -1) : name;
-
-      try {
-        items.push({
-          name: displayName,
-          isDir,
-          url: new URL(href, baseUrl).href,
-          size: '',
-          date: '',
-        });
-      } catch (e) { /* URL 解析失败 */ }
-    });
-  }
-
-  // 策略 2：备用 - 所有 <a> 链接
-  if (items.length === 0) {
-    const links = document.querySelectorAll('a');
-    console.log('[MD Viewer Inject] 备用方案，找到链接数:', links.length);
-
-    links.forEach(link => {
-      const name = link.textContent.trim();
-      if (!name || name === '.' || name === '..' || name === 'Parent Directory' ||
-          name === 'Name' || name === 'Size' || name === 'Date Modified') return;
-
-      const href = link.getAttribute('href');
-      if (!href || href.startsWith('?') || href.startsWith('#')) return;
-
-      const isDir = name.endsWith('/') || link.classList.contains('dir');
-      const displayName = name.endsWith('/') ? name.slice(0, -1) : name;
-
-      try {
-        items.push({
-          name: displayName,
-          isDir,
-          url: new URL(href, baseUrl).href,
-          size: '',
-          date: '',
-        });
-      } catch (e) { /* URL 解析失败 */ }
-    });
-  }
-
-  console.log('[MD Viewer Inject] 提取到文件数:', items.length);
-  return items;
-}
 
 console.log('[MD Viewer Enhanced] Background service worker 已启动');
 
 // ==================== 测试导出 ====================
-// 仅在 Node.js 环境下导出（用于 Jest 测试），浏览器环境中不生效
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     DEFAULT_SETTINGS,
     isMarkdownUrl,
     isTextContentType,
-    extractDirectoryItems,
   };
 }

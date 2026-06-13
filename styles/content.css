@@ -78,6 +78,14 @@ html:has(.theme-dark) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.md-toolbar-file-icon {
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 .theme-dark .md-toolbar-title {
@@ -220,16 +228,21 @@ html:has(.theme-dark) {
 /* ==================== 嵌入模式 ==================== */
 /* 悬浮模式（默认）：侧边栏 position:fixed 覆盖在内容之上 */
 /* 嵌入模式：侧边栏参与 flex 布局，占据独立空间，内容区被自然挤开 */
+.panel-embed .md-main-container {
+  height: calc(100vh - 30px);
+  overflow: hidden;
+}
+
 .panel-embed .md-toc-sidebar {
   position: relative;
   top: auto;
   left: auto;
   right: auto;
-  height: auto;
-  align-self: stretch;
+  height: 100%;
   flex-shrink: 0;
   z-index: auto;
   box-shadow: none;
+  overflow-y: auto;
 }
 
 .panel-embed .md-toc-sidebar.toc-right {
@@ -237,14 +250,10 @@ html:has(.theme-dark) {
   order: 2;
 }
 
-.panel-embed .md-toc-sidebar.toc-right ~ .md-content,
 .panel-embed .md-content {
   order: 1;
-}
-
-/* 嵌入模式下侧边栏滚动独立于内容区 */
-.panel-embed .md-main-container {
-  align-items: stretch;
+  overflow-y: auto;
+  height: 100%;
 }
 
 /* ==================== 侧边栏页签栏 ==================== */
@@ -456,186 +465,6 @@ html:has(.theme-dark) {
   font-size: 12px;
 }
 
-/* ==================== 文件浏览器 ==================== */
-
-/* 面包屑路径栏 */
-.file-tree-breadcrumb {
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  font-size: 12px;
-  color: #656d76;
-  border-bottom: 1px solid #d0d7de;
-  background: rgba(0, 0, 0, 0.02);
-  overflow: hidden;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.breadcrumb-icon {
-  margin-right: 6px;
-  font-size: 13px;
-  flex-shrink: 0;
-}
-
-.breadcrumb-link {
-  color: #0969da;
-  text-decoration: none;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.breadcrumb-link:hover {
-  text-decoration: underline;
-}
-
-.breadcrumb-sep {
-  margin: 0 3px;
-  color: #8b949e;
-  flex-shrink: 0;
-}
-
-.breadcrumb-current {
-  color: #24292f;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.theme-dark .file-tree-breadcrumb {
-  border-bottom-color: #333;
-  background: rgba(255, 255, 255, 0.03);
-  color: #8b949e;
-}
-
-.theme-dark .breadcrumb-link {
-  color: #58a6ff;
-}
-
-.theme-dark .breadcrumb-current {
-  color: #e0e0e0;
-}
-
-.file-tree {
-  padding: 4px 0;
-}
-
-.file-tree-loading,
-.file-tree-empty {
-  padding: 16px;
-  text-align: center;
-  color: #8b949e;
-  font-size: 13px;
-}
-
-.file-tree-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.file-tree-item {
-  display: flex;
-  align-items: center;
-  padding: 3px 12px;
-  cursor: pointer;
-  color: #586069;
-  font-size: 13px;
-  transition: background 0.1s;
-  user-select: none;
-}
-
-.file-tree-item:hover {
-  background: rgba(3, 102, 214, 0.06);
-}
-
-.file-tree-item.file-tree-active {
-  background: rgba(3, 102, 214, 0.1);
-  color: #0366d6;
-  font-weight: 500;
-}
-
-.file-tree-item.file-tree-dir {
-  color: #24292e;
-  font-weight: 500;
-}
-
-.file-tree-item.file-tree-md .file-tree-name {
-  color: #0366d6;
-}
-
-.theme-dark .file-tree-item {
-  color: #8b949e;
-}
-
-.theme-dark .file-tree-item:hover {
-  background: rgba(88, 166, 255, 0.08);
-}
-
-.theme-dark .file-tree-item.file-tree-active {
-  background: rgba(88, 166, 255, 0.15);
-  color: #58a6ff;
-}
-
-.theme-dark .file-tree-item.file-tree-dir {
-  color: #e0e0e0;
-}
-
-.theme-dark .file-tree-item.file-tree-md .file-tree-name {
-  color: #58a6ff;
-}
-
-.file-tree-icon {
-  width: 22px;
-  flex-shrink: 0;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1;
-}
-
-/* 文件夹展开/折叠箭头 */
-.file-tree-arrow {
-  width: 16px;
-  flex-shrink: 0;
-  text-align: center;
-  font-size: 10px;
-  color: #8b949e;
-  cursor: pointer;
-  transition: color 0.15s;
-  line-height: 1;
-}
-
-.file-tree-arrow:hover {
-  color: #0366d6;
-}
-
-.theme-dark .file-tree-arrow {
-  color: #6e7681;
-}
-
-.theme-dark .file-tree-arrow:hover {
-  color: #58a6ff;
-}
-
-/* 文件的箭头占位符（保持和文件夹对齐） */
-.file-tree-arrow-placeholder {
-  width: 16px;
-  flex-shrink: 0;
-}
-
-/* 子目录容器 */
-.file-tree-subdir {
-  list-style: none;
-}
-
-.file-tree-name {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.6;
-}
-
 /* ==================== 侧边栏拖拽调整宽度手柄 ==================== */
 .sidebar-resize-handle {
   position: absolute;
@@ -690,9 +519,10 @@ html:has(.theme-dark) {
 }
 
 .md-toc-search-icon {
-  font-size: 12px;
   flex-shrink: 0;
   opacity: 0.6;
+  display: flex;
+  align-items: center;
 }
 
 .md-toc-search-input {
@@ -1167,43 +997,6 @@ html:has(.theme-dark) {
   }
   .theme-auto .ctx-menu-group-content {
     background: rgba(255, 255, 255, 0.05);
-  }
-  .theme-auto .file-tree-loading,
-  .theme-auto .file-tree-empty {
-    color: #6e7681;
-  }
-  .theme-auto .file-tree-breadcrumb {
-    border-bottom-color: #333;
-    background: rgba(255, 255, 255, 0.03);
-    color: #8b949e;
-  }
-  .theme-auto .breadcrumb-link {
-    color: #58a6ff;
-  }
-  .theme-auto .breadcrumb-current {
-    color: #e0e0e0;
-  }
-  .theme-auto .file-tree-item {
-    color: #8b949e;
-  }
-  .theme-auto .file-tree-item:hover {
-    background: rgba(88, 166, 255, 0.08);
-  }
-  .theme-auto .file-tree-item.file-tree-active {
-    background: rgba(88, 166, 255, 0.15);
-    color: #58a6ff;
-  }
-  .theme-auto .file-tree-item.file-tree-dir {
-    color: #e0e0e0;
-  }
-  .theme-auto .file-tree-item.file-tree-md .file-tree-name {
-    color: #58a6ff;
-  }
-  .theme-auto .file-tree-arrow {
-    color: #6e7681;
-  }
-  .theme-auto .file-tree-arrow:hover {
-    color: #58a6ff;
   }
   .theme-auto .md-toc-link {
     color: #8b949e;

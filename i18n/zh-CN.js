@@ -20,8 +20,6 @@
     'toolbar.fileChanged': '文件已更新',
 
     // ========== 侧边栏 ==========
-    'sidebar.files.title': '文件浏览器',
-    'sidebar.toc.title': '目录导航',
     'sidebar.menu.title': '更多操作',
     'sidebar.close.title': '关闭侧边栏',
     'sidebar.backToTop.title': '回到顶部',
@@ -33,23 +31,6 @@
     // ========== 侧边栏菜单 ==========
     'menu.toc.collapseAll': '折叠全部',
     'menu.toc.expandAll': '展开全部',
-    'menu.files.refresh': '刷新',
-    'menu.files.collapseAll': '折叠全部',
-    'menu.files.sortGroup': '排序顺序',
-    'menu.files.sortByName': '按名称',
-    'menu.files.sortBySize': '按大小',
-    'menu.files.sortByModified': '按修改日期',
-    'menu.files.sortAsc': '升序',
-    'menu.files.sortDesc': '降序',
-    'menu.files.foldersFirst': '文件夹置顶',
-    'menu.files.showHidden': '显示隐藏文件',
-
-    // ========== 文件浏览器 ==========
-    'fileTree.loading': '加载中...',
-    'fileTree.empty': '暂无文件',
-    'fileTree.noMarkdown': '当前目录无 Markdown 文件',
-    'fileTree.emptyFolder': '空文件夹',
-    'fileTree.loadFailed': '加载失败',
 
     // ========== 代码复制 ==========
     'code.copy': '📋 复制',

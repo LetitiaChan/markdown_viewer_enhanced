@@ -20,8 +20,6 @@
     'toolbar.fileChanged': 'File updated',
 
     // ========== Sidebar ==========
-    'sidebar.files.title': 'File Browser',
-    'sidebar.toc.title': 'Table of Contents',
     'sidebar.menu.title': 'More actions',
     'sidebar.close.title': 'Close sidebar',
     'sidebar.backToTop.title': 'Back to top',
@@ -33,23 +31,6 @@
     // ========== Sidebar Menu ==========
     'menu.toc.collapseAll': 'Collapse All',
     'menu.toc.expandAll': 'Expand All',
-    'menu.files.refresh': 'Refresh',
-    'menu.files.collapseAll': 'Collapse All',
-    'menu.files.sortGroup': 'Sort Order',
-    'menu.files.sortByName': 'By Name',
-    'menu.files.sortBySize': 'By Size',
-    'menu.files.sortByModified': 'By Modified Date',
-    'menu.files.sortAsc': 'Ascending',
-    'menu.files.sortDesc': 'Descending',
-    'menu.files.foldersFirst': 'Folders First',
-    'menu.files.showHidden': 'Show Hidden Files',
-
-    // ========== File Browser ==========
-    'fileTree.loading': 'Loading...',
-    'fileTree.empty': 'No files',
-    'fileTree.noMarkdown': 'No Markdown files in this directory',
-    'fileTree.emptyFolder': 'Empty folder',
-    'fileTree.loadFailed': 'Load failed',
 
     // ========== Code Copy ==========
     'code.copy': '📋 Copy',

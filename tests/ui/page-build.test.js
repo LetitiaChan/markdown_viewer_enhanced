@@ -28,8 +28,7 @@ describe('BT-page-build.1 DOM 结构', () => {
         <div class="md-main-container">
           <aside id="md-toc-sidebar" class="md-toc-sidebar toc-right visible">
             <div class="sidebar-tabs">
-              <button class="sidebar-tab" data-tab="files">📁</button>
-              <button class="sidebar-tab active" data-tab="toc">≡</button>
+              <span class="sidebar-tab-spacer"></span>
             </div>
             <div id="sidebar-panel-toc" class="sidebar-panel">
               <nav id="md-toc-nav" class="md-toc-nav"></nav>
