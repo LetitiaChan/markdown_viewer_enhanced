@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ---
 
+## [1.3.2] - 2026-06-13
+
+### Fixed
+- **TOC Search Sidebar**: Kept the TOC search box fixed while the heading list scrolls independently, so long documents no longer scroll the search controls out of view.
+
+---
+
 ## [1.3.1] - 2026-04-23
 
 ### Fixed
